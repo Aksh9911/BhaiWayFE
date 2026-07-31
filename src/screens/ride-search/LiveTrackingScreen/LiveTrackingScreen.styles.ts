@@ -1,0 +1,406 @@
+import { Dimensions, StyleSheet } from 'react-native';
+import { colors } from '@/shared/theme';
+import { createShadow } from '@/shared/utils/platform';
+
+const PRIMARY = '#0342D1';
+const PRIMARY_CONTAINER = '#335EEA';
+const ON_SURFACE = '#191C1D';
+const ON_SURFACE_VARIANT = '#434655';
+const OUTLINE = '#747686';
+const OUTLINE_VARIANT = '#C4C5D7';
+const SECONDARY = '#585E72';
+const SECONDARY_CONTAINER = '#DADFF7';
+const SURFACE = '#F8F9FA';
+const SURFACE_CONTAINER = '#EDEEEF';
+const RADIUS_XL = 20;
+const MAP_HEIGHT = Math.round(Dimensions.get('window').height * 0.5);
+
+export const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: SURFACE,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    backgroundColor: SURFACE,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    flex: 1,
+  },
+  headerTitle: {
+    fontSize: 28,
+    lineHeight: 36,
+    fontWeight: '700',
+    color: PRIMARY,
+  },
+  scroll: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 24,
+  },
+  mapSection: {
+    height: MAP_HEIGHT,
+    width: '100%',
+    overflow: 'hidden',
+    backgroundColor: '#F3F4F5',
+    ...createShadow({
+      color: colors.shadow,
+      opacity: 0.12,
+      radius: 12,
+      offsetY: 4,
+      elevation: 4,
+    }),
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  etaPill: {
+    position: 'absolute',
+    top: 16,
+    left: 16,
+    zIndex: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: PRIMARY,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 999,
+    ...createShadow({
+      color: PRIMARY,
+      opacity: 0.28,
+      radius: 10,
+      offsetY: 4,
+      elevation: 4,
+    }),
+  },
+  etaDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.white,
+  },
+  etaCopy: {
+    gap: 2,
+  },
+  etaLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: -0.2,
+    textTransform: 'uppercase',
+    color: 'rgba(255,255,255,0.8)',
+    lineHeight: 12,
+  },
+  etaValue: {
+    fontSize: 14,
+    lineHeight: 18,
+    fontWeight: '700',
+    color: colors.white,
+  },
+  mapControls: {
+    position: 'absolute',
+    right: 16,
+    bottom: 16,
+    gap: 8,
+    zIndex: 10,
+  },
+  mapControlBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 8,
+    backgroundColor: colors.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...createShadow({
+      color: colors.shadow,
+      opacity: 0.12,
+      radius: 6,
+      offsetY: 2,
+      elevation: 3,
+    }),
+  },
+  mapControlBtnPrimary: {
+    backgroundColor: PRIMARY,
+  },
+  destinationMarker: {
+    alignItems: 'center',
+  },
+  destinationPin: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: SECONDARY,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...createShadow({
+      color: colors.shadow,
+      opacity: 0.2,
+      radius: 6,
+      offsetY: 2,
+      elevation: 3,
+    }),
+  },
+  destinationDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: SECONDARY,
+    marginTop: -2,
+  },
+  carMarkerWrap: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 56,
+    height: 56,
+  },
+  carPulse: {
+    position: 'absolute',
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(3, 66, 209, 0.3)',
+  },
+  carMarker: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: OUTLINE_VARIANT,
+    ...createShadow({
+      color: colors.shadow,
+      opacity: 0.14,
+      radius: 6,
+      offsetY: 2,
+      elevation: 3,
+    }),
+  },
+  content: {
+    marginTop: -32,
+    paddingHorizontal: 16,
+    gap: 24,
+    zIndex: 10,
+  },
+  driverCard: {
+    backgroundColor: colors.white,
+    borderRadius: RADIUS_XL,
+    padding: 24,
+    borderWidth: 1,
+    borderColor: OUTLINE_VARIANT,
+    gap: 24,
+    ...createShadow({
+      color: colors.shadow,
+      opacity: 0.1,
+      radius: 10,
+      offsetY: 4,
+      elevation: 3,
+    }),
+  },
+  driverInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+  avatar: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    borderWidth: 2,
+    borderColor: '#DDE1FF',
+    overflow: 'hidden',
+    backgroundColor: SURFACE_CONTAINER,
+  },
+  driverMeta: {
+    flex: 1,
+    gap: 2,
+  },
+  driverNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    flexWrap: 'wrap',
+  },
+  driverName: {
+    fontSize: 20,
+    lineHeight: 28,
+    fontWeight: '600',
+    color: ON_SURFACE,
+  },
+  ratingPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    backgroundColor: SECONDARY_CONTAINER,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 8,
+  },
+  ratingText: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '700',
+    letterSpacing: 0.6,
+    color: SECONDARY,
+  },
+  vehicleText: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: ON_SURFACE_VARIANT,
+  },
+  contactRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  chatButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: OUTLINE,
+    backgroundColor: colors.white,
+  },
+  chatLabel: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '700',
+    letterSpacing: 0.6,
+    color: ON_SURFACE,
+  },
+  callButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 999,
+    backgroundColor: PRIMARY,
+  },
+  callLabel: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '700',
+    letterSpacing: 0.6,
+    color: colors.white,
+  },
+  otpCard: {
+    backgroundColor: 'rgba(218, 223, 247, 0.3)',
+    borderWidth: 1,
+    borderColor: '#DCE2F9',
+    borderRadius: RADIUS_XL,
+    padding: 24,
+    alignItems: 'center',
+  },
+  otpHint: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '700',
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+    color: ON_SURFACE_VARIANT,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  otpRow: {
+    flexDirection: 'row',
+    gap: 16,
+  },
+  otpDigit: {
+    width: 56,
+    height: 64,
+    borderRadius: 8,
+    backgroundColor: colors.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: OUTLINE_VARIANT,
+    ...createShadow({
+      color: colors.shadow,
+      opacity: 0.06,
+      radius: 4,
+      offsetY: 1,
+      elevation: 1,
+    }),
+  },
+  otpDigitText: {
+    fontSize: 32,
+    lineHeight: 40,
+    fontWeight: '700',
+    color: PRIMARY,
+  },
+  whyOtpBtn: {
+    marginTop: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  whyOtpLabel: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '700',
+    letterSpacing: 0.6,
+    color: PRIMARY,
+  },
+  quickActions: {
+    flexDirection: 'row',
+    gap: 16,
+  },
+  quickAction: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    backgroundColor: SURFACE_CONTAINER,
+    padding: 16,
+    borderRadius: RADIUS_XL,
+  },
+  quickActionIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  shareIcon: {
+    backgroundColor: PRIMARY,
+  },
+  supportIcon: {
+    backgroundColor: SECONDARY,
+  },
+  quickActionTitle: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '700',
+    letterSpacing: 0.6,
+    color: ON_SURFACE,
+  },
+  quickActionHint: {
+    fontSize: 11,
+    lineHeight: 14,
+    color: ON_SURFACE_VARIANT,
+  },
+});
+
+export const liveTrackingTokens = {
+  PRIMARY,
+  PRIMARY_CONTAINER,
+  ON_SURFACE_VARIANT,
+  MAP_HEIGHT,
+} as const;

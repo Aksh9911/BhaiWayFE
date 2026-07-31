@@ -1,0 +1,84 @@
+import { StyleSheet } from 'react-native';
+import { colors, layout, spacing, typography } from '@/shared/theme';
+import { createShadow } from '@/shared/utils/platform';
+
+export const styles = StyleSheet.create({
+  card: {
+    backgroundColor: colors.white,
+    borderRadius: layout.radiusXl,
+    padding: spacing.md,
+    gap: spacing.md,
+    borderWidth: 1,
+    borderColor: 'rgba(198, 198, 205, 0.3)',
+    ...createShadow({ color: colors.shadow, opacity: 0.04, radius: 20, offsetY: 4, elevation: 3 }),
+  },
+  title: {
+    ...typography.label,
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '600',
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+    color: colors.textSecondary,
+  },
+  row: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  input: {
+    flex: 1,
+    height: 48,
+    borderRadius: layout.radiusMd,
+    borderWidth: 1,
+    borderColor: '#C6C6CD',
+    backgroundColor: '#EFF4FF',
+    paddingHorizontal: spacing.md,
+    ...typography.body,
+    fontSize: 16,
+    lineHeight: 24,
+    color: colors.textPrimary,
+  },
+  applyButton: {
+    minWidth: 88,
+    height: 48,
+    borderRadius: layout.radiusMd,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+  },
+  applyLabel: {
+    ...typography.label,
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '600',
+    color: colors.textInverse,
+  },
+  successRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: spacing.md,
+  },
+  successLeft: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  successText: {
+    ...typography.caption,
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '500',
+    color: colors.primary,
+    flex: 1,
+  },
+  discount: {
+    ...typography.body,
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: '600',
+    color: colors.primary,
+  },
+});

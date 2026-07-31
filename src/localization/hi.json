@@ -1,0 +1,16 @@
+{
+  "common": {
+    "continue": "जारी रखें",
+    "verify": "सत्यापित करें",
+    "saveAndContinue": "सहेजें और जारी रखें",
+    "help": "मदद"
+  },
+  "auth": {
+    "welcomeTitle": "BhaiWay में आपका स्वागत है",
+    "signUp": "मुफ़्त साइन अप करें",
+    "login": "खाते में लॉगिन करें",
+    "phoneHeading": "अपना मोबाइल नंबर दर्ज करें",
+    "otpHeading": "फ़ोन सत्यापित करें",
+    "completeProfile": "प्रोफ़ाइल पूरी करें"
+  }
+}

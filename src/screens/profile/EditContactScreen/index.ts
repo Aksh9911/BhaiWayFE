@@ -1,0 +1,1 @@
+export { EditContactScreen } from './EditContactScreen';

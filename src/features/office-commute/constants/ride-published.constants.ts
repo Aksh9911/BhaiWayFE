@@ -1,0 +1,16 @@
+export const RIDE_PUBLISHED_SCREEN = {
+  brandName: 'BhaiWay',
+  title: 'Ride Published Successfully!',
+  subtitle: 'Your commute is now live for others to join.',
+  pickupLabel: 'Pickup',
+  dropLabel: 'Drop',
+  timingLabel: 'Timing',
+  capacityLabel: 'Capacity',
+  seatsSuffix: 'Seats',
+  perSeatLabel: '/ seat',
+  oneTimeLabel: 'One-time',
+  viewRidesLabel: 'View My Rides',
+  modifyLabel: 'Modify Ride',
+  fallbackPickup: 'Pickup location',
+  fallbackDrop: 'Drop-off location',
+} as const;

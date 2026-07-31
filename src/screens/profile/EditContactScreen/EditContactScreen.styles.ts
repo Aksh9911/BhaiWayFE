@@ -1,0 +1,204 @@
+import { StyleSheet } from 'react-native';
+
+import { layout, spacing } from '@/shared/theme';
+import { createShadow } from '@/shared/utils/platform';
+
+export const editContactTokens = {
+  PRIMARY: '#0342D1',
+  PRIMARY_CONTAINER: '#335EEA',
+  ON_PRIMARY: '#FFFFFF',
+  ON_PRIMARY_CONTAINER: '#EAEBFF',
+  ON_SURFACE: '#191C1D',
+  ON_SURFACE_VARIANT: '#434655',
+  OUTLINE: '#747686',
+  OUTLINE_VARIANT: '#C4C5D7',
+  SURFACE: '#F8F9FA',
+  SURFACE_HIGH: '#E7E8E9',
+  SURFACE_LOWEST: '#FFFFFF',
+  ERROR: '#BA1A1A',
+  ERROR_CONTAINER: '#FFDAD6',
+  SUCCESS: '#16A34A',
+} as const;
+
+export const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: editContactTokens.SURFACE,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    minHeight: 64,
+    backgroundColor: editContactTokens.SURFACE,
+    ...createShadow({ color: '#000000', opacity: 0.05, radius: 20, offsetY: 4, elevation: 3 }),
+  },
+  headerTitle: {
+    fontSize: 28,
+    lineHeight: 36,
+    fontWeight: '700',
+    color: editContactTokens.PRIMARY,
+    flexShrink: 1,
+  },
+  scroll: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.xxxl,
+    paddingBottom: spacing.huge + spacing.xxxl,
+    maxWidth: 448,
+    width: '100%',
+    alignSelf: 'center',
+    gap: spacing.xxxl,
+  },
+  avatarSection: {
+    alignItems: 'center',
+    marginBottom: spacing.sm,
+  },
+  avatarWrap: {
+    position: 'relative',
+  },
+  avatar: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    borderWidth: 4,
+    borderColor: editContactTokens.SURFACE_HIGH,
+    backgroundColor: editContactTokens.SURFACE_HIGH,
+  },
+  avatarInitials: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarInitialsText: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: editContactTokens.PRIMARY,
+  },
+  editAvatarButton: {
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: editContactTokens.PRIMARY,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...createShadow({ color: '#000000', opacity: 0.15, radius: 8, offsetY: 2, elevation: 3 }),
+  },
+  subtitle: {
+    marginTop: spacing.lg,
+    fontSize: 16,
+    lineHeight: 24,
+    color: editContactTokens.ON_SURFACE_VARIANT,
+    textAlign: 'center',
+  },
+  field: {
+    gap: spacing.sm,
+  },
+  label: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '700',
+    letterSpacing: 0.6,
+    color: editContactTokens.ON_SURFACE_VARIANT,
+    paddingHorizontal: spacing.xs,
+  },
+  inputWrap: {
+    position: 'relative',
+    justifyContent: 'center',
+  },
+  inputIcon: {
+    position: 'absolute',
+    left: spacing.lg,
+    zIndex: 1,
+  },
+  input: {
+    height: layout.inputHeight,
+    paddingLeft: 48,
+    paddingRight: spacing.lg,
+    backgroundColor: editContactTokens.SURFACE_LOWEST,
+    borderWidth: 1,
+    borderColor: editContactTokens.OUTLINE_VARIANT,
+    borderRadius: layout.radiusXl,
+    fontSize: 16,
+    lineHeight: 24,
+    color: editContactTokens.ON_SURFACE,
+  },
+  inputFocused: {
+    borderColor: editContactTokens.PRIMARY,
+    borderWidth: 2,
+  },
+  relationsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
+  relationChip: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    borderRadius: 999,
+    backgroundColor: editContactTokens.SURFACE_HIGH,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  relationChipActive: {
+    backgroundColor: 'rgba(51, 94, 234, 0.12)',
+    borderColor: editContactTokens.PRIMARY,
+  },
+  relationLabel: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '600',
+    color: editContactTokens.ON_SURFACE_VARIANT,
+  },
+  relationLabelActive: {
+    color: editContactTokens.PRIMARY,
+  },
+  actions: {
+    paddingTop: spacing.xxxl,
+    gap: spacing.lg,
+  },
+  saveButton: {
+    height: layout.buttonHeight,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: editContactTokens.PRIMARY_CONTAINER,
+    borderRadius: layout.radiusXl,
+    ...createShadow({
+      color: editContactTokens.PRIMARY_CONTAINER,
+      opacity: 0.3,
+      radius: 12,
+      offsetY: 4,
+      elevation: 4,
+    }),
+  },
+  saveButtonSuccess: {
+    backgroundColor: editContactTokens.SUCCESS,
+  },
+  saveLabel: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: '600',
+    color: editContactTokens.ON_PRIMARY,
+  },
+  deleteButton: {
+    height: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    borderRadius: layout.radiusLg,
+  },
+  deleteLabel: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: '600',
+    color: editContactTokens.ERROR,
+  },
+});

@@ -1,0 +1,1 @@
+export { RideResultSkeleton } from './RideResultSkeleton';

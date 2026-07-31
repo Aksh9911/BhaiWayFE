@@ -1,0 +1,149 @@
+import { StyleSheet } from 'react-native';
+import { colors, layout, spacing, typography } from '@/shared/theme';
+import { createShadow } from '@/shared/utils/platform';
+
+export const styles = StyleSheet.create({
+  card: {
+    borderRadius: layout.radiusXl,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: '#C6C6CD',
+    padding: spacing.md,
+    ...createShadow({
+      color: colors.shadow,
+      opacity: 0.04,
+      radius: 20,
+      offsetY: 4,
+      elevation: 3,
+    }),
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: spacing.md,
+    marginBottom: spacing.md,
+  },
+  driverRow: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  driverMeta: {
+    flex: 1,
+    gap: 4,
+  },
+  driverName: {
+    ...typography.label,
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '600',
+    color: colors.textPrimary,
+  },
+  ratingBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    gap: 4,
+    backgroundColor: '#FFDBCA',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 999,
+  },
+  ratingText: {
+    ...typography.caption,
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '500',
+    color: '#D95F00',
+  },
+  priceCol: {
+    alignItems: 'flex-end',
+  },
+  price: {
+    ...typography.title,
+    fontSize: 24,
+    lineHeight: 32,
+    fontWeight: '600',
+    letterSpacing: -0.24,
+    color: colors.primary,
+  },
+  originalPrice: {
+    ...typography.caption,
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '500',
+    color: colors.textSecondary,
+    textDecorationLine: 'line-through',
+    marginTop: 2,
+  },
+  infoBox: {
+    flexDirection: 'row',
+    backgroundColor: '#EFF4FF',
+    borderRadius: layout.radiusMd,
+    padding: spacing.sm,
+    gap: spacing.sm,
+    marginBottom: spacing.md,
+  },
+  infoCol: {
+    flex: 1,
+    gap: 2,
+  },
+  infoLabel: {
+    ...typography.caption,
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '500',
+    color: colors.textSecondary,
+  },
+  infoValue: {
+    ...typography.label,
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '600',
+    color: colors.textPrimary,
+  },
+  footerDivider: {
+    height: 1,
+    backgroundColor: '#C6C6CD',
+  },
+  footer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: spacing.md,
+    paddingTop: spacing.sm,
+    marginTop: spacing.xs,
+  },
+  seatsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    flex: 1,
+  },
+  seatsText: {
+    ...typography.caption,
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '500',
+    color: colors.textSecondary,
+  },
+  seatsCount: {
+    fontWeight: '700',
+    color: colors.textPrimary,
+  },
+  seatsTextUrgent: {
+    color: '#D95F00',
+  },
+  seatsCountUrgent: {
+    color: '#D95F00',
+  },
+  bookButton: {
+    minWidth: 132,
+    minHeight: 40,
+    height: 40,
+    paddingHorizontal: spacing.lg,
+    borderRadius: layout.radiusMd,
+  },
+});

@@ -1,0 +1,16 @@
+{
+  "common": {
+    "continue": "Continue",
+    "verify": "Verify",
+    "saveAndContinue": "Save and Continue",
+    "help": "Help"
+  },
+  "auth": {
+    "welcomeTitle": "Welcome to BhaiWay",
+    "signUp": "Sign Up Free",
+    "login": "Login to Account",
+    "phoneHeading": "Enter your mobile number",
+    "otpHeading": "Verify Phone",
+    "completeProfile": "Complete Profile"
+  }
+}

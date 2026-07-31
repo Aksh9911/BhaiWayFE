@@ -1,0 +1,1 @@
+export { TrustedContactsScreen } from './TrustedContactsScreen';

@@ -1,0 +1,223 @@
+import React, { useCallback } from 'react';
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+import { AppFooter, IconButton } from '@/shared/components';
+import { colors } from '@/shared/theme';
+import { triggerLightHaptic } from '@/shared/utils';
+import { CommuteReviewMapPreview } from '@/features/office-commute/components';
+import { REVIEW_DRIVE_SCREEN } from '@/features/office-commute/constants';
+import { useReviewDrive } from '@/features/office-commute/hooks';
+import { styles } from './ReviewDriveScreen.styles';
+
+export const ReviewDriveScreen = () => {
+  const {
+    draft,
+    pickup,
+    destination,
+    routeCoordinates,
+    pickupLabel,
+    destinationLabel,
+    departureLabel,
+    distanceLabel,
+    durationLabel,
+    routeLoading,
+    estimatedEarnings,
+    weekdays,
+    publishing,
+    goBack,
+    verifyIdentity,
+    publishRide,
+  } = useReviewDrive();
+
+  const hasRecurringDays = draft.recurringDays.length > 0;
+
+  const handlePublish = useCallback(() => {
+    if (publishing) {
+      return;
+    }
+    triggerLightHaptic();
+    publishRide();
+  }, [publishRide, publishing]);
+
+  return (
+    <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          <IconButton
+            icon="arrow-back"
+            onPress={goBack}
+            color={colors.textPrimary}
+            accessibilityLabel="Go back"
+          />
+          <Text style={styles.title}>{REVIEW_DRIVE_SCREEN.title}</Text>
+        </View>
+        <IconButton
+          icon="ellipsis-vertical"
+          onPress={() => undefined}
+          color={colors.textPrimary}
+          accessibilityLabel="More options"
+        />
+      </View>
+
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <CommuteReviewMapPreview
+          pickup={pickup}
+          dropoff={destination}
+          routeCoordinates={routeCoordinates}
+          distanceLabel={distanceLabel}
+          durationLabel={durationLabel}
+          distanceCaption={REVIEW_DRIVE_SCREEN.distanceLabel}
+          loading={routeLoading}
+        />
+
+        <View style={styles.content}>
+          <View style={styles.card}>
+            <View style={styles.cardHeader}>
+              <Ionicons name="git-branch-outline" size={18} color="#45464D" />
+              <Text style={styles.cardHeaderLabel}>{REVIEW_DRIVE_SCREEN.routeLabel}</Text>
+            </View>
+            <View style={styles.routeTimeline}>
+              <View style={styles.routeLine} />
+              <View style={styles.routeStop}>
+                <View style={[styles.routeDot, styles.routeDotPickup]} />
+                <Text style={styles.stopLabel}>{REVIEW_DRIVE_SCREEN.pickupLabel}</Text>
+                <Text style={styles.stopValue}>{pickupLabel}</Text>
+              </View>
+              <View style={styles.routeStop}>
+                <View style={[styles.routeDot, styles.routeDotDrop]} />
+                <Text style={styles.stopLabel}>{REVIEW_DRIVE_SCREEN.destinationLabel}</Text>
+                <Text style={styles.stopValue}>{destinationLabel}</Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.bentoGrid}>
+            <View style={[styles.card, styles.scheduleCard]}>
+              <View style={styles.scheduleRow}>
+                <View>
+                  <Text style={styles.fieldCaption}>{REVIEW_DRIVE_SCREEN.departureLabel}</Text>
+                  <View style={styles.timeRow}>
+                    <Ionicons name="time-outline" size={22} color="#335EEA" />
+                    <Text style={styles.timeValue}>{departureLabel}</Text>
+                  </View>
+                </View>
+                <View style={{ alignItems: 'flex-end' }}>
+                  <Text style={styles.fieldCaption}>{REVIEW_DRIVE_SCREEN.repeatLabel}</Text>
+                  {hasRecurringDays ? (
+                    <View style={styles.daysRow}>
+                      {weekdays.map((day) => {
+                        const selected = draft.recurringDays.includes(day.id);
+                        return (
+                          <View
+                            key={day.id}
+                            style={[styles.dayChip, selected && styles.dayChipSelected]}
+                          >
+                            <Text
+                              style={[styles.dayLabel, selected && styles.dayLabelSelected]}
+                            >
+                              {day.label}
+                            </Text>
+                          </View>
+                        );
+                      })}
+                    </View>
+                  ) : (
+                    <Text style={styles.oneTime}>{REVIEW_DRIVE_SCREEN.oneTimeLabel}</Text>
+                  )}
+                </View>
+              </View>
+            </View>
+
+            <View style={[styles.card, styles.halfCard]}>
+              <Text style={styles.fieldCaption}>{REVIEW_DRIVE_SCREEN.seatsLabel}</Text>
+              <View style={styles.metricRow}>
+                <Ionicons name="car-sport-outline" size={22} color="#335EEA" />
+                <Text style={styles.metricValue}>{draft.seats}</Text>
+              </View>
+            </View>
+
+            <View style={[styles.card, styles.halfCard]}>
+              <Text style={styles.fieldCaption}>{REVIEW_DRIVE_SCREEN.priceLabel}</Text>
+              <View style={styles.metricRow}>
+                <Text style={styles.priceCurrency}>₹</Text>
+                <Text style={styles.metricValue}>{draft.pricePerSeat || '0'}</Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.earningsCard}>
+            <View style={{ flex: 1, paddingRight: 12 }}>
+              <Text style={styles.earningsCaption}>{REVIEW_DRIVE_SCREEN.earningsLabel}</Text>
+              <Text style={styles.earningsHint}>{REVIEW_DRIVE_SCREEN.earningsHint}</Text>
+            </View>
+            <View>
+              <Text style={styles.earningsValue}>{estimatedEarnings}</Text>
+              <Text style={styles.profitableBadge}>{REVIEW_DRIVE_SCREEN.profitableBadge}</Text>
+            </View>
+          </View>
+
+          <View>
+            <View style={styles.warningCard}>
+              <Ionicons name="warning" size={22} color="#D95F00" />
+              <Text style={styles.warningText}>
+                <Text style={styles.warningBold}>Note: </Text>
+                {REVIEW_DRIVE_SCREEN.verifyWarning}
+              </Text>
+            </View>
+            <Pressable
+              style={({ pressed }) => [
+                styles.verifyButton,
+                { marginTop: 16 },
+                pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] },
+              ]}
+              onPress={verifyIdentity}
+              accessibilityRole="button"
+              accessibilityLabel={REVIEW_DRIVE_SCREEN.verifyLabel}
+            >
+              <Ionicons name="shield-checkmark-outline" size={20} color="#335EEA" />
+              <Text style={styles.verifyLabel}>{REVIEW_DRIVE_SCREEN.verifyLabel}</Text>
+            </Pressable>
+          </View>
+        </View>
+      </ScrollView>
+
+      <View style={styles.stickyFooter}>
+        <Pressable
+          style={({ pressed }) => [
+            styles.publishButton,
+            pressed && !publishing && { opacity: 0.92, transform: [{ scale: 0.98 }] },
+          ]}
+          onPress={handlePublish}
+          disabled={publishing}
+          accessibilityRole="button"
+          accessibilityLabel={REVIEW_DRIVE_SCREEN.publishLabel}
+        >
+          {publishing ? (
+            <>
+              <ActivityIndicator color={colors.white} />
+              <Text style={styles.publishLabel}>{REVIEW_DRIVE_SCREEN.publishingLabel}</Text>
+            </>
+          ) : (
+            <>
+              <Text style={styles.publishLabel}>{REVIEW_DRIVE_SCREEN.publishLabel}</Text>
+              <Ionicons name="send" size={18} color={colors.white} />
+            </>
+          )}
+        </Pressable>
+      </View>
+
+      <AppFooter />
+    </SafeAreaView>
+  );
+};

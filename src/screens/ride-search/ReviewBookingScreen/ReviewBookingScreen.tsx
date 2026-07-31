@@ -1,0 +1,201 @@
+import React, { useCallback, useEffect, useRef } from 'react';
+import { Keyboard, Platform, ScrollView, View, type LayoutChangeEvent } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+import { ROUTES } from '@/config';
+import { AppFooter, Button, IconButton, KeyboardAwareScrollView, ScreenHeader } from '@/shared/components';
+import { colors, spacing } from '@/shared/theme';
+import { getSearchParam } from '@/shared/utils';
+import {
+  ReviewBookingAssuredSection,
+  ReviewBookingCoPassengersCard,
+  ReviewBookingDriverCard,
+  ReviewBookingFareCard,
+  ReviewBookingMapPreview,
+  ReviewBookingPromoSection,
+  ReviewBookingRouteCard,
+} from '@/features/ride-search/components';
+import { REVIEW_BOOKING_SCREEN } from '@/features/ride-search/constants';
+import { useReviewBooking } from '@/features/ride-search/hooks';
+import type { RideType } from '@/features/ride-search/types';
+import { styles } from './ReviewBookingScreen.styles';
+
+const PROMO_TOP_GAP = spacing.md;
+
+const isRideType = (value: string): value is RideType =>
+  value === 'regular' || value === 'assured';
+
+export const ReviewBookingScreen = () => {
+  const router = useRouter();
+  const params = useLocalSearchParams<{
+    rideId?: string;
+    rideType?: string;
+    origin?: string;
+    destination?: string;
+    driverName?: string;
+    carModel?: string;
+    price?: string;
+    originLat?: string;
+    originLng?: string;
+    destinationLat?: string;
+    destinationLng?: string;
+  }>();
+
+  const rideTypeParam = getSearchParam(params.rideType);
+  const rideType: RideType = isRideType(rideTypeParam) ? rideTypeParam : 'regular';
+  const priceParam = Number(getSearchParam(params.price));
+  const originLat = Number(getSearchParam(params.originLat));
+  const originLng = Number(getSearchParam(params.originLng));
+  const destinationLat = Number(getSearchParam(params.destinationLat));
+  const destinationLng = Number(getSearchParam(params.destinationLng));
+
+  const {
+    booking,
+    routeCoordinates,
+    promoInput,
+    promoApplied,
+    setPromoInput,
+    applyPromo,
+    confirmBooking,
+  } = useReviewBooking({
+    rideId: getSearchParam(params.rideId) || 'ride-default',
+    rideType,
+    origin: getSearchParam(params.origin),
+    destination: getSearchParam(params.destination),
+    driverName: getSearchParam(params.driverName),
+    carModel: getSearchParam(params.carModel),
+    price: Number.isFinite(priceParam) ? priceParam : undefined,
+    originLat: Number.isFinite(originLat) ? originLat : undefined,
+    originLng: Number.isFinite(originLng) ? originLng : undefined,
+    destinationLat: Number.isFinite(destinationLat) ? destinationLat : undefined,
+    destinationLng: Number.isFinite(destinationLng) ? destinationLng : undefined,
+  });
+
+  const scrollRef = useRef<ScrollView>(null);
+  const promoOffsetY = useRef(0);
+  const promoFocusedRef = useRef(false);
+
+  const scrollPromoIntoView = useCallback(() => {
+    scrollRef.current?.scrollTo({
+      y: Math.max(0, promoOffsetY.current - PROMO_TOP_GAP),
+      animated: true,
+    });
+  }, []);
+
+  useEffect(() => {
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const subscription = Keyboard.addListener(showEvent, () => {
+      if (!promoFocusedRef.current) {
+        return;
+      }
+      scrollPromoIntoView();
+    });
+
+    return () => subscription.remove();
+  }, [scrollPromoIntoView]);
+
+  const handlePromoLayout = useCallback((event: LayoutChangeEvent) => {
+    promoOffsetY.current = event.nativeEvent.layout.y;
+  }, []);
+
+  const handlePromoFocus = useCallback(() => {
+    promoFocusedRef.current = true;
+    // Defer so KeyboardAvoidingView can shrink first, then scroll promo above keyboard.
+    requestAnimationFrame(scrollPromoIntoView);
+  }, [scrollPromoIntoView]);
+
+  const handlePromoBlur = useCallback(() => {
+    promoFocusedRef.current = false;
+  }, []);
+
+  const handleBack = useCallback(() => {
+    if (router.canGoBack()) {
+      router.back();
+    }
+  }, [router]);
+
+  const handleNotifications = useCallback(() => {
+    router.push(ROUTES.notifications);
+  }, [router]);
+
+  const handleEditRoute = useCallback(() => {
+    if (router.canGoBack()) {
+      router.back();
+    }
+  }, [router]);
+
+  const isAssured = booking.rideType === 'assured';
+
+  return (
+    <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
+      <ScreenHeader
+        title={REVIEW_BOOKING_SCREEN.title}
+        onBack={handleBack}
+        right={
+          <IconButton
+            icon="notifications-outline"
+            onPress={handleNotifications}
+            color={colors.textPrimary}
+            accessibilityLabel="Open notifications"
+          />
+        }
+      />
+
+      <KeyboardAwareScrollView
+        contentContainerStyle={styles.scrollContent}
+        scrollViewRef={scrollRef}
+        footer={
+          <View style={styles.footer}>
+            <Button
+              label={REVIEW_BOOKING_SCREEN.confirmLabel}
+              onPress={confirmBooking}
+              showArrow
+              accessibilityLabel="Confirm and pay for booking"
+            />
+          </View>
+        }
+      >
+        <ReviewBookingMapPreview
+          pickup={booking.pickup}
+          dropoff={booking.dropoff}
+          routeCoordinates={routeCoordinates}
+          distanceLabel={booking.distanceLabel}
+          durationLabel={booking.durationLabel}
+        />
+
+        <ReviewBookingRouteCard
+          pickup={booking.pickup}
+          dropoff={booking.dropoff}
+          onEditPickup={handleEditRoute}
+          onEditDropoff={handleEditRoute}
+        />
+
+        <ReviewBookingDriverCard driver={booking.driver} />
+
+        <ReviewBookingCoPassengersCard
+          passengers={booking.coPassengers}
+          maxPassengers={booking.maxPassengers}
+        />
+
+        <View onLayout={handlePromoLayout}>
+          <ReviewBookingPromoSection
+            value={promoInput}
+            applied={promoApplied}
+            discount={booking.fare.promoDiscount}
+            onChange={setPromoInput}
+            onApply={applyPromo}
+            onFocus={handlePromoFocus}
+            onBlur={handlePromoBlur}
+          />
+        </View>
+
+        {isAssured ? <ReviewBookingAssuredSection fee={booking.fare.assuredFee} /> : null}
+
+        <ReviewBookingFareCard fare={booking.fare} showAssuredFee={isAssured} />
+      </KeyboardAwareScrollView>
+
+      <AppFooter activeTab="rides" />
+    </SafeAreaView>
+  );
+};

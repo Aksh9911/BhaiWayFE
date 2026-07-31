@@ -1,0 +1,1 @@
+export { trustedContactsStore } from './trustedContactsStore';

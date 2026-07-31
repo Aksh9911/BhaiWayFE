@@ -1,0 +1,1 @@
+export { RideDetailsScreen } from './RideDetailsScreen';

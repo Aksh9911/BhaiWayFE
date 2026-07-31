@@ -1,0 +1,178 @@
+import { StyleSheet } from 'react-native';
+import { colors, layout, spacing, typography } from '@/shared/theme';
+import { androidTextInputFix, createShadow } from '@/shared/utils/platform';
+
+export const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: colors.surface,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    paddingHorizontal: spacing.screenHorizontal,
+    paddingVertical: spacing.md,
+    backgroundColor: colors.white,
+  },
+  title: {
+    ...typography.title,
+    fontSize: 22,
+    color: colors.textPrimary,
+    flex: 1,
+  },
+  mapContainer: {
+    flex: 1,
+  },
+  searchOverlay: {
+    position: 'absolute',
+    top: spacing.md,
+    left: spacing.screenHorizontal,
+    right: spacing.screenHorizontal,
+    zIndex: 2,
+  },
+  searchBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    borderRadius: layout.radiusMd,
+    backgroundColor: colors.white,
+    paddingHorizontal: spacing.md,
+    minHeight: layout.inputHeight,
+    ...createShadow({ color: colors.primary, opacity: 0.1, radius: 10, offsetY: 3, elevation: 4 }),
+  },
+  searchValue: {
+    flex: 1,
+    ...typography.input,
+    fontSize: 16,
+    color: colors.textPrimary,
+  },
+  searchPlaceholder: {
+    color: colors.textPlaceholder,
+  },
+
+  // Full-screen search mode (Uber-style)
+  searchScreen: {
+    flex: 1,
+    backgroundColor: colors.white,
+  },
+  searchHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.screenHorizontal,
+    paddingVertical: spacing.md,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.border,
+  },
+  searchField: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    borderRadius: layout.radiusMd,
+    backgroundColor: colors.surfaceMuted,
+    paddingHorizontal: spacing.md,
+    minHeight: layout.inputHeight - 4,
+  },
+  searchInput: {
+    flex: 1,
+    ...typography.input,
+    fontSize: 16,
+    color: colors.textPrimary,
+    padding: 0,
+    margin: 0,
+    ...androidTextInputFix,
+  },
+  currentLocationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    paddingHorizontal: spacing.screenHorizontal,
+    paddingVertical: spacing.md,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.border,
+  },
+  currentLocationText: {
+    ...typography.label,
+    fontSize: 15,
+    color: colors.primary,
+  },
+  sectionLabel: {
+    ...typography.caption,
+    color: colors.textSecondary,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
+    paddingHorizontal: spacing.screenHorizontal,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.xs,
+    backgroundColor: colors.white,
+  },
+  loadingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.screenHorizontal,
+    paddingVertical: spacing.sm,
+  },
+  loadingText: {
+    ...typography.caption,
+    color: colors.textSecondary,
+  },
+  suggestionsContent: {
+    paddingBottom: spacing.xxl,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    paddingHorizontal: spacing.screenHorizontal,
+    paddingVertical: spacing.md,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.border,
+  },
+  rowIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.surfaceMuted,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  rowIconAccent: {
+    backgroundColor: colors.accentLight,
+  },
+  rowText: {
+    flex: 1,
+    gap: 2,
+  },
+  placeName: {
+    ...typography.label,
+    fontSize: 15,
+    color: colors.textPrimary,
+  },
+  address: {
+    ...typography.caption,
+    color: colors.textSecondary,
+  },
+  emptyState: {
+    alignItems: 'center',
+    gap: spacing.xs,
+    paddingHorizontal: spacing.screenHorizontal,
+    paddingVertical: spacing.xxl,
+  },
+  emptyTitle: {
+    ...typography.label,
+    fontSize: 16,
+    color: colors.textPrimary,
+    marginTop: spacing.sm,
+  },
+  emptySubtitle: {
+    ...typography.caption,
+    color: colors.textSecondary,
+    textAlign: 'center',
+  },
+});

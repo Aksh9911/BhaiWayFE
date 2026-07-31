@@ -1,0 +1,465 @@
+export interface ScreenDefinition {
+  readonly id: string;
+  readonly segment: string;
+  readonly path: string;
+  readonly title: string;
+}
+
+export const ROOT_SCREENS = {
+  welcome: {
+    id: 'welcome',
+    segment: 'index',
+    path: '/',
+    title: 'Welcome',
+  },
+  login: {
+    id: 'login',
+    segment: 'login',
+    path: '/login',
+    title: 'Login',
+  },
+  home: {
+    id: 'home',
+    segment: 'home',
+    path: '/home',
+    title: 'Home',
+  },
+  rideSearch: {
+    id: 'ride-search',
+    segment: 'ride-search',
+    path: '/ride-search',
+    title: 'Find Ride',
+  },
+  officeCommute: {
+    id: 'office-commute',
+    segment: 'office-commute',
+    path: '/office-commute',
+    title: 'Daily Office Commute',
+  },
+  offerRide: {
+    id: 'offer-ride',
+    segment: 'offer-ride',
+    path: '/offer-ride',
+    title: 'Publish Carpool Ride',
+  },
+  notifications: {
+    id: 'notifications',
+    segment: 'notifications',
+    path: '/notifications',
+    title: 'Notifications',
+  },
+  myRides: {
+    id: 'my-rides',
+    segment: 'my-rides',
+    path: '/my-rides',
+    title: 'My Rides',
+  },
+  masterProfile: {
+    id: 'master-profile',
+    segment: 'profile',
+    path: '/profile',
+    title: 'Profile',
+  },
+  legalPolicies: {
+    id: 'legal-policies',
+    segment: 'legal',
+    path: '/legal',
+    title: 'Legal & Policies',
+  },
+  deleteAccount: {
+    id: 'delete-account',
+    segment: 'delete-account',
+    path: '/delete-account',
+    title: 'Delete Account',
+  },
+  accountDeleted: {
+    id: 'account-deleted',
+    segment: 'account-deleted',
+    path: '/account-deleted',
+    title: 'Account Deleted',
+  },
+  helpSupport: {
+    id: 'help-support',
+    segment: 'help-support',
+    path: '/help-support',
+    title: 'Help & Support',
+  },
+  supportChat: {
+    id: 'support-chat',
+    segment: 'support-chat',
+    path: '/support-chat',
+    title: 'Support',
+  },
+  referEarn: {
+    id: 'refer-earn',
+    segment: 'refer-earn',
+    path: '/refer-earn',
+    title: 'Refer & Earn',
+  },
+  myGarage: {
+    id: 'my-garage',
+    segment: 'my-garage',
+    path: '/my-garage',
+    title: 'My Garage',
+  },
+  addVehicle: {
+    id: 'add-vehicle',
+    segment: 'add-vehicle',
+    path: '/add-vehicle',
+    title: 'Add Vehicle',
+  },
+  safetyHub: {
+    id: 'safety-hub',
+    segment: 'safety-hub',
+    path: '/safety-hub',
+    title: 'Safety Hub',
+  },
+  emergencyAssistance: {
+    id: 'emergency-assistance',
+    segment: 'emergency-assistance',
+    path: '/emergency-assistance',
+    title: 'Emergency Assistance',
+  },
+  wallet: {
+    id: 'wallet',
+    segment: 'wallet',
+    path: '/wallet',
+    title: 'Wallet',
+  },
+  withdraw: {
+    id: 'withdraw',
+    segment: 'withdraw',
+    path: '/withdraw',
+    title: 'Withdraw',
+  },
+  addBankAccount: {
+    id: 'add-bank-account',
+    segment: 'add-bank-account',
+    path: '/add-bank-account',
+    title: 'Add Bank Account',
+  },
+  bankAccountAdded: {
+    id: 'bank-account-added',
+    segment: 'bank-account-added',
+    path: '/bank-account-added',
+    title: 'Account Added',
+  },
+  withdrawalInitiated: {
+    id: 'withdrawal-initiated',
+    segment: 'withdrawal-initiated',
+    path: '/withdrawal-initiated',
+    title: 'Withdrawal Initiated',
+  },
+  trustedContacts: {
+    id: 'trusted-contacts',
+    segment: 'trusted-contacts',
+    path: '/trusted-contacts',
+    title: 'Trusted Contacts',
+  },
+  editContact: {
+    id: 'edit-contact',
+    segment: 'edit-contact',
+    path: '/edit-contact',
+    title: 'Edit Contact',
+  },
+} as const satisfies Record<string, ScreenDefinition>;
+
+export const RIDE_SEARCH_SCREENS = {
+  index: {
+    id: 'ride-search-index',
+    segment: 'index',
+    path: '/ride-search',
+    title: 'Find Ride',
+  },
+  destination: {
+    id: 'ride-search-destination',
+    segment: 'destination',
+    path: '/ride-search/destination',
+    title: 'Map Search',
+  },
+  result: {
+    id: 'ride-search-result',
+    segment: 'result',
+    path: '/ride-search/result',
+    title: 'Ride Result',
+  },
+  reviewBooking: {
+    id: 'ride-search-review-booking',
+    segment: 'review-booking',
+    path: '/ride-search/review-booking',
+    title: 'Review Booking',
+  },
+  payment: {
+    id: 'ride-search-payment',
+    segment: 'payment',
+    path: '/ride-search/payment',
+    title: 'Payment Options',
+  },
+  booked: {
+    id: 'ride-search-booked',
+    segment: 'booked',
+    path: '/ride-search/booked',
+    title: 'Ride Booked',
+  },
+  rideDetails: {
+    id: 'ride-search-ride-details',
+    segment: 'ride-details',
+    path: '/ride-search/ride-details',
+    title: 'Ride Details',
+  },
+  cancelRide: {
+    id: 'ride-search-cancel-ride',
+    segment: 'cancel-ride',
+    path: '/ride-search/cancel-ride',
+    title: 'Cancel Ride',
+  },
+  cancelConfirmed: {
+    id: 'ride-search-cancel-confirmed',
+    segment: 'cancel-confirmed',
+    path: '/ride-search/cancel-confirmed',
+    title: 'Ride Status',
+  },
+  liveTracking: {
+    id: 'ride-search-live-tracking',
+    segment: 'live-tracking',
+    path: '/ride-search/live-tracking',
+    title: 'Live Tracking',
+  },
+  ongoingTrip: {
+    id: 'ride-search-ongoing-trip',
+    segment: 'ongoing-trip',
+    path: '/ride-search/ongoing-trip',
+    title: 'Ongoing Trip',
+  },
+  tripCompleted: {
+    id: 'ride-search-trip-completed',
+    segment: 'trip-completed',
+    path: '/ride-search/trip-completed',
+    title: 'Trip Completed',
+  },
+  tripReview: {
+    id: 'ride-search-trip-review',
+    segment: 'trip-review',
+    path: '/ride-search/trip-review',
+    title: 'Trip Review',
+  },
+  feedbackSubmitted: {
+    id: 'ride-search-feedback-submitted',
+    segment: 'feedback-submitted',
+    path: '/ride-search/feedback-submitted',
+    title: 'Feedback Submitted',
+  },
+  driverChat: {
+    id: 'ride-search-driver-chat',
+    segment: 'driver-chat',
+    path: '/ride-search/driver-chat',
+    title: 'Chat',
+  },
+} as const satisfies Record<string, ScreenDefinition>;
+
+export const OFFER_RIDE_SCREENS = {
+  index: {
+    id: 'offer-ride-index',
+    segment: 'index',
+    path: '/offer-ride',
+    title: 'Publish Carpool Ride',
+  },
+  publish: {
+    id: 'offer-ride-publish',
+    segment: 'publish',
+    path: '/offer-ride/publish',
+    title: 'Publish Carpool Ride',
+  },
+  location: {
+    id: 'offer-ride-location',
+    segment: 'location',
+    path: '/offer-ride/location',
+    title: 'Starting point',
+  },
+} as const satisfies Record<string, ScreenDefinition>;
+
+export const OFFICE_COMMUTE_SCREENS = {
+  index: {
+    id: 'office-commute-index',
+    segment: 'index',
+    path: '/office-commute',
+    title: 'Daily Office Commute',
+  },
+  publish: {
+    id: 'office-commute-publish',
+    segment: 'publish',
+    path: '/office-commute/publish',
+    title: 'Schedule Your Drive',
+  },
+  location: {
+    id: 'office-commute-location',
+    segment: 'location',
+    path: '/office-commute/location',
+    title: 'Select location',
+  },
+  review: {
+    id: 'office-commute-review',
+    segment: 'review',
+    path: '/office-commute/review',
+    title: 'Review Drive',
+  },
+  verify: {
+    id: 'office-commute-verify',
+    segment: 'verify',
+    path: '/office-commute/verify',
+    title: 'Corporate Verification',
+  },
+  verifySuccess: {
+    id: 'office-commute-verify-success',
+    segment: 'verify-success',
+    path: '/office-commute/verify-success',
+    title: 'Verification Submitted',
+  },
+  published: {
+    id: 'office-commute-published',
+    segment: 'published',
+    path: '/office-commute/published',
+    title: 'Ride Published',
+  },
+  search: {
+    id: 'office-commute-search',
+    segment: 'search',
+    path: '/office-commute/search',
+    title: 'Find Your Commute',
+  },
+  result: {
+    id: 'office-commute-result',
+    segment: 'result',
+    path: '/office-commute/result',
+    title: 'Available Rides',
+  },
+  reviewBooking: {
+    id: 'office-commute-review-booking',
+    segment: 'review-booking',
+    path: '/office-commute/review-booking',
+    title: 'Review Booking',
+  },
+  payment: {
+    id: 'office-commute-payment',
+    segment: 'payment',
+    path: '/office-commute/payment',
+    title: 'Payment Options',
+  },
+  booked: {
+    id: 'office-commute-booked',
+    segment: 'booked',
+    path: '/office-commute/booked',
+    title: 'Ride Booked',
+  },
+} as const satisfies Record<string, ScreenDefinition>;
+
+export const AUTH_SCREENS = {
+  loginIndex: {
+    id: 'login-index',
+    segment: 'index',
+    path: '/login',
+    title: 'Login',
+  },
+  account: {
+    id: 'account',
+    segment: 'account',
+    path: '/login/account',
+    title: 'Login to Account',
+  },
+  phone: {
+    id: 'phone',
+    segment: 'phone',
+    path: '/login/phone',
+    title: 'Phone Number',
+  },
+  otp: {
+    id: 'otp',
+    segment: 'otp',
+    path: '/login/otp',
+    title: 'Verify Phone',
+  },
+  profile: {
+    id: 'profile',
+    segment: 'profile',
+    path: '/login/profile',
+    title: 'Complete Profile',
+  },
+} as const satisfies Record<string, ScreenDefinition>;
+
+export const SCREENS = {
+  ...ROOT_SCREENS,
+  ...RIDE_SEARCH_SCREENS,
+  ...OFFER_RIDE_SCREENS,
+  ...OFFICE_COMMUTE_SCREENS,
+  ...AUTH_SCREENS,
+} as const;
+
+export type ScreenId = (typeof SCREENS)[keyof typeof SCREENS]['id'];
+export type ScreenPath = (typeof SCREENS)[keyof typeof SCREENS]['path'];
+
+export const ROUTES = {
+  welcome: ROOT_SCREENS.welcome.path,
+  phone: AUTH_SCREENS.phone.path,
+  account: AUTH_SCREENS.account.path,
+  otp: AUTH_SCREENS.otp.path,
+  completeProfile: AUTH_SCREENS.profile.path,
+  profile: ROOT_SCREENS.masterProfile.path,
+  home: ROOT_SCREENS.home.path,
+  rideSearch: ROOT_SCREENS.rideSearch.path,
+  rideSearchDestination: RIDE_SEARCH_SCREENS.destination.path,
+  rideSearchResult: RIDE_SEARCH_SCREENS.result.path,
+  rideSearchReviewBooking: RIDE_SEARCH_SCREENS.reviewBooking.path,
+  rideSearchPayment: RIDE_SEARCH_SCREENS.payment.path,
+  rideSearchBooked: RIDE_SEARCH_SCREENS.booked.path,
+  rideSearchRideDetails: RIDE_SEARCH_SCREENS.rideDetails.path,
+  rideSearchCancelRide: RIDE_SEARCH_SCREENS.cancelRide.path,
+  rideSearchCancelConfirmed: RIDE_SEARCH_SCREENS.cancelConfirmed.path,
+  rideSearchLiveTracking: RIDE_SEARCH_SCREENS.liveTracking.path,
+  rideSearchOngoingTrip: RIDE_SEARCH_SCREENS.ongoingTrip.path,
+  rideSearchTripCompleted: RIDE_SEARCH_SCREENS.tripCompleted.path,
+  rideSearchTripReview: RIDE_SEARCH_SCREENS.tripReview.path,
+  rideSearchFeedbackSubmitted: RIDE_SEARCH_SCREENS.feedbackSubmitted.path,
+  rideSearchDriverChat: RIDE_SEARCH_SCREENS.driverChat.path,
+  officeCommute: ROOT_SCREENS.officeCommute.path,
+  officeCommutePublish: OFFICE_COMMUTE_SCREENS.publish.path,
+  officeCommuteLocation: OFFICE_COMMUTE_SCREENS.location.path,
+  officeCommuteReview: OFFICE_COMMUTE_SCREENS.review.path,
+  officeCommuteVerify: OFFICE_COMMUTE_SCREENS.verify.path,
+  officeCommuteVerifySuccess: OFFICE_COMMUTE_SCREENS.verifySuccess.path,
+  officeCommutePublished: OFFICE_COMMUTE_SCREENS.published.path,
+  officeCommuteSearch: OFFICE_COMMUTE_SCREENS.search.path,
+  officeCommuteResult: OFFICE_COMMUTE_SCREENS.result.path,
+  officeCommuteReviewBooking: OFFICE_COMMUTE_SCREENS.reviewBooking.path,
+  officeCommutePayment: OFFICE_COMMUTE_SCREENS.payment.path,
+  officeCommuteBooked: OFFICE_COMMUTE_SCREENS.booked.path,
+  offerRide: ROOT_SCREENS.offerRide.path,
+  offerRidePublish: OFFER_RIDE_SCREENS.publish.path,
+  offerRideLocation: OFFER_RIDE_SCREENS.location.path,
+  notifications: ROOT_SCREENS.notifications.path,
+  myRides: ROOT_SCREENS.myRides.path,
+  legalPolicies: ROOT_SCREENS.legalPolicies.path,
+  deleteAccount: ROOT_SCREENS.deleteAccount.path,
+  accountDeleted: ROOT_SCREENS.accountDeleted.path,
+  helpSupport: ROOT_SCREENS.helpSupport.path,
+  supportChat: ROOT_SCREENS.supportChat.path,
+  referEarn: ROOT_SCREENS.referEarn.path,
+  myGarage: ROOT_SCREENS.myGarage.path,
+  addVehicle: ROOT_SCREENS.addVehicle.path,
+  safetyHub: ROOT_SCREENS.safetyHub.path,
+  emergencyAssistance: ROOT_SCREENS.emergencyAssistance.path,
+  wallet: ROOT_SCREENS.wallet.path,
+  withdraw: ROOT_SCREENS.withdraw.path,
+  addBankAccount: ROOT_SCREENS.addBankAccount.path,
+  bankAccountAdded: ROOT_SCREENS.bankAccountAdded.path,
+  withdrawalInitiated: ROOT_SCREENS.withdrawalInitiated.path,
+  trustedContacts: ROOT_SCREENS.trustedContacts.path,
+  editContact: ROOT_SCREENS.editContact.path,
+} as const;
+
+export type AppRoute = (typeof ROUTES)[keyof typeof ROUTES];
+
+export const ROOT_SCREEN_INDEX = Object.values(ROOT_SCREENS);
+export const RIDE_SEARCH_SCREEN_INDEX = Object.values(RIDE_SEARCH_SCREENS);
+export const OFFER_RIDE_SCREEN_INDEX = Object.values(OFFER_RIDE_SCREENS);
+export const OFFICE_COMMUTE_SCREEN_INDEX = Object.values(OFFICE_COMMUTE_SCREENS);
+export const AUTH_SCREEN_INDEX = Object.values(AUTH_SCREENS);

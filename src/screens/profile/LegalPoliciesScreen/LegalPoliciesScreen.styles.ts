@@ -1,0 +1,155 @@
+import { StyleSheet } from 'react-native';
+
+import { colors, layout, spacing } from '@/shared/theme';
+import { createShadow } from '@/shared/utils/platform';
+
+export const legalTokens = {
+  PRIMARY: '#0342D1',
+  PRIMARY_CONTAINER: '#335EEA',
+  ON_PRIMARY_CONTAINER: '#EAEBFF',
+  ON_SURFACE: '#191C1D',
+  ON_SURFACE_VARIANT: '#434655',
+  OUTLINE: '#747686',
+  OUTLINE_VARIANT: '#C4C5D7',
+  SURFACE: '#F8F9FA',
+  SURFACE_LOW: '#F3F4F5',
+} as const;
+
+export const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: legalTokens.SURFACE,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    minHeight: 64,
+    backgroundColor: legalTokens.SURFACE,
+  },
+  iconButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    fontSize: 28,
+    lineHeight: 36,
+    fontWeight: '600',
+    color: legalTokens.PRIMARY,
+    flexShrink: 1,
+  },
+  scroll: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.xxxl,
+    paddingBottom: spacing.huge + spacing.xxxl,
+    gap: spacing.xxl,
+    maxWidth: layout.maxContentWidth,
+    width: '100%',
+    alignSelf: 'center',
+  },
+  hero: {
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  heroIcon: {
+    width: 80,
+    height: 80,
+    borderRadius: layout.radiusXl,
+    backgroundColor: legalTokens.PRIMARY_CONTAINER,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.xxl,
+    ...createShadow({ color: colors.shadow, opacity: 0.06, radius: 8, offsetY: 2, elevation: 2 }),
+  },
+  heroTitle: {
+    fontSize: 32,
+    lineHeight: 40,
+    fontWeight: '600',
+    letterSpacing: -0.32,
+    color: legalTokens.ON_SURFACE,
+    textAlign: 'center',
+    marginBottom: spacing.sm,
+  },
+  heroSubtitle: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: legalTokens.ON_SURFACE_VARIANT,
+    textAlign: 'center',
+    maxWidth: 480,
+  },
+  list: {
+    gap: spacing.xxl,
+  },
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: spacing.md,
+    padding: spacing.xxl,
+    backgroundColor: colors.white,
+    borderRadius: layout.radiusXl,
+    borderWidth: 1,
+    borderColor: legalTokens.OUTLINE_VARIANT,
+    ...createShadow({ color: colors.shadow, opacity: 0.05, radius: 20, offsetY: 4, elevation: 2 }),
+  },
+  cardLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.lg,
+    flex: 1,
+  },
+  cardIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: layout.radiusMd,
+    backgroundColor: legalTokens.SURFACE_LOW,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cardMeta: {
+    flex: 1,
+    gap: 2,
+  },
+  cardTitle: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: '700',
+    color: legalTokens.ON_SURFACE,
+  },
+  cardSubtitle: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '700',
+    letterSpacing: 0.6,
+    textTransform: 'uppercase',
+    color: legalTokens.OUTLINE,
+  },
+  footerInfo: {
+    marginTop: spacing.xxl,
+    paddingTop: spacing.xxxl,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: legalTokens.OUTLINE_VARIANT,
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  versionLabel: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: legalTokens.ON_SURFACE_VARIANT,
+    textAlign: 'center',
+  },
+  copyrightLabel: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: legalTokens.OUTLINE,
+    textAlign: 'center',
+  },
+});

@@ -1,0 +1,1 @@
+export { RideResultScreen } from './RideResultScreen';

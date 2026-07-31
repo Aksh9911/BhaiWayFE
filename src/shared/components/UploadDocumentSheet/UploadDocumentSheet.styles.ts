@@ -1,0 +1,125 @@
+import { StyleSheet } from 'react-native';
+import { colors, layout, spacing, typography } from '@/shared/theme';
+import { createShadow } from '@/shared/utils/platform';
+
+export const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(3, 66, 209, 0.28)',
+  },
+  sheet: {
+    backgroundColor: '#F8F9FA',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingTop: spacing.md,
+    paddingHorizontal: spacing.screenHorizontal,
+    ...createShadow({
+      color: '#0342D1',
+      opacity: 0.14,
+      radius: 20,
+      offsetY: -4,
+      elevation: 10,
+    }),
+  },
+  handle: {
+    alignSelf: 'center',
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#C4C5D7',
+    marginBottom: spacing.md,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.md,
+    marginBottom: spacing.lg,
+  },
+  headerIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#335EEA',
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...createShadow({ color: '#335EEA', opacity: 0.28, radius: 8, offsetY: 3, elevation: 4 }),
+  },
+  headerText: {
+    flex: 1,
+    gap: 4,
+  },
+  title: {
+    ...typography.title,
+    fontSize: 20,
+    lineHeight: 28,
+    fontWeight: '600',
+    color: '#191C1D',
+  },
+  subtitle: {
+    ...typography.caption,
+    fontSize: 14,
+    lineHeight: 20,
+    color: '#434655',
+  },
+  options: {
+    gap: spacing.md,
+    marginBottom: spacing.md,
+  },
+  option: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    backgroundColor: colors.white,
+    borderRadius: layout.radiusLg,
+    borderWidth: 1,
+    borderColor: '#C4C5D7',
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    minHeight: 72,
+    ...createShadow({ color: colors.shadow, opacity: 0.04, radius: 8, offsetY: 2, elevation: 2 }),
+  },
+  optionPressed: {
+    borderColor: '#0342D1',
+    backgroundColor: 'rgba(3, 66, 209, 0.04)',
+  },
+  optionIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: '#DDE1FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  optionText: {
+    flex: 1,
+    gap: 2,
+  },
+  optionLabel: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: '600',
+    color: '#191C1D',
+  },
+  optionHint: {
+    fontSize: 13,
+    lineHeight: 18,
+    color: '#747686',
+  },
+  cancelButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.md,
+    borderRadius: layout.radiusLg,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: '#C4C5D7',
+    marginBottom: spacing.sm,
+  },
+  cancelLabel: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: '600',
+    color: '#434655',
+  },
+});

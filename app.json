@@ -1,15 +1,44 @@
 {
   "expo": {
-    "name": "BhaiWayFE",
+    "name": "BhaiWay",
     "slug": "BhaiWayFE",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "scheme": "bhaiwayfe",
     "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFFFFF"
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.bhaiway.app",
+      "config": {
+        "googleMapsApiKey": ""
+      },
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow BhaiWay to access your camera to take a profile picture.",
+        "NSPhotoLibraryUsageDescription": "Allow BhaiWay to access your photos to set your profile picture.",
+        "NSPhotoLibraryAddUsageDescription": "Allow BhaiWay to save photos to your library.",
+        "NSLocationWhenInUseUsageDescription": "Allow BhaiWay to use your location to suggest nearby destinations.",
+        "UIViewControllerBasedStatusBarAppearance": true
+      }
     },
     "android": {
+      "package": "com.bhaiway.app",
+      "softwareKeyboardLayoutMode": "resize",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": ""
+        }
+      },
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -20,6 +49,27 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "googlePlacesApiKey": "",
+      "googleMapsApiKey": ""
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow BhaiWay to access your photos to set your profile picture.",
+          "cameraPermission": "Allow BhaiWay to access your camera to take a profile picture."
+        }
+      ],
+      "@react-native-community/datetimepicker",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Allow BhaiWay to use your location to suggest nearby destinations."
+        }
+      ]
+    ]
   }
 }
