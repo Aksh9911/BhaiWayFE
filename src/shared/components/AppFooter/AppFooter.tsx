@@ -3,8 +3,8 @@ import { Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
-import { ROUTES } from '@/config';
-import { colors } from '@/shared/theme';
+import { TAB_ROUTES } from '@/navigation';
+import { colors } from '@/theme';
 import { triggerLightHaptic } from '@/shared/utils';
 import { styles } from './AppFooter.styles';
 import type { AppFooterItem, AppFooterProps, AppFooterTabId } from './AppFooter.types';
@@ -28,22 +28,22 @@ export const AppFooter = React.memo(({ activeTab }: AppFooterProps) => {
       }
 
       if (id === 'home') {
-        router.replace(ROUTES.home);
+        router.replace(TAB_ROUTES.home);
         return;
       }
 
       if (id === 'inbox') {
-        router.push(ROUTES.notifications);
+        router.replace(TAB_ROUTES.inbox);
         return;
       }
 
       if (id === 'profile') {
-        router.replace(ROUTES.profile);
+        router.replace(TAB_ROUTES.profile);
         return;
       }
 
       if (id === 'rides') {
-        router.push(ROUTES.myRides);
+        router.push(TAB_ROUTES.rides);
       }
     },
     [activeTab, router],

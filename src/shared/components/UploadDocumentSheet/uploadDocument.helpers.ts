@@ -1,12 +1,12 @@
-import { Alert } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
 import type { UploadedDocument } from '../UploadDocumentSheet/UploadDocumentSheet.types';
 
 const DEFAULT_OPTIONS: ImagePicker.ImagePickerOptions = {
   mediaTypes: ['images'],
-  allowsEditing: true,
   quality: 0.85,
+  allowsEditing: false,
 };
 
 const toUploadedDocument = (asset: ImagePicker.ImagePickerAsset): UploadedDocument => ({
@@ -17,44 +17,141 @@ const toUploadedDocument = (asset: ImagePicker.ImagePickerAsset): UploadedDocume
   height: asset.height,
 });
 
-export const pickDocumentFromCamera = async (
-  options?: ImagePicker.ImagePickerOptions,
-): Promise<UploadedDocument | null> => {
-  const permission = await ImagePicker.requestCameraPermissionsAsync();
-  if (!permission.granted) {
-    Alert.alert('Permission required', 'Camera access is needed to capture your document.');
-    return null;
-  }
+export type PickDocumentOptions = ImagePicker.ImagePickerOptions & {
+  /** Wait after closing a modal before launching the system picker. */
+  waitAfterModalMs?: number;
+};
 
-  const result = await ImagePicker.launchCameraAsync({
-    ...DEFAULT_OPTIONS,
-    ...options,
+const delay = (ms: number): Promise<void> =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms);
   });
 
-  if (result.canceled || !result.assets[0]) {
+const withTimeout = async <T,>(promise: Promise<T>, ms: number, label: string): Promise<T> => {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<T>((_, reject) => {
+        timeoutId = setTimeout(() => {
+          reject(new Error(`${label} timed out. Please try again.`));
+        }, ms);
+      }),
+    ]);
+  } finally {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+  }
+};
+
+export const pickDocumentFromCamera = async (
+  options?: PickDocumentOptions,
+): Promise<UploadedDocument | null> => {
+  const { waitAfterModalMs = 0, ...pickerOptions } = options ?? {};
+
+  try {
+    const current = await ImagePicker.getCameraPermissionsAsync();
+    let permission = current;
+
+    if (!current.granted) {
+      permission = await ImagePicker.requestCameraPermissionsAsync();
+    }
+
+    if (!permission.granted) {
+      Alert.alert(
+        'Camera permission needed',
+        permission.canAskAgain === false
+          ? 'Camera access is blocked. Enable it in Settings → BhaiWay → Camera.'
+          : 'Allow camera access to take your profile photo.',
+      );
+      return null;
+    }
+
+    if (waitAfterModalMs > 0) {
+      await delay(waitAfterModalMs);
+    }
+
+    // Do NOT use allowsEditing with camera — it freezes frequently on iOS Expo.
+    const result = await withTimeout(
+      ImagePicker.launchCameraAsync({
+        ...DEFAULT_OPTIONS,
+        ...pickerOptions,
+        allowsEditing: false,
+        aspect: undefined,
+      }),
+      60_000,
+      'Camera',
+    );
+
+    if (result.canceled || !result.assets[0]) {
+      return null;
+    }
+
+    return toUploadedDocument(result.assets[0]);
+  } catch (error) {
+    Alert.alert(
+      'Camera unavailable',
+      error instanceof Error
+        ? error.message
+        : 'Could not open the camera. Please try again or use Gallery.',
+    );
     return null;
   }
-
-  return toUploadedDocument(result.assets[0]);
 };
 
 export const pickDocumentFromGallery = async (
-  options?: ImagePicker.ImagePickerOptions,
+  options?: PickDocumentOptions,
 ): Promise<UploadedDocument | null> => {
-  const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-  if (!permission.granted) {
-    Alert.alert('Permission required', 'Gallery access is needed to upload your document.');
+  const { waitAfterModalMs = 0, ...pickerOptions } = options ?? {};
+
+  try {
+    const current = await ImagePicker.getMediaLibraryPermissionsAsync();
+    let permission = current;
+
+    if (!current.granted) {
+      permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    }
+
+    if (!permission.granted) {
+      Alert.alert(
+        'Photos permission needed',
+        permission.canAskAgain === false
+          ? 'Photo access is blocked. Enable it in Settings → BhaiWay → Photos.'
+          : 'Allow photo library access to choose a profile photo.',
+      );
+      return null;
+    }
+
+    if (waitAfterModalMs > 0) {
+      await delay(waitAfterModalMs);
+    }
+
+    const result = await withTimeout(
+      ImagePicker.launchImageLibraryAsync({
+        ...DEFAULT_OPTIONS,
+        ...pickerOptions,
+        // Gallery crop is OK; camera crop is not.
+        allowsEditing: pickerOptions.allowsEditing ?? true,
+      }),
+      60_000,
+      'Gallery',
+    );
+
+    if (result.canceled || !result.assets[0]) {
+      return null;
+    }
+
+    return toUploadedDocument(result.assets[0]);
+  } catch (error) {
+    Alert.alert(
+      'Gallery unavailable',
+      error instanceof Error
+        ? error.message
+        : 'Could not open the gallery. Please try again.',
+    );
     return null;
   }
-
-  const result = await ImagePicker.launchImageLibraryAsync({
-    ...DEFAULT_OPTIONS,
-    ...options,
-  });
-
-  if (result.canceled || !result.assets[0]) {
-    return null;
-  }
-
-  return toUploadedDocument(result.assets[0]);
 };
+
+export const isIos = Platform.OS === 'ios';

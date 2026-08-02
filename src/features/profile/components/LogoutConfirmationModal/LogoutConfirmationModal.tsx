@@ -5,7 +5,7 @@ import { PROFILE_SCREEN } from '../../constants';
 import { styles } from './LogoutConfirmationModal.styles';
 import type { LogoutConfirmationModalProps } from './LogoutConfirmationModal.types';
 
-const logoSource = require('../../../../../assets/images/bhaiway_logo.png');
+const logoSource = require('../../../auth/assets/logo.png');
 
 export const LogoutConfirmationModal = ({
   visible,
@@ -32,12 +32,12 @@ export const LogoutConfirmationModal = ({
       >
         <View style={styles.logoWrap}>
           <View style={styles.logoCircle}>
-            <View style={styles.logoRing} pointerEvents="none" />
             <Image
               source={logoSource}
               style={styles.logo}
               resizeMode="contain"
               accessibilityLabel="BhaiWay logo"
+              accessibilityIgnoresInvertColors
             />
           </View>
         </View>

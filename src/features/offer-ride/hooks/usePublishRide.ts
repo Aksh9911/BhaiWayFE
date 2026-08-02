@@ -3,12 +3,9 @@ import { Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { getSearchParam, formatSlashDate, parseSlashDate, startOfDay } from '@/shared/utils';
-import { useOptionPicker } from '@/shared/hooks';
-import { getSelectLocationPath } from '../constants';
+import { formatTimeLabel, getSelectLocationPath, parseTimeLabel } from '../constants';
 import { publishRideDraft } from '../store';
 import type { LocationFieldType, OutstationRideTypeId, PublishRideDraft } from '../types';
-
-const TIME_OPTIONS = ['08:00 AM', '09:30 AM', '12:00 PM', '06:00 PM', '08:00 PM'] as const;
 
 const isRideType = (value: string): value is OutstationRideTypeId =>
   value === 'regular' || value === 'assured';
@@ -17,11 +14,11 @@ export const usePublishRide = () => {
   const router = useRouter();
   const params = useLocalSearchParams<{ rideType?: string }>();
   const rideTypeParam = getSearchParam(params.rideType);
-  const showOptionPicker = useOptionPicker();
   const minimumDate = useMemo(() => startOfDay(new Date()), []);
 
   const [draft, setDraft] = useState<PublishRideDraft>(() => publishRideDraft.get());
   const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const [timePickerOpen, setTimePickerOpen] = useState(false);
 
   useEffect(() => {
     if (isRideType(rideTypeParam)) {
@@ -57,11 +54,21 @@ export const usePublishRide = () => {
     [updateDraft],
   );
 
-  const pickTime = useCallback(() => {
-    showOptionPicker('Departure Time', TIME_OPTIONS, (value) => {
-      updateDraft({ departureTime: value });
-    });
-  }, [showOptionPicker, updateDraft]);
+  const openTimePicker = useCallback(() => {
+    setTimePickerOpen(true);
+  }, []);
+
+  const closeTimePicker = useCallback(() => {
+    setTimePickerOpen(false);
+  }, []);
+
+  const selectTime = useCallback(
+    (date: Date) => {
+      updateDraft({ departureTime: formatTimeLabel(date) });
+      setTimePickerOpen(false);
+    },
+    [updateDraft],
+  );
 
   const submit = useCallback(() => {
     if (!draft.origin.trim() || !draft.destination.trim()) {
@@ -87,6 +94,10 @@ export const usePublishRide = () => {
     Number(draft.pricePerSeat) > 0;
 
   const selectedDate = parseSlashDate(draft.departureDate) ?? minimumDate;
+  const selectedTime = useMemo(
+    () => parseTimeLabel(draft.departureTime),
+    [draft.departureTime],
+  );
 
   return {
     draft,
@@ -98,7 +109,11 @@ export const usePublishRide = () => {
     selectedDate,
     minimumDate,
     selectDate,
-    pickTime,
+    openTimePicker,
+    closeTimePicker,
+    timePickerOpen,
+    selectedTime,
+    selectTime,
     submit,
     isValid,
   };

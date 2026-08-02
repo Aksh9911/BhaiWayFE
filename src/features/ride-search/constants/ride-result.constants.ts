@@ -1,18 +1,50 @@
-import type { RideResultFilterOption, RideResultItem } from '../types';
+import type {
+  RideResultFilterOption,
+  RideResultItem,
+  RideResultSortOption,
+} from '../types';
 
 export const RIDE_RESULT_SCREEN = {
   title: 'Available Rides',
   emptyTitle: 'No Rides Available',
-  emptySubtitle: 'Try changing the date or destination to find matching rides.',
+  emptySubtitle: 'Try changing the date, filters, or search to find matching rides.',
   modifySearchLabel: 'Modify Search',
   refreshLabel: 'Refresh',
   bookLabel: 'Book Ride',
+  searchPlaceholder: 'Search driver or car…',
+  sortLabel: 'Sort',
 } as const;
 
 export const RIDE_RESULT_FILTERS: readonly RideResultFilterOption[] = [
   { id: 'regular', label: 'Regular' },
   { id: 'assured', label: 'Assured' },
 ] as const;
+
+export const RIDE_RESULT_SORT_OPTIONS: readonly RideResultSortOption[] = [
+  { id: 'price-asc', label: 'Price ↑' },
+  { id: 'price-desc', label: 'Price ↓' },
+  { id: 'departure', label: 'Earliest' },
+  { id: 'rating', label: 'Rating' },
+  { id: 'duration', label: 'Fastest' },
+] as const;
+
+/** Parse "08:00 AM" style labels into minutes from midnight for sorting. */
+export const departureTimeToMinutes = (label: string): number => {
+  const match = label.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (!match) {
+    return 0;
+  }
+  let hours = Number(match[1]);
+  const minutes = Number(match[2]);
+  const meridian = match[3].toUpperCase();
+  if (meridian === 'PM' && hours < 12) {
+    hours += 12;
+  }
+  if (meridian === 'AM' && hours === 12) {
+    hours = 0;
+  }
+  return hours * 60 + minutes;
+};
 
 export const MOCK_RIDE_RESULTS: readonly RideResultItem[] = [
   {
@@ -34,8 +66,9 @@ export const MOCK_RIDE_RESULTS: readonly RideResultItem[] = [
     luggage: 'Medium',
     originCity: 'Bengaluru',
     destinationCity: 'Mumbai',
-    distanceKm: 840,
-    durationLabel: '12 hrs',
+    distanceKm: 845,
+    durationMinutes: 720,
+    durationLabel: '12 hr',
     preferences: [],
     features: [],
   },
@@ -57,8 +90,9 @@ export const MOCK_RIDE_RESULTS: readonly RideResultItem[] = [
     luggage: 'Large',
     originCity: 'Bengaluru',
     destinationCity: 'Mumbai',
-    distanceKm: 840,
-    durationLabel: '11 hrs',
+    distanceKm: 830,
+    durationMinutes: 660,
+    durationLabel: '11 hr',
     preferences: [],
     features: [],
   },
@@ -80,8 +114,9 @@ export const MOCK_RIDE_RESULTS: readonly RideResultItem[] = [
     luggage: 'Small',
     originCity: 'Bengaluru',
     destinationCity: 'Mumbai',
-    distanceKm: 840,
-    durationLabel: '12 hrs',
+    distanceKm: 860,
+    durationMinutes: 750,
+    durationLabel: '12 hr 30 min',
     preferences: [],
     features: [],
   },
@@ -103,8 +138,57 @@ export const MOCK_RIDE_RESULTS: readonly RideResultItem[] = [
     luggage: 'Large',
     originCity: 'Bengaluru',
     destinationCity: 'Mumbai',
-    distanceKm: 840,
-    durationLabel: '11 hrs',
+    distanceKm: 820,
+    durationMinutes: 630,
+    durationLabel: '10 hr 30 min',
+    preferences: [],
+    features: [],
+  },
+  {
+    id: 'ride-5',
+    rideType: 'assured',
+    driver: {
+      id: 'driver-5',
+      name: 'Vikram Singh',
+      rating: 4.7,
+      verified: true,
+      yearsDriving: 5,
+    },
+    price: 1050,
+    departureTime: '06:15 AM',
+    carModel: 'Kia Seltos',
+    seatsLeft: 2,
+    ac: true,
+    luggage: 'Medium',
+    originCity: 'Bengaluru',
+    destinationCity: 'Mumbai',
+    distanceKm: 835,
+    durationMinutes: 645,
+    durationLabel: '10 hr 45 min',
+    preferences: [],
+    features: [],
+  },
+  {
+    id: 'ride-6',
+    rideType: 'regular',
+    driver: {
+      id: 'driver-6',
+      name: 'Neha Gupta',
+      rating: 4.6,
+      verified: true,
+      yearsDriving: 2,
+    },
+    price: 1250,
+    departureTime: '02:00 PM',
+    carModel: 'Honda Amaze',
+    seatsLeft: 3,
+    ac: true,
+    luggage: 'Medium',
+    originCity: 'Bengaluru',
+    destinationCity: 'Mumbai',
+    distanceKm: 850,
+    durationMinutes: 700,
+    durationLabel: '11 hr 40 min',
     preferences: [],
     features: [],
   },

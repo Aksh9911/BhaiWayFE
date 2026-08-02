@@ -1,10 +1,11 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ROUTES } from '@/config';
 import { BrandTopBar, AppFooter, IconButton, ScreenIntro } from '@/shared/components';
+import { appModeStore } from '@/store';
 import { CommuteOptionCard, VerificationBanner } from '@/features/office-commute/components';
 import {
   OFFICE_COMMUTE_INTRO,
@@ -16,6 +17,10 @@ import { styles } from './DailyOfficeCommuteScreen.styles';
 
 export const DailyOfficeCommuteScreen = () => {
   const router = useRouter();
+
+  useEffect(() => {
+    appModeStore.setRiding();
+  }, []);
 
   const handleMenuPress = useCallback(() => {
     if (router.canGoBack()) {

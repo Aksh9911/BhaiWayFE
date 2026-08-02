@@ -48,6 +48,12 @@ export const ROOT_SCREENS = {
     path: '/notifications',
     title: 'Notifications',
   },
+  inbox: {
+    id: 'inbox',
+    segment: 'inbox',
+    path: '/inbox',
+    title: 'Inbox',
+  },
   myRides: {
     id: 'my-rides',
     segment: 'my-rides',
@@ -161,6 +167,24 @@ export const ROOT_SCREENS = {
     segment: 'edit-contact',
     path: '/edit-contact',
     title: 'Edit Contact',
+  },
+  uploadProfilePhoto: {
+    id: 'upload-profile-photo',
+    segment: 'upload-profile-photo',
+    path: '/upload-profile-photo',
+    title: 'Profile Photo Upload',
+  },
+  uploadDl: {
+    id: 'upload-dl',
+    segment: 'upload-dl',
+    path: '/upload-dl',
+    title: 'Driving License Upload',
+  },
+  uploadRc: {
+    id: 'upload-rc',
+    segment: 'upload-rc',
+    path: '/upload-rc',
+    title: 'Vehicle RC Upload',
   },
 } as const satisfies Record<string, ScreenDefinition>;
 
@@ -278,6 +302,57 @@ export const OFFER_RIDE_SCREENS = {
   },
 } as const satisfies Record<string, ScreenDefinition>;
 
+export const MY_RIDES_SCREENS = {
+  index: {
+    id: 'my-rides-index',
+    segment: 'index',
+    path: '/my-rides',
+    title: 'My Rides',
+  },
+  cancel: {
+    id: 'my-rides-cancel',
+    segment: 'cancel',
+    path: '/my-rides/cancel',
+    title: 'Cancel Ride',
+  },
+  cancelConfirmed: {
+    id: 'my-rides-cancel-confirmed',
+    segment: 'cancel-confirmed',
+    path: '/my-rides/cancel-confirmed',
+    title: 'Ride Cancelled',
+  },
+  activeTrip: {
+    id: 'my-rides-active-trip',
+    segment: 'active-trip',
+    path: '/my-rides/active-trip',
+    title: 'Active Trip',
+  },
+  pickup: {
+    id: 'my-rides-pickup',
+    segment: 'pickup',
+    path: '/my-rides/pickup',
+    title: 'Pickup',
+  },
+  emergencyEnd: {
+    id: 'my-rides-emergency-end',
+    segment: 'emergency-end',
+    path: '/my-rides/emergency-end',
+    title: 'Emergency End Trip',
+  },
+  requestRaised: {
+    id: 'my-rides-request-raised',
+    segment: 'request-raised',
+    path: '/my-rides/request-raised',
+    title: 'Request Raised',
+  },
+  tripCompleted: {
+    id: 'my-rides-trip-completed',
+    segment: 'trip-completed',
+    path: '/my-rides/trip-completed',
+    title: 'Trip Completed',
+  },
+} as const satisfies Record<string, ScreenDefinition>;
+
 export const OFFICE_COMMUTE_SCREENS = {
   index: {
     id: 'office-commute-index',
@@ -390,6 +465,7 @@ export const SCREENS = {
   ...ROOT_SCREENS,
   ...RIDE_SEARCH_SCREENS,
   ...OFFER_RIDE_SCREENS,
+  ...MY_RIDES_SCREENS,
   ...OFFICE_COMMUTE_SCREENS,
   ...AUTH_SCREENS,
 } as const;
@@ -436,7 +512,15 @@ export const ROUTES = {
   offerRidePublish: OFFER_RIDE_SCREENS.publish.path,
   offerRideLocation: OFFER_RIDE_SCREENS.location.path,
   notifications: ROOT_SCREENS.notifications.path,
+  inbox: ROOT_SCREENS.inbox.path,
   myRides: ROOT_SCREENS.myRides.path,
+  myRidesCancel: MY_RIDES_SCREENS.cancel.path,
+  myRidesCancelConfirmed: MY_RIDES_SCREENS.cancelConfirmed.path,
+  myRidesActiveTrip: MY_RIDES_SCREENS.activeTrip.path,
+  myRidesPickup: MY_RIDES_SCREENS.pickup.path,
+  myRidesEmergencyEnd: MY_RIDES_SCREENS.emergencyEnd.path,
+  myRidesRequestRaised: MY_RIDES_SCREENS.requestRaised.path,
+  myRidesTripCompleted: MY_RIDES_SCREENS.tripCompleted.path,
   legalPolicies: ROOT_SCREENS.legalPolicies.path,
   deleteAccount: ROOT_SCREENS.deleteAccount.path,
   accountDeleted: ROOT_SCREENS.accountDeleted.path,
@@ -454,6 +538,9 @@ export const ROUTES = {
   withdrawalInitiated: ROOT_SCREENS.withdrawalInitiated.path,
   trustedContacts: ROOT_SCREENS.trustedContacts.path,
   editContact: ROOT_SCREENS.editContact.path,
+  uploadProfilePhoto: ROOT_SCREENS.uploadProfilePhoto.path,
+  uploadDl: ROOT_SCREENS.uploadDl.path,
+  uploadRc: ROOT_SCREENS.uploadRc.path,
 } as const;
 
 export type AppRoute = (typeof ROUTES)[keyof typeof ROUTES];
@@ -461,5 +548,6 @@ export type AppRoute = (typeof ROUTES)[keyof typeof ROUTES];
 export const ROOT_SCREEN_INDEX = Object.values(ROOT_SCREENS);
 export const RIDE_SEARCH_SCREEN_INDEX = Object.values(RIDE_SEARCH_SCREENS);
 export const OFFER_RIDE_SCREEN_INDEX = Object.values(OFFER_RIDE_SCREENS);
+export const MY_RIDES_SCREEN_INDEX = Object.values(MY_RIDES_SCREENS);
 export const OFFICE_COMMUTE_SCREEN_INDEX = Object.values(OFFICE_COMMUTE_SCREENS);
 export const AUTH_SCREEN_INDEX = Object.values(AUTH_SCREENS);

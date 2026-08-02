@@ -1,5 +1,12 @@
 export type RideResultFilterId = 'regular' | 'assured';
 
+export type RideResultSortId =
+  | 'price-asc'
+  | 'price-desc'
+  | 'departure'
+  | 'rating'
+  | 'duration';
+
 export type RideType = 'regular' | 'assured';
 
 export type SeatUrgency = 'available' | 'limited' | 'last';
@@ -39,6 +46,7 @@ export interface RideResultItem {
   originCity: string;
   destinationCity: string;
   distanceKm: number;
+  durationMinutes: number;
   durationLabel: string;
   preferences: RidePreference[];
   features: RideFeature[];
@@ -54,5 +62,10 @@ export interface RideSearchSummary {
 
 export interface RideResultFilterOption {
   id: RideResultFilterId;
+  label: string;
+}
+
+export interface RideResultSortOption {
+  id: RideResultSortId;
   label: string;
 }

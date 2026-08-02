@@ -37,7 +37,11 @@ export const PublishRideScreen = () => {
     selectedDate,
     minimumDate,
     selectDate,
-    pickTime,
+    openTimePicker,
+    closeTimePicker,
+    timePickerOpen,
+    selectedTime,
+    selectTime,
     submit,
     isValid,
   } = usePublishRide();
@@ -100,8 +104,15 @@ export const PublishRideScreen = () => {
             </View>
 
             <View style={styles.fieldHalf}>
-              <Pressable onPress={pickTime} style={styles.pressableField} accessibilityRole="button">
-                <Text style={styles.fieldLabel}>Departure Time</Text>
+              <Pressable
+                onPress={openTimePicker}
+                style={[styles.pressableField, timePickerOpen && styles.pressableFieldActive]}
+                accessibilityRole="button"
+                accessibilityLabel="Select departure time"
+              >
+                <Text style={[styles.fieldLabel, timePickerOpen && styles.fieldLabelActive]}>
+                  Departure Time
+                </Text>
                 <View style={styles.fieldIconRow}>
                   <Ionicons name="time-outline" size={16} color={colors.primary} />
                   <Text style={[styles.fieldValue, !draft.departureTime && styles.fieldPlaceholder]}>
@@ -167,6 +178,15 @@ export const PublishRideScreen = () => {
         title="Departure Date"
         onChange={selectDate}
         onClose={closeDatePicker}
+      />
+
+      <NativeDatePicker
+        visible={timePickerOpen}
+        value={selectedTime}
+        mode="time"
+        title="Departure Time"
+        onChange={selectTime}
+        onClose={closeTimePicker}
       />
 
       <AppFooter />

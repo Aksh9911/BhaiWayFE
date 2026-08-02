@@ -12,3 +12,17 @@ export interface AsyncState<T> {
   loading: boolean;
   error: Nullable<string>;
 }
+
+export type {
+  CloudinaryResourceType,
+  UploadKind,
+  UploadSource,
+  UploadErrorCode,
+  CloudinaryConfig,
+  FileMetadata,
+  UploadFileRequest,
+  CloudinaryUploadResponse,
+  CloudinaryDeleteRequest,
+  CloudinaryDeleteResponse,
+} from '@/types/cloudinary';
+export { CloudinaryUploadError } from '@/types/cloudinary';

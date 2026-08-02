@@ -1,6 +1,7 @@
 import React from 'react';
-import { ComingSoonScreen } from '@/shared/components';
+
 import { SCREENS } from '@/config';
+import { ComingSoonScreen } from '@/shared/components';
 
 export default function NotificationsRoute() {
   return (
@@ -8,7 +9,6 @@ export default function NotificationsRoute() {
       title={SCREENS.notifications.title}
       message="Your notifications will appear here soon."
       icon="notifications-outline"
-      footerActiveTab="inbox"
     />
   );
 }

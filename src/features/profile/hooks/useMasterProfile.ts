@@ -3,9 +3,12 @@ import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { ROUTES } from '@/config';
+import { saveProfilePhotoUrl } from '@/features/media';
+import { uploadFile } from '@/services/cloudinary';
 import type { UploadedDocument } from '@/shared/components';
 import { useSessionUser } from '@/shared/hooks';
-import { triggerLightHaptic } from '@/shared/utils';
+import { CloudinaryUploadError } from '@/types/cloudinary';
+import { logger, triggerLightHaptic, triggerSuccessHaptic } from '@/shared/utils';
 import { authSession } from '@/store';
 import {
   DEFAULT_MASTER_PROFILE,
@@ -19,6 +22,7 @@ export interface UseMasterProfileResult {
   profile: MasterProfileData;
   menuItems: readonly ProfileMenuItem[];
   uploadSheetVisible: boolean;
+  avatarUploading: boolean;
   logoutVisible: boolean;
   openCameraSheet: () => void;
   closeCameraSheet: () => void;
@@ -38,6 +42,7 @@ export const useMasterProfile = (): UseMasterProfileResult => {
   const user = useSessionUser();
   const [localAvatarUri, setLocalAvatarUri] = useState<string | null>(null);
   const [uploadSheetVisible, setUploadSheetVisible] = useState(false);
+  const [avatarUploading, setAvatarUploading] = useState(false);
   const [logoutVisible, setLogoutVisible] = useState(false);
 
   const profile = useMemo((): MasterProfileData => {
@@ -67,6 +72,8 @@ export const useMasterProfile = (): UseMasterProfileResult => {
 
   const openCameraSheet = useCallback(() => {
     triggerLightHaptic();
+    // Always allow reopening — a stuck upload/picker must not freeze the profile screen.
+    setAvatarUploading(false);
     setUploadSheetVisible(true);
   }, []);
 
@@ -75,14 +82,44 @@ export const useMasterProfile = (): UseMasterProfileResult => {
   }, []);
 
   const applyAvatar = useCallback((document: UploadedDocument) => {
+    // Optimistic local preview while Cloudinary upload runs.
     setLocalAvatarUri(document.uri);
-    const current = authSession.getUser();
-    if (current) {
-      authSession.setSession(authSession.getToken() ?? '', {
-        ...current,
-        avatarUri: document.uri,
-      });
-    }
+    setAvatarUploading(true);
+
+    void (async () => {
+      try {
+        const uploaded = await uploadFile({
+          uri: document.uri,
+          kind: 'profile',
+          fileName: document.fileName ?? `profile_${Date.now()}.jpg`,
+          mimeType: document.mimeType ?? 'image/jpeg',
+          resourceType: 'image',
+        });
+
+        await saveProfilePhotoUrl(uploaded);
+
+        setLocalAvatarUri(uploaded.secureUrl);
+        const current = authSession.getUser();
+        if (current) {
+          authSession.setSession(authSession.getToken() ?? '', {
+            ...current,
+            avatarUri: uploaded.secureUrl,
+          });
+        }
+
+        triggerSuccessHaptic();
+        Alert.alert('Photo updated', 'Your profile photo was uploaded successfully.');
+      } catch (error) {
+        logger.error('Profile photo Cloudinary upload failed', error);
+        const message =
+          error instanceof CloudinaryUploadError
+            ? error.message
+            : 'Unable to upload your profile photo. Please try again.';
+        Alert.alert('Upload failed', message);
+      } finally {
+        setAvatarUploading(false);
+      }
+    })();
   }, []);
 
   const openAddRedeem = useCallback(() => {
@@ -154,6 +191,7 @@ export const useMasterProfile = (): UseMasterProfileResult => {
     profile,
     menuItems: PROFILE_MENU_ITEMS,
     uploadSheetVisible,
+    avatarUploading,
     logoutVisible,
     openCameraSheet,
     closeCameraSheet,

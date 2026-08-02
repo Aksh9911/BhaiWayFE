@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Image, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Image, Pressable, ScrollView, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -9,6 +9,12 @@ import { PROFILE_SCREEN } from '@/features/profile/constants';
 import { useMasterProfile } from '@/features/profile/hooks';
 import type { ProfileBadge } from '@/features/profile/types';
 import { profileTokens, styles } from './MasterProfileScreen.styles';
+
+const PROFILE_PICKER_OPTIONS = {
+  allowsEditing: true,
+  aspect: [1, 1] as [number, number],
+  quality: 0.8,
+};
 
 const badgeIconName = (icon: ProfileBadge['icon']): keyof typeof Ionicons.glyphMap => {
   if (icon === 'verified') {
@@ -45,6 +51,7 @@ export const MasterProfileScreen = () => {
     profile,
     menuItems,
     uploadSheetVisible,
+    avatarUploading,
     logoutVisible,
     openCameraSheet,
     closeCameraSheet,
@@ -103,6 +110,23 @@ export const MasterProfileScreen = () => {
                   <Ionicons name="person" size={56} color={profileTokens.PRIMARY} />
                 </View>
               )}
+              {avatarUploading ? (
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    left: 0,
+                    borderRadius: 999,
+                    backgroundColor: 'rgba(3, 66, 209, 0.45)',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <ActivityIndicator color="#FFFFFF" />
+                </View>
+              ) : null}
             </View>
             <Pressable
               style={({ pressed }) => [styles.cameraButton, pressed && { transform: [{ scale: 0.95 }] }]}
@@ -249,11 +273,7 @@ export const MasterProfileScreen = () => {
         onPicked={applyAvatar}
         title={PROFILE_SCREEN.changePhotoTitle}
         subtitle={PROFILE_SCREEN.changePhotoSubtitle}
-        imagePickerOptions={{
-          allowsEditing: true,
-          aspect: [1, 1],
-          quality: 0.8,
-        }}
+        imagePickerOptions={PROFILE_PICKER_OPTIONS}
       />
 
       <LogoutConfirmationModal

@@ -51,3 +51,5 @@ export type {
   UseUploadDocumentSheetOptions,
   UseUploadDocumentSheetResult,
 } from './UploadDocumentSheet';
+export { ImageUploader, UploadProgress } from './ImageUploader';
+export type { ImageUploaderProps, UploadProgressProps } from './ImageUploader';

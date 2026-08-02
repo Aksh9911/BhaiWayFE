@@ -1,10 +1,11 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Image, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ROUTES } from '@/config';
 import { AppFooter, ScreenHeader, ScreenIntro } from '@/shared/components';
+import { appModeStore } from '@/store';
 import { IncentiveBanner, RideTypeCard } from '@/features/offer-ride/components';
 import {
   OUTSTATION_HERO_IMAGE,
@@ -19,6 +20,10 @@ import { styles } from './PublishCarpoolRideScreen.styles';
 
 export const PublishCarpoolRideScreen = () => {
   const router = useRouter();
+
+  useEffect(() => {
+    appModeStore.setDriving();
+  }, []);
 
   const handleBack = useCallback(() => {
     if (router.canGoBack()) {

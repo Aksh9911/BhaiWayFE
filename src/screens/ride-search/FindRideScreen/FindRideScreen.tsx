@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -15,6 +15,7 @@ import {
 } from '@/shared/components';
 import { spacing } from '@/shared/theme';
 import { getSearchParam } from '@/shared/utils';
+import { appModeStore } from '@/store';
 import {
   LocationRouteInput,
   PassengerStepper,
@@ -40,6 +41,10 @@ export const FindRideScreen = ({ mode: modeProp }: FindRideScreenProps) => {
   const paramMode = getSearchParam(params.mode);
   const mode: RideSearchMode =
     modeProp ?? (isRideSearchMode(paramMode) ? paramMode : 'outstation');
+
+  useEffect(() => {
+    appModeStore.setRiding();
+  }, []);
 
   const {
     config,

@@ -1,5 +1,14 @@
-import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, Modal, Pressable, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  ActionSheetIOS,
+  ActivityIndicator,
+  Modal,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -17,6 +26,9 @@ import type {
 
 const DEFAULT_SOURCES: readonly UploadDocumentSource[] = ['camera', 'gallery'];
 
+/** Ignore overlay taps right after open so the opening press doesn't dismiss the sheet. */
+const OPEN_GUARD_MS = 450;
+
 export const UploadDocumentSheet = ({
   visible,
   onClose,
@@ -33,39 +45,150 @@ export const UploadDocumentSheet = ({
 }: UploadDocumentSheetProps) => {
   const insets = useSafeAreaInsets();
   const [busy, setBusy] = useState(false);
+  const openedAtRef = useRef(0);
+  const onPickedRef = useRef(onPicked);
+  const onCloseRef = useRef(onClose);
+  const optionsRef = useRef(imagePickerOptions);
+  const sourcesRef = useRef(sources);
+  const labelsRef = useRef({ title, subtitle, cameraLabel, galleryLabel, cancelLabel });
+  const pickingRef = useRef(false);
+  const iosPresentingRef = useRef(false);
 
-  const handleClose = useCallback(() => {
-    if (busy) {
+  onPickedRef.current = onPicked;
+  onCloseRef.current = onClose;
+  optionsRef.current = imagePickerOptions;
+  sourcesRef.current = sources;
+  labelsRef.current = { title, subtitle, cameraLabel, galleryLabel, cancelLabel };
+
+  const resetBusy = useCallback(() => {
+    pickingRef.current = false;
+    setBusy(false);
+  }, []);
+
+  const runPicker = useCallback(
+    async (source: UploadDocumentSource, waitAfterModalMs: number) => {
+      if (pickingRef.current) {
+        return;
+      }
+
+      pickingRef.current = true;
+      setBusy(true);
+
+      try {
+        const pickerOptions = {
+          ...optionsRef.current,
+          waitAfterModalMs,
+        };
+
+        const document =
+          source === 'camera'
+            ? await pickDocumentFromCamera(pickerOptions)
+            : await pickDocumentFromGallery(pickerOptions);
+
+        if (document) {
+          onPickedRef.current(document);
+        }
+      } finally {
+        resetBusy();
+      }
+    },
+    [resetBusy],
+  );
+
+  /**
+   * iOS: use native ActionSheet (no RN Modal). Modal + camera freezes Expo on device.
+   * Important: do NOT clear the ActionSheet timer when `visible` flips to false —
+   * we close `visible` ourselves before presenting the sheet.
+   */
+  useEffect(() => {
+    if (!visible || Platform.OS !== 'ios') {
       return;
     }
-    onClose();
-  }, [busy, onClose]);
+
+    if (iosPresentingRef.current || pickingRef.current) {
+      onCloseRef.current();
+      return;
+    }
+
+    iosPresentingRef.current = true;
+    onCloseRef.current();
+
+    const timer = setTimeout(() => {
+      const activeSources = sourcesRef.current.length
+        ? [...sourcesRef.current]
+        : [...DEFAULT_SOURCES];
+      const labels = labelsRef.current;
+      const optionLabels = activeSources.map((source) =>
+        source === 'camera' ? labels.cameraLabel : labels.galleryLabel,
+      );
+      const options = [...optionLabels, labels.cancelLabel];
+      const cancelButtonIndex = options.length - 1;
+
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          title: labels.title,
+          message: labels.subtitle,
+          options,
+          cancelButtonIndex,
+          userInterfaceStyle: 'light',
+        },
+        (buttonIndex) => {
+          iosPresentingRef.current = false;
+
+          if (buttonIndex === cancelButtonIndex || buttonIndex == null) {
+            resetBusy();
+            return;
+          }
+
+          const source = activeSources[buttonIndex];
+          if (!source) {
+            resetBusy();
+            return;
+          }
+
+          triggerLightHaptic();
+          void runPicker(source, 0);
+        },
+      );
+    }, 120);
+
+    // Keep timer alive even after `visible` becomes false (we close it on purpose).
+    return undefined;
+  }, [visible, resetBusy, runPicker]);
+
+  useEffect(() => {
+    if (visible && Platform.OS !== 'ios') {
+      openedAtRef.current = Date.now();
+      resetBusy();
+    }
+  }, [visible, resetBusy]);
+
+  const handleClose = useCallback(() => {
+    if (pickingRef.current) {
+      return;
+    }
+    if (Date.now() - openedAtRef.current < OPEN_GUARD_MS) {
+      return;
+    }
+    onCloseRef.current();
+  }, []);
 
   const runSource = useCallback(
     async (source: UploadDocumentSource) => {
-      if (busy) {
+      if (pickingRef.current) {
         return;
       }
 
       triggerLightHaptic();
-      setBusy(true);
-      onClose();
-
-      try {
-        const document =
-          source === 'camera'
-            ? await pickDocumentFromCamera(imagePickerOptions)
-            : await pickDocumentFromGallery(imagePickerOptions);
-
-        if (document) {
-          onPicked(document);
-        }
-      } finally {
-        setBusy(false);
-      }
+      onCloseRef.current();
+      await runPicker(source, 300);
     },
-    [busy, imagePickerOptions, onClose, onPicked],
+    [runPicker],
   );
+
+  if (Platform.OS === 'ios') {
+    return null;
+  }
 
   return (
     <Modal
@@ -75,10 +198,18 @@ export const UploadDocumentSheet = ({
       onRequestClose={handleClose}
       statusBarTranslucent
     >
-      <Pressable style={styles.overlay} onPress={handleClose} accessibilityLabel="Close upload sheet">
+      <View style={styles.overlay}>
         <Pressable
-          style={[styles.sheet, { paddingBottom: Math.max(insets.bottom, spacing.xxl) }]}
-          onPress={(event) => event.stopPropagation()}
+          style={StyleSheet.absoluteFill}
+          onPress={handleClose}
+          accessibilityLabel="Close upload sheet"
+        />
+        <View
+          style={[
+            styles.sheet,
+            sheetLayer,
+            { paddingBottom: Math.max(insets.bottom, spacing.xxl) },
+          ]}
         >
           <View style={styles.handle} />
 
@@ -145,8 +276,13 @@ export const UploadDocumentSheet = ({
           >
             <Text style={styles.cancelLabel}>{cancelLabel}</Text>
           </Pressable>
-        </Pressable>
-      </Pressable>
+        </View>
+      </View>
     </Modal>
   );
+};
+
+const sheetLayer = {
+  zIndex: 2,
+  elevation: 12,
 };

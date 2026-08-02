@@ -200,24 +200,6 @@ export const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: SURFACE_CONTAINER_HIGHEST,
   },
-  mapImage: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  mapGradient: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  fullscreenBtn: {
-    position: 'absolute',
-    right: 8,
-    bottom: 8,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: colors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...createShadow({ color: colors.shadow, opacity: 0.14, radius: 8, offsetY: 2, elevation: 3 }),
-  },
   routeBlock: {
     paddingLeft: 32,
     position: 'relative',
@@ -273,6 +255,14 @@ export const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: OUTLINE_VARIANT,
     gap: 16,
+  },
+  peerLabel: {
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: '700',
+    letterSpacing: 0.6,
+    textTransform: 'uppercase',
+    color: ON_SURFACE_VARIANT,
   },
   driverRow: {
     flexDirection: 'row',
@@ -397,7 +387,7 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(196, 197, 215, 0.4)',
     padding: 20,
-    gap: 6,
+    gap: 12,
   },
   historyTop: {
     flexDirection: 'row',
@@ -423,6 +413,9 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     color: ON_SURFACE_VARIANT,
+  },
+  historyMetaGroup: {
+    gap: 4,
   },
   dashedPlaceholder: {
     marginTop: 24,

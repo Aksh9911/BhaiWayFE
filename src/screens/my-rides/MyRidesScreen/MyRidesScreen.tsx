@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react';
-import { Image, Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppFooter, Avatar } from '@/shared/components';
 import { triggerLightHaptic } from '@/shared/utils';
+import { MyRidesRouteMap } from '@/features/my-rides/components';
 import { MY_RIDES_SCREEN } from '@/features/my-rides/constants';
 import { useMyRides } from '@/features/my-rides/hooks';
 import type { MyRidesTab } from '@/features/my-rides/types';
@@ -13,11 +13,17 @@ import { myRidesTokens, styles } from './MyRidesScreen.styles';
 
 export const MyRidesScreen = () => {
   const {
+    modeBadge,
     tab,
     setTab,
     avatarUri,
     upcomingRide,
     historyRides,
+    cancelLabel,
+    trackLabel,
+    peerLabel,
+    emptyUpcomingSubtitle,
+    emptyPastSubtitle,
     openProfile,
     openNotifications,
     trackRide,
@@ -42,13 +48,15 @@ export const MyRidesScreen = () => {
     cancelRequest();
   }, [cancelRequest]);
 
+  const peer = upcomingRide?.peer ?? upcomingRide?.driver;
+
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <Text style={styles.title}>{MY_RIDES_SCREEN.title}</Text>
           <View style={styles.modeBadge}>
-            <Text style={styles.modeBadgeText}>{MY_RIDES_SCREEN.riderModeBadge}</Text>
+            <Text style={styles.modeBadgeText}>{modeBadge}</Text>
           </View>
         </View>
         <View style={styles.headerRight}>
@@ -106,7 +114,7 @@ export const MyRidesScreen = () => {
         </View>
 
         {tab === 'upcoming' ? (
-          upcomingRide ? (
+          upcomingRide && peer ? (
             <>
               <View style={styles.rideCard}>
                 <View style={styles.cardBody}>
@@ -129,28 +137,14 @@ export const MyRidesScreen = () => {
 
                   <View style={styles.mapRouteRow}>
                     <View style={styles.mapPreview}>
-                      <Image
-                        source={{ uri: upcomingRide.mapImageUri }}
-                        style={styles.mapImage}
-                        resizeMode="cover"
-                        accessibilityLabel="Route map preview"
+                      <MyRidesRouteMap
+                        pickup={upcomingRide.pickup}
+                        dropoff={upcomingRide.dropoff}
+                        pickupLabel={upcomingRide.pickupLabel}
+                        dropoffLabel={upcomingRide.dropoffLabel}
+                        onExpandPress={handleTrack}
+                        height={160}
                       />
-                      <LinearGradient
-                        colors={['transparent', 'rgba(0,0,0,0.2)']}
-                        style={styles.mapGradient}
-                        pointerEvents="none"
-                      />
-                      <Pressable
-                        style={({ pressed }) => [
-                          styles.fullscreenBtn,
-                          pressed && { transform: [{ scale: 0.94 }] },
-                        ]}
-                        onPress={handleTrack}
-                        accessibilityRole="button"
-                        accessibilityLabel="Open live map"
-                      >
-                        <Ionicons name="expand-outline" size={16} color="#0342D1" />
-                      </Pressable>
                     </View>
 
                     <View style={styles.routeBlock}>
@@ -173,18 +167,19 @@ export const MyRidesScreen = () => {
                   </View>
 
                   <View style={styles.driverSection}>
+                    <Text style={styles.peerLabel}>{peerLabel}</Text>
                     <View style={styles.driverRow}>
                       <View style={styles.driverAvatarRing}>
                         <Avatar
                           size={48}
-                          uri={upcomingRide.driver.avatarUri}
-                          accessibilityLabel={`${upcomingRide.driver.name} photo`}
+                          uri={peer.avatarUri}
+                          accessibilityLabel={`${peer.name} photo`}
                         />
                       </View>
                       <View style={styles.driverMeta}>
                         <View style={styles.driverNameRow}>
-                          <Text style={styles.driverName}>{upcomingRide.driver.name}</Text>
-                          {upcomingRide.driver.verified ? (
+                          <Text style={styles.driverName}>{peer.name}</Text>
+                          {peer.verified ? (
                             <View style={styles.verifiedBadge}>
                               <Ionicons name="checkmark-circle" size={12} color="#15803D" />
                               <Text style={styles.verifiedText}>
@@ -194,7 +189,7 @@ export const MyRidesScreen = () => {
                           ) : null}
                         </View>
                         <Text style={styles.vehicleText}>
-                          {upcomingRide.driver.vehicleLabel} • {upcomingRide.driver.plateNumber}
+                          {peer.vehicleLabel} • {peer.plateNumber}
                         </Text>
                       </View>
                     </View>
@@ -207,9 +202,9 @@ export const MyRidesScreen = () => {
                         ]}
                         onPress={handleCancel}
                         accessibilityRole="button"
-                        accessibilityLabel={MY_RIDES_SCREEN.cancelLabel}
+                        accessibilityLabel={cancelLabel}
                       >
-                        <Text style={styles.cancelLabel}>{MY_RIDES_SCREEN.cancelLabel}</Text>
+                        <Text style={styles.cancelLabel}>{cancelLabel}</Text>
                       </Pressable>
                       <Pressable
                         style={({ pressed }) => [
@@ -218,10 +213,10 @@ export const MyRidesScreen = () => {
                         ]}
                         onPress={handleTrack}
                         accessibilityRole="button"
-                        accessibilityLabel={MY_RIDES_SCREEN.trackLabel}
+                        accessibilityLabel={trackLabel}
                       >
                         <Ionicons name="navigate" size={16} color="#FFFFFF" />
-                        <Text style={styles.trackLabel}>{MY_RIDES_SCREEN.trackLabel}</Text>
+                        <Text style={styles.trackLabel}>{trackLabel}</Text>
                       </Pressable>
                     </View>
                   </View>
@@ -234,14 +229,14 @@ export const MyRidesScreen = () => {
             <View style={styles.emptyState}>
               <Ionicons name="car-outline" size={32} color="#747686" />
               <Text style={styles.emptyTitle}>{MY_RIDES_SCREEN.emptyUpcomingTitle}</Text>
-              <Text style={styles.emptySubtitle}>{MY_RIDES_SCREEN.emptyUpcomingSubtitle}</Text>
+              <Text style={styles.emptySubtitle}>{emptyUpcomingSubtitle}</Text>
             </View>
           )
         ) : historyRides.length === 0 ? (
           <View style={styles.emptyState}>
             <Ionicons name="time-outline" size={32} color="#747686" />
             <Text style={styles.emptyTitle}>{MY_RIDES_SCREEN.emptyPastTitle}</Text>
-            <Text style={styles.emptySubtitle}>{MY_RIDES_SCREEN.emptyPastSubtitle}</Text>
+            <Text style={styles.emptySubtitle}>{emptyPastSubtitle}</Text>
           </View>
         ) : (
           <View style={styles.historyList}>
@@ -251,8 +246,17 @@ export const MyRidesScreen = () => {
                   <Text style={styles.historyTitle}>{ride.title}</Text>
                   <Text style={styles.historyStatus}>{ride.statusLabel}</Text>
                 </View>
-                <Text style={styles.historyMeta}>{ride.routeLabel}</Text>
-                <Text style={styles.historyMeta}>{ride.dateLabel}</Text>
+                <MyRidesRouteMap
+                  pickup={ride.pickup}
+                  dropoff={ride.dropoff}
+                  pickupLabel={ride.pickupLabel}
+                  dropoffLabel={ride.dropoffLabel}
+                  height={132}
+                />
+                <View style={styles.historyMetaGroup}>
+                  <Text style={styles.historyMeta}>{ride.routeLabel}</Text>
+                  <Text style={styles.historyMeta}>{ride.dateLabel}</Text>
+                </View>
               </View>
             ))}
           </View>

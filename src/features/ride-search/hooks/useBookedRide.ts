@@ -93,6 +93,7 @@ export const useBookedRide = (params: UseBookedRideParams): UseBookedRideResult 
       getRideDetailsPath({
         rideId: details.rideId,
         rideType: details.rideType,
+        mode: 'booked',
         origin: params.origin || details.pickup,
         destination: params.destination || details.dropoff,
         driverName: details.driverName,

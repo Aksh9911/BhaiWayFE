@@ -2,6 +2,7 @@ import { useCallback, useMemo, useRef, useState, type RefObject } from 'react';
 import { Alert, Linking, type FlatList } from 'react-native';
 import { useRouter } from 'expo-router';
 
+import { ROUTES } from '@/config';
 import {
   DRIVER_CHAT_QUICK_REPLIES,
   DRIVER_CHAT_SCREEN,
@@ -86,7 +87,7 @@ export const useDriverChat = (params: UseDriverChatParams): UseDriverChatResult 
       router.back();
       return;
     }
-    router.replace('/ride-search/live-tracking');
+    router.replace(ROUTES.inbox);
   }, [router]);
 
   const callDriver = useCallback(() => {

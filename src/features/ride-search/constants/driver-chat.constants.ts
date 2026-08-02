@@ -20,13 +20,19 @@ export const getDriverChatMock = (params: {
   driverName?: string;
   carModel?: string;
 }): { profile: DriverChatProfile; messages: ChatMessage[] } => {
-  const name = (params.driverName || 'Arjun').split(' ')[0];
-  const car = params.carModel || 'Honda City';
+  const name = params.driverName?.trim() || 'Arjun';
+  const car = params.carModel?.trim();
+  const vehicleLabel =
+    !car
+      ? 'White Honda City'
+      : /passenger|·|ka-|seat/i.test(car)
+        ? car
+        : `White ${car}`;
 
   return {
     profile: {
       name,
-      vehicleLabel: `White ${car}`,
+      vehicleLabel,
       isOnline: true,
     },
     messages: [

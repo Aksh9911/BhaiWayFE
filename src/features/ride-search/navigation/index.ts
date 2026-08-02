@@ -1,1 +1,1 @@
-export { RIDE_SEARCH_SCREEN_INDEX, RIDE_SEARCH_SCREENS } from '@/config';
+export { RIDE_SEARCH_SCREEN_INDEX, RIDE_SEARCH_SCREENS } from '@/navigation';

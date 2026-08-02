@@ -3,18 +3,31 @@ import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { ROUTES } from '@/config';
-import { getCancelRidePath, getRideDetailsMock } from '../constants';
+import {
+  getCancelRidePath,
+  getDriverChatPath,
+  getReviewBookingPath,
+  getRideDetailsMock,
+} from '../constants';
 import { fetchDrivingRoute } from '../services';
-import type { MapCoordinate, RideDetailsData, RideType } from '../types';
+import type {
+  MapCoordinate,
+  RideDetailsData,
+  RideDetailsMode,
+  RideType,
+} from '../types';
 
 export interface UseRideDetailsParams {
   rideId: string;
   rideType: RideType;
+  mode?: RideDetailsMode;
   origin?: string;
   destination?: string;
   driverName?: string;
   carModel?: string;
   price?: number;
+  distanceLabel?: string;
+  durationLabel?: string;
   originLat?: number;
   originLng?: number;
   destinationLat?: number;
@@ -23,7 +36,11 @@ export interface UseRideDetailsParams {
 
 export interface UseRideDetailsResult {
   details: RideDetailsData;
+  mode: RideDetailsMode;
+  isPreview: boolean;
   routeCoordinates: MapCoordinate[];
+  bookRide: () => void;
+  contactDriver: () => void;
   cancelRide: () => void;
   chatPassenger: (name: string) => void;
   goHome: () => void;
@@ -32,6 +49,7 @@ export interface UseRideDetailsResult {
 
 export const useRideDetails = (params: UseRideDetailsParams): UseRideDetailsResult => {
   const router = useRouter();
+  const mode: RideDetailsMode = params.mode === 'booked' ? 'booked' : 'preview';
 
   const details = useMemo(
     () =>
@@ -43,6 +61,8 @@ export const useRideDetails = (params: UseRideDetailsParams): UseRideDetailsResu
         driverName: params.driverName,
         carModel: params.carModel,
         price: params.price,
+        distanceLabel: params.distanceLabel,
+        durationLabel: params.durationLabel,
         originLat: params.originLat,
         originLng: params.originLng,
         destinationLat: params.destinationLat,
@@ -80,6 +100,33 @@ export const useRideDetails = (params: UseRideDetailsParams): UseRideDetailsResu
     details.pickup.longitude,
   ]);
 
+  const bookRide = useCallback(() => {
+    router.push(
+      getReviewBookingPath({
+        rideId: details.rideId,
+        rideType: details.rideType,
+        origin: params.origin || details.pickup.address || details.pickup.title,
+        destination: params.destination || details.dropoff.address || details.dropoff.title,
+        driverName: details.driver.name,
+        carModel: details.driver.vehicleModel,
+        price: details.fare.total,
+        originLat: params.originLat ?? details.pickup.latitude,
+        originLng: params.originLng ?? details.pickup.longitude,
+        destinationLat: params.destinationLat ?? details.dropoff.latitude,
+        destinationLng: params.destinationLng ?? details.dropoff.longitude,
+      }),
+    );
+  }, [details, params, router]);
+
+  const contactDriver = useCallback(() => {
+    router.push(
+      getDriverChatPath({
+        driverName: details.driver.name,
+        carModel: details.driver.vehicleModel,
+      }),
+    );
+  }, [details.driver.name, details.driver.vehicleModel, router]);
+
   const cancelRide = useCallback(() => {
     router.push(
       getCancelRidePath({
@@ -105,7 +152,11 @@ export const useRideDetails = (params: UseRideDetailsParams): UseRideDetailsResu
 
   return {
     details,
+    mode,
+    isPreview: mode === 'preview',
     routeCoordinates,
+    bookRide,
+    contactDriver,
     cancelRide,
     chatPassenger,
     goHome,

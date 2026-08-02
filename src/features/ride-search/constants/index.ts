@@ -17,7 +17,9 @@ export {
 export {
   RIDE_RESULT_SCREEN,
   RIDE_RESULT_FILTERS,
+  RIDE_RESULT_SORT_OPTIONS,
   MOCK_RIDE_RESULTS,
+  departureTimeToMinutes,
   getSeatUrgency,
   formatRidePrice,
   getRideResultPath,

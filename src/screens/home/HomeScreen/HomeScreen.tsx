@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { APP_CONFIG, ROUTES } from '@/config';
 import { ScreenIntro } from '@/shared/components';
 import { colors, spacing } from '@/shared/theme';
+import { appModeStore } from '@/store';
 import {
   EmptyHomeState,
   HomeHeader,
@@ -43,15 +44,18 @@ export const HomeScreen = () => {
   const handleCardPress = useCallback(
     (data: ServiceCardData) => {
       if (data.variant === 'office') {
+        appModeStore.setRiding();
         router.push(ROUTES.officeCommute);
         return;
       }
 
       if (data.variant === 'publish') {
+        appModeStore.setDriving();
         router.push(ROUTES.offerRide);
         return;
       }
 
+      appModeStore.setRiding();
       router.push({
         pathname: ROUTES.rideSearch,
         params: { mode: data.variant },

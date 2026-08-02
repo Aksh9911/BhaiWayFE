@@ -20,8 +20,7 @@ export const PROFILE_SCREEN = {
   changePhotoSubtitle: 'Take a new photo or choose one from your gallery.',
 } as const;
 
-export const DEFAULT_PROFILE_AVATAR =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuCDR6-T8s0DEbDQmGsnLqJqNJCt7gnb0ZKFbpdniwNboXHbWIEOJWsx1IpLMwcb8OR_lM34pp1x-V2s4CuhG0W8TfIPI1xkOzIAvU0kNstEh7J3zkIDgmtgs5PytynNjBB3x5Ejo7n1CjFa14AR4WTCtRhMU2tRF9shZSOAHDqDqwYhHTyu1R6nPflF_aQFNhgu719gl_d6dop3wXw1dwHRQJfccdLvyTQTdjoU_JxojLYghUaW5hg85tXZrAQzUcX9NKJYFeeHX6g';
+export const DEFAULT_PROFILE_AVATAR = '';
 
 export const DEFAULT_MASTER_PROFILE: MasterProfileData = {
   fullName: 'Arjun Sharma',

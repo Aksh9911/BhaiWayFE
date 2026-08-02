@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { Avatar, Button } from '@/shared/components';
 import { colors } from '@/shared/theme';
+import { formatDistanceLabel } from '../../utils/route';
 import {
   formatRidePrice,
   getSeatUrgency,
@@ -17,6 +18,10 @@ export const RideResultCard = React.memo(
     const urgency = useMemo(() => getSeatUrgency(ride.seatsLeft), [ride.seatsLeft]);
     const isUrgent = urgency === 'last';
     const seatSuffix = ride.seatsLeft === 1 ? 'seat left' : 'seats left';
+    const distanceLabel = useMemo(
+      () => formatDistanceLabel(ride.distanceKm),
+      [ride.distanceKm],
+    );
 
     const handlePress = useCallback(() => onPress(ride), [onPress, ride]);
     const handleBook = useCallback(() => onBookPress(ride), [onBookPress, ride]);
@@ -26,7 +31,7 @@ export const RideResultCard = React.memo(
         style={styles.card}
         onPress={handlePress}
         accessibilityRole="button"
-        accessibilityLabel={`Ride with ${ride.driver.name}, ${formatRidePrice(ride.price)}`}
+        accessibilityLabel={`Ride with ${ride.driver.name}, ${formatRidePrice(ride.price)}, ${distanceLabel}, ${ride.durationLabel}`}
         android_ripple={{ color: 'rgba(29, 78, 216, 0.08)' }}
       >
         <View style={styles.header}>
@@ -67,6 +72,17 @@ export const RideResultCard = React.memo(
             <Text style={styles.infoValue} numberOfLines={1}>
               {ride.carModel}
             </Text>
+          </View>
+        </View>
+
+        <View style={styles.statsRow}>
+          <View style={styles.statChip}>
+            <Ionicons name="navigate-outline" size={14} color={colors.primary} />
+            <Text style={styles.statText}>{distanceLabel}</Text>
+          </View>
+          <View style={styles.statChip}>
+            <Ionicons name="time-outline" size={14} color={colors.primary} />
+            <Text style={styles.statText}>{ride.durationLabel}</Text>
           </View>
         </View>
 

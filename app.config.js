@@ -1,0 +1,76 @@
+/**
+ * Expo app config — loads Maps keys from `.env` (EXPO_PUBLIC_*).
+ * Do not commit real API keys into app.json; set them in `.env` instead.
+ *
+ * Required for native maps + Places search:
+ *   EXPO_PUBLIC_GOOGLE_MAPS_API_KEY=...
+ *   EXPO_PUBLIC_GOOGLE_PLACES_API_KEY=...   (can be the same key)
+ *
+ * Then restart: npx expo start -c
+ */
+const appJson = require('./app.json');
+
+const firstNonEmpty = (...values) => {
+  for (const value of values) {
+    if (typeof value !== 'string') {
+      continue;
+    }
+    const trimmed = value.trim();
+    if (!trimmed || trimmed.startsWith('YOUR_')) {
+      continue;
+    }
+    return trimmed;
+  }
+  return '';
+};
+
+const googleMapsApiKey = firstNonEmpty(
+  process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY,
+  process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY,
+);
+
+const googlePlacesApiKey = firstNonEmpty(
+  process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY,
+  process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY,
+);
+
+/** One key is enough for both Maps SDK and Places if APIs are enabled on that key. */
+const mapsKey = googleMapsApiKey || googlePlacesApiKey;
+
+module.exports = () => {
+  const base = appJson.expo;
+
+  return {
+    ...base,
+    ios: {
+      ...base.ios,
+      config: {
+        ...(base.ios?.config ?? {}),
+        googleMapsApiKey: mapsKey || base.ios?.config?.googleMapsApiKey || '',
+      },
+    },
+    android: {
+      ...base.android,
+      config: {
+        ...(base.android?.config ?? {}),
+        googleMaps: {
+          ...(base.android?.config?.googleMaps ?? {}),
+          apiKey: mapsKey || base.android?.config?.googleMaps?.apiKey || '',
+        },
+      },
+    },
+    extra: {
+      ...(base.extra ?? {}),
+      googleMapsApiKey: mapsKey,
+      googlePlacesApiKey: googlePlacesApiKey || mapsKey,
+      cloudinaryCloudName: firstNonEmpty(
+        process.env.EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME,
+        base.extra?.cloudinaryCloudName,
+      ),
+      cloudinaryUploadPreset: firstNonEmpty(
+        process.env.EXPO_PUBLIC_CLOUDINARY_UPLOAD_PRESET,
+        base.extra?.cloudinaryUploadPreset,
+      ),
+    },
+  };
+};

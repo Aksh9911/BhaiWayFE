@@ -31,8 +31,12 @@
       "package": "com.bhaiway.app",
       "softwareKeyboardLayoutMode": "resize",
       "permissions": [
-        "ACCESS_COARSE_LOCATION",
-        "ACCESS_FINE_LOCATION"
+        "android.permission.CAMERA",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.RECORD_AUDIO"
       ],
       "config": {
         "googleMaps": {
@@ -52,7 +56,11 @@
     },
     "extra": {
       "googlePlacesApiKey": "",
-      "googleMapsApiKey": ""
+      "googleMapsApiKey": "",
+      "router": {},
+      "eas": {
+        "projectId": "8488cda3-eefc-4508-8a78-d41d7e1fe17c"
+      }
     },
     "plugins": [
       "expo-router",

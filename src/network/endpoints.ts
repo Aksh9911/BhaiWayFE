@@ -7,4 +7,10 @@ export const ENDPOINTS = {
   home: {
     dashboard: '/home/dashboard',
   },
+  media: {
+    /** Persist Cloudinary secure_url + public_id after client upload. */
+    saveAsset: '/media/assets',
+    /** Backend-signed Cloudinary destroy. */
+    deleteAsset: '/media/cloudinary/delete',
+  },
 } as const;

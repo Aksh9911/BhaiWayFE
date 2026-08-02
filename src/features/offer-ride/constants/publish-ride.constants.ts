@@ -55,3 +55,35 @@ export const getSelectLocationPath = (field: LocationFieldType) => ({
   pathname: ROUTES.offerRideLocation,
   params: { field },
 });
+
+/** Readable 12-hour time, e.g. 8:00 AM */
+export const formatTimeLabel = (date: Date): string => {
+  const hours = date.getHours();
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const period = hours >= 12 ? 'PM' : 'AM';
+  const displayHours = hours % 12 === 0 ? 12 : hours % 12;
+  return `${displayHours}:${minutes} ${period}`;
+};
+
+export const parseTimeLabel = (value: string): Date => {
+  const match = /^(\d{1,2}):(\d{2})\s*(AM|PM)$/i.exec(value.trim());
+  const date = new Date();
+
+  if (!match) {
+    date.setHours(9, 0, 0, 0);
+    return date;
+  }
+
+  let hours = Number(match[1]);
+  const minutes = Number(match[2]);
+  const period = match[3].toUpperCase();
+
+  if (period === 'AM' && hours === 12) {
+    hours = 0;
+  } else if (period === 'PM' && hours !== 12) {
+    hours += 12;
+  }
+
+  date.setHours(hours, minutes, 0, 0);
+  return date;
+};

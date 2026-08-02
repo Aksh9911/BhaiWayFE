@@ -35,6 +35,12 @@ export const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: colors.white,
   },
+  uploadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(3, 66, 209, 0.55)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   hint: {
     marginTop: spacing.md,
     ...typography.caption,

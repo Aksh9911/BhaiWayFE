@@ -1,0 +1,275 @@
+import { StyleSheet } from 'react-native';
+
+import { colors, spacing } from '@/shared/theme';
+import { createShadow } from '@/shared/utils/platform';
+
+const PRIMARY = '#0342D1';
+const ON_SURFACE = '#191C1D';
+const SECONDARY = '#585E72';
+const OUTLINE_VARIANT = '#C4C5D7';
+const SURFACE_LOW = '#F3F4F5';
+const ERROR = '#BA1A1A';
+
+export const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: SURFACE_LOW,
+  },
+  header: {
+    height: 64,
+    paddingHorizontal: spacing.lg,
+    backgroundColor: colors.white,
+    justifyContent: 'center',
+    ...createShadow({
+      color: colors.shadow,
+      opacity: 0.06,
+      radius: 6,
+      offsetY: 2,
+      elevation: 2,
+    }),
+  },
+  brandRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  brandTitle: {
+    fontSize: 28,
+    lineHeight: 36,
+    fontWeight: '700',
+    color: PRIMARY,
+    letterSpacing: -0.3,
+  },
+  scroll: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.xxxl,
+    gap: spacing.lg,
+  },
+  statusCard: {
+    backgroundColor: colors.white,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(196, 197, 215, 0.3)',
+    padding: spacing.xxl,
+    ...createShadow({
+      color: colors.shadow,
+      opacity: 0.04,
+      radius: 8,
+      offsetY: 2,
+      elevation: 1,
+    }),
+  },
+  statusTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: spacing.lg,
+    gap: spacing.md,
+  },
+  statusLeft: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.lg,
+    flex: 1,
+  },
+  flagWrap: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: PRIMARY,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  statusText: {
+    flex: 1,
+    gap: 4,
+  },
+  arrivingLabel: {
+    fontSize: 10,
+    lineHeight: 12,
+    fontWeight: '700',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    color: SECONDARY,
+  },
+  destination: {
+    fontSize: 22,
+    lineHeight: 28,
+    fontWeight: '700',
+    color: ON_SURFACE,
+  },
+  etaBlock: {
+    alignItems: 'flex-end',
+  },
+  etaValue: {
+    fontSize: 30,
+    lineHeight: 34,
+    fontWeight: '700',
+    color: PRIMARY,
+  },
+  etaUnit: {
+    fontSize: 28,
+    lineHeight: 32,
+    fontWeight: '600',
+    color: PRIMARY,
+  },
+  distance: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: SECONDARY,
+    marginTop: 2,
+  },
+  progressTrack: {
+    height: 6,
+    borderRadius: 999,
+    backgroundColor: '#E7E8E9',
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    borderRadius: 999,
+    backgroundColor: PRIMARY,
+  },
+  passengerRow: {
+    gap: spacing.sm,
+    paddingVertical: 2,
+  },
+  passengerChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    backgroundColor: colors.white,
+    borderRadius: 999,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    borderWidth: 1,
+    borderColor: 'rgba(196, 197, 215, 0.3)',
+    ...createShadow({
+      color: colors.shadow,
+      opacity: 0.04,
+      radius: 6,
+      offsetY: 2,
+      elevation: 1,
+    }),
+  },
+  passengerAvatar: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: OUTLINE_VARIANT,
+  },
+  passengerName: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '600',
+    color: ON_SURFACE,
+  },
+  onlineDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#22C55E',
+  },
+  mapCard: {
+    width: '100%',
+    aspectRatio: 4 / 3,
+    borderRadius: 16,
+    overflow: 'hidden',
+    backgroundColor: '#E1E3E4',
+    borderWidth: 1,
+    borderColor: 'rgba(196, 197, 215, 0.4)',
+    ...createShadow({
+      color: colors.shadow,
+      opacity: 0.08,
+      radius: 10,
+      offsetY: 4,
+      elevation: 3,
+    }),
+  },
+  mapImage: {
+    ...StyleSheet.absoluteFillObject,
+    width: '100%',
+    height: '100%',
+  },
+  mapOverlay: {
+    position: 'absolute',
+    left: spacing.lg,
+    right: spacing.lg,
+    bottom: spacing.lg,
+    borderRadius: 12,
+    padding: spacing.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(255, 255, 255, 0.88)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.4)',
+  },
+  navRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.lg,
+    flex: 1,
+  },
+  navIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 8,
+    backgroundColor: 'rgba(3, 66, 209, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  navText: {
+    flex: 1,
+    gap: 2,
+  },
+  navInstruction: {
+    fontSize: 15,
+    lineHeight: 20,
+    fontWeight: '700',
+    color: ON_SURFACE,
+  },
+  navDistance: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: SECONDARY,
+  },
+  voiceButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#EDEEEF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: spacing.sm,
+  },
+  sosButton: {
+    width: '100%',
+    height: 56,
+    borderRadius: 12,
+    backgroundColor: ERROR,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.md,
+    ...createShadow({
+      color: ERROR,
+      opacity: 0.2,
+      radius: 12,
+      offsetY: 6,
+      elevation: 4,
+    }),
+  },
+  sosLabel: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: '700',
+    color: colors.white,
+  },
+});

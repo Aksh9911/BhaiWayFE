@@ -16,6 +16,7 @@ export type {
 } from './ride-search.types';
 export type {
   RideResultFilterId,
+  RideResultSortId,
   RideType,
   SeatUrgency,
   RideDriver,
@@ -24,6 +25,7 @@ export type {
   RideResultItem,
   RideSearchSummary,
   RideResultFilterOption,
+  RideResultSortOption,
 } from './ride-result.types';
 export type {
   BookingLocation,
@@ -40,9 +42,11 @@ export type {
   BookedRideDetails,
 } from './payment.types';
 export type {
+  RideDetailsMode,
   RideDetailsLocation,
   RideDetailsDriver,
   RideDetailsFare,
+  RideRule,
   RideDetailsData,
 } from './ride-details.types';
 export type {

@@ -10,6 +10,8 @@ export interface EnvConfig {
   readonly useMocks: boolean;
   readonly googlePlacesApiKey: string;
   readonly googleMapsApiKey: string;
+  readonly cloudinaryCloudName: string;
+  readonly cloudinaryUploadPreset: string;
 }
 
 const extra = (Constants.expoConfig?.extra ?? {}) as Record<string, string | undefined>;
@@ -88,4 +90,12 @@ export const env: EnvConfig = {
   useMocks: readBoolean(process.env.EXPO_PUBLIC_USE_MOCKS, environment === 'development'),
   googlePlacesApiKey,
   googleMapsApiKey,
+  cloudinaryCloudName: firstNonEmpty(
+    process.env.EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME,
+    extra.cloudinaryCloudName,
+  ),
+  cloudinaryUploadPreset: firstNonEmpty(
+    process.env.EXPO_PUBLIC_CLOUDINARY_UPLOAD_PRESET,
+    extra.cloudinaryUploadPreset,
+  ),
 };

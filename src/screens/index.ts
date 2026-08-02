@@ -8,6 +8,8 @@ export {
 
 export { HomeScreen } from './home';
 
+export { InboxScreen } from './inbox';
+
 export {
   FindRideScreen,
   MapSearchScreen,

@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors } from '@/shared/theme';
+import { colors, layout, spacing, typography } from '@/shared/theme';
 import { createShadow } from '@/shared/utils/platform';
 
 export const styles = StyleSheet.create({
@@ -43,8 +43,34 @@ export const styles = StyleSheet.create({
     paddingBottom: 24,
     gap: 24,
   },
+  scrollContentWithFooter: {
+    paddingBottom: 32,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
+  statChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: '#DCE9FF',
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  statText: {
+    ...typography.caption,
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '600',
+    color: colors.textPrimary,
+  },
   actions: {
-    paddingTop: 16,
+    paddingTop: 8,
   },
   cancelButton: {
     width: '100%',
@@ -61,5 +87,61 @@ export const styles = StyleSheet.create({
     lineHeight: 24,
     fontWeight: '600',
     color: '#BA1A1A',
+  },
+  previewHint: {
+    ...typography.caption,
+    fontSize: 13,
+    lineHeight: 18,
+    color: colors.textSecondary,
+    textAlign: 'center',
+  },
+  bookingBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: spacing.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    backgroundColor: colors.white,
+    borderTopWidth: 1,
+    borderTopColor: '#E3E2E6',
+  },
+  bookingPriceCol: {
+    flexShrink: 1,
+  },
+  bookingPriceLabel: {
+    ...typography.caption,
+    fontSize: 12,
+    lineHeight: 16,
+    color: colors.textSecondary,
+  },
+  bookingPrice: {
+    ...typography.title,
+    fontSize: 22,
+    lineHeight: 28,
+    fontWeight: '700',
+    color: colors.primary,
+  },
+  bookingActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  contactButton: {
+    width: 48,
+    height: 48,
+    borderRadius: layout.radiusMd,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    backgroundColor: '#EFF4FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bookButton: {
+    minWidth: 140,
+    minHeight: 48,
+    height: 48,
+    paddingHorizontal: spacing.lg,
+    borderRadius: layout.radiusMd,
   },
 });
