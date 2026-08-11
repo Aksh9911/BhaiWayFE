@@ -5,22 +5,28 @@ import type { UploadKind } from '@/types/cloudinary';
  *
  * Cloudinary creates these folders automatically on first upload:
  *
- * Media Library
+ * Media Library (Home)
  * └── bhaiway
- *       ├── profile          ← profile photos
+ *       ├── profile              ← profile photos
+ *       ├── IssueReport          ← ride issue report photos
  *       └── documents
- *             ├── dl         ← driving licence
- *             └── rc         ← vehicle RC
+ *             ├── dl             ← driving licence
+ *             ├── rc             ← vehicle RC
+ *             └── CorporateID    ← corporate ID card
  */
 export const CLOUDINARY_ROOT_FOLDER = 'bhaiway' as const;
 
 export const UPLOAD_FOLDERS = {
-  /** Profile photo → Media Library / bhaiway / profile */
+  /** Profile photo → Home / bhaiway / profile */
   profile: `${CLOUDINARY_ROOT_FOLDER}/profile`,
-  /** Driving licence → Media Library / bhaiway / documents / dl */
+  /** Driving licence → Home / bhaiway / documents / dl */
   dl: `${CLOUDINARY_ROOT_FOLDER}/documents/dl`,
-  /** Vehicle RC → Media Library / bhaiway / documents / rc */
+  /** Vehicle RC → Home / bhaiway / documents / rc */
   rc: `${CLOUDINARY_ROOT_FOLDER}/documents/rc`,
+  /** Corporate ID → Home / bhaiway / documents / CorporateID */
+  corporateId: `${CLOUDINARY_ROOT_FOLDER}/documents/CorporateID`,
+  /** Issue report photo → Home / bhaiway / IssueReport */
+  issueReport: `${CLOUDINARY_ROOT_FOLDER}/IssueReport`,
   /** Fallback documents root */
   generic: `${CLOUDINARY_ROOT_FOLDER}/documents`,
 } as const satisfies Record<UploadKind, string>;

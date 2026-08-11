@@ -1,8 +1,9 @@
 import React from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 
 import { styles } from './SavedPlacesRow.styles';
 import type { SavedPlacesRowProps } from './SavedPlacesRow.types';
+import { AppText as Text } from '@/shared/components';
 
 export const SavedPlacesRow = React.memo(({ places, onSelect }: SavedPlacesRowProps) => {
   if (places.length === 0) {

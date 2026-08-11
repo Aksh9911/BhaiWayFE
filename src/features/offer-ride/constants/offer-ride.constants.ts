@@ -32,7 +32,7 @@ export const OUTSTATION_RIDE_TYPES: readonly OutstationRideTypeOption[] = [
     iconVariant: 'dark',
     description: 'Guaranteed rides for passengers. Earn a premium booking amount upfront.',
     buttonLabel: 'Select Assured',
-    buttonVariant: 'dark',
+    buttonVariant: 'primary',
     highlighted: true,
     badge: 'Best for Drivers',
     note: '*Note: Cancellation fees apply for assured rides.*',
@@ -46,6 +46,7 @@ export {
   PUBLISH_SEAT_LIMITS,
   getPublishRidePath,
   getSelectLocationPath,
+  getRidePreferencesPath,
   formatTimeLabel,
   parseTimeLabel,
 } from './publish-ride.constants';

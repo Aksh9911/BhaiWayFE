@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors } from '@/shared/theme';
+import { colors, spacing } from '@/shared/theme';
 import { createShadow } from '@/shared/utils/platform';
 
 export const styles = StyleSheet.create({
@@ -39,7 +39,7 @@ export const styles = StyleSheet.create({
   content: {
     width: '100%',
     maxWidth: 448,
-    gap: 32,
+    gap: spacing.sectionGap,
   },
   hero: {
     alignItems: 'center',

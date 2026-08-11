@@ -1,15 +1,9 @@
 import React, { useCallback } from 'react';
-import {
-  Image,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from 'react-native';
+import { Image, Pressable, ScrollView, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppFooter, IconButton } from '@/shared/components';
+import { AppFooter, IconButton, BhaiWayCoinAmount, BhaiWayCoinIcon, AppText as Text } from '@/shared/components';
 import { triggerLightHaptic } from '@/shared/utils';
 import { WALLET_SCREEN } from '@/features/profile/constants';
 import { useWallet } from '@/features/profile/hooks';
@@ -29,6 +23,7 @@ const transactionIcon = (icon: WalletTransaction['icon']) => {
 export const WalletScreen = () => {
   const {
     summary,
+    balance,
     filters,
     activeFilter,
     transactions,
@@ -78,11 +73,15 @@ export const WalletScreen = () => {
           <View style={styles.balanceGlow} pointerEvents="none" />
           <View>
             <Text style={styles.balanceLabel}>{WALLET_SCREEN.balanceLabel}</Text>
-            <Text style={styles.balanceValue}>{summary.balanceLabel}</Text>
+            <BhaiWayCoinAmount
+              amount={balance}
+              size={28}
+              textStyle={styles.balanceValue}
+            />
           </View>
           <View style={styles.balanceFooter}>
             <View style={styles.walletNameRow}>
-              <Ionicons name="wallet" size={20} color={walletTokens.ON_PRIMARY} />
+              <Ionicons name="diamond" size={20} color={walletTokens.ON_PRIMARY} />
               <Text style={styles.walletName}>{summary.walletName}</Text>
             </View>
             <View style={styles.walletIdBlock}>
@@ -99,8 +98,10 @@ export const WalletScreen = () => {
             accessibilityRole="button"
             accessibilityLabel={WALLET_SCREEN.withdrawLabel}
           >
-            <Ionicons name="business-outline" size={20} color={walletTokens.ON_PRIMARY} />
-            <Text style={styles.actionLabelPrimary}>{WALLET_SCREEN.withdrawLabel}</Text>
+            <Ionicons name="business-outline" size={18} color={walletTokens.ON_PRIMARY} />
+            <Text style={styles.actionLabelPrimary} numberOfLines={1}>
+              {WALLET_SCREEN.withdrawLabel}
+            </Text>
           </Pressable>
           <Pressable
             style={({ pressed }) => [styles.addMoneyButton, pressed && { transform: [{ scale: 0.97 }] }]}
@@ -108,21 +109,27 @@ export const WalletScreen = () => {
             accessibilityRole="button"
             accessibilityLabel={WALLET_SCREEN.addMoneyLabel}
           >
-            <Ionicons name="add-circle-outline" size={20} color={walletTokens.PRIMARY} />
-            <Text style={styles.actionLabelOutline}>{WALLET_SCREEN.addMoneyLabel}</Text>
+            <Ionicons name="add" size={18} color={walletTokens.PRIMARY} />
+            <Text style={styles.actionLabelOutline} numberOfLines={1}>
+              {WALLET_SCREEN.addMoneyLabel}
+            </Text>
           </Pressable>
         </View>
 
         <View style={styles.transactionsSection}>
           <View style={styles.transactionsHeader}>
-            <Text style={styles.transactionsTitle}>{WALLET_SCREEN.transactionsTitle}</Text>
+            <Text style={styles.transactionsTitle} numberOfLines={1}>
+              {WALLET_SCREEN.transactionsTitle}
+            </Text>
             <Pressable
               onPress={viewAll}
               accessibilityRole="button"
               accessibilityLabel={WALLET_SCREEN.viewAllLabel}
               hitSlop={8}
             >
-              <Text style={styles.viewAllLabel}>{WALLET_SCREEN.viewAllLabel}</Text>
+              <Text style={styles.viewAllLabel} numberOfLines={1}>
+                {WALLET_SCREEN.viewAllLabel}
+              </Text>
             </Pressable>
           </View>
 
@@ -187,9 +194,12 @@ export const WalletScreen = () => {
                       </View>
                     </View>
                     <View style={styles.transactionRight}>
-                      <Text style={isCredit ? styles.amountCredit : styles.amountDebit}>
-                        {tx.amountLabel}
-                      </Text>
+                      <View style={styles.amountRow}>
+                        <BhaiWayCoinIcon size={14} />
+                        <Text style={isCredit ? styles.amountCredit : styles.amountDebit}>
+                          {tx.amountLabel}
+                        </Text>
+                      </View>
                       <Text style={styles.typeLabel}>{tx.type}</Text>
                     </View>
                   </Pressable>

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Modal, Platform, Pressable, Text, View } from 'react-native';
+import { Modal, Platform, Pressable, View } from 'react-native';
 import DateTimePicker, {
   type DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
@@ -9,6 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, spacing } from '@/shared/theme';
 import { styles } from './NativeDatePicker.styles';
 import type { NativeDatePickerProps } from './NativeDatePicker.types';
+import { AppText as Text } from '../AppText';
 
 export const NativeDatePicker = ({
   visible,

@@ -36,7 +36,29 @@ export interface PublishRideFormValues {
   pricePerSeat: string;
 }
 
+export type RidePreferenceId = 'noSmoking' | 'noPets' | 'luggage' | 'music';
+
+export interface PublishRidePreferences {
+  noSmoking: boolean;
+  noPets: boolean;
+  luggage: boolean;
+  music: boolean;
+}
+
+export interface PublishRideVehicleOption {
+  id: string;
+  name: string;
+  plateNumber: string;
+  icon: 'car' | 'car-sport';
+}
+
 export interface PublishRideDraft extends PublishRideFormValues {
   originLocation: SelectedLocation | null;
   destinationLocation: SelectedLocation | null;
+  preferences: PublishRidePreferences;
+  notes: string;
+  selectedVehicleId: string | null;
+  /** Assured rides only. */
+  promoCode: string;
+  promoApplied: boolean;
 }

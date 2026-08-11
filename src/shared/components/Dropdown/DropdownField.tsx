@@ -1,10 +1,11 @@
 import React from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { colors } from '@/shared/theme';
 import { styles } from './Dropdown.styles';
 import type { DropdownFieldProps } from './Dropdown.types';
+import { AppText as Text } from '../AppText';
 
 export const DropdownField = ({
   label,

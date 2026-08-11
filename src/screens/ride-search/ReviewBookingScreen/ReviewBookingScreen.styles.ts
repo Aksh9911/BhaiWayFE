@@ -12,7 +12,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: spacing.md,
     paddingBottom: spacing.huge,
-    gap: spacing.lg,
+    gap: spacing.cardGap,
   },
   footer: {
     paddingHorizontal: 20,

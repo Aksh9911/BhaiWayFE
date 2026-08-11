@@ -47,7 +47,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.lg,
     paddingBottom: spacing.xxxl,
-    gap: spacing.lg,
+    gap: spacing.cardGap,
   },
   statusCard: {
     backgroundColor: colors.white,
@@ -73,7 +73,7 @@ export const styles = StyleSheet.create({
   statusLeft: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: spacing.lg,
+    gap: spacing.cardGap,
     flex: 1,
   },
   flagWrap: {
@@ -214,7 +214,7 @@ export const styles = StyleSheet.create({
   navRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.lg,
+    gap: spacing.cardGap,
     flex: 1,
   },
   navIcon: {

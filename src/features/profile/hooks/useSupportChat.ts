@@ -1,9 +1,16 @@
-import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
-import { Alert, type FlatList } from 'react-native';
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type RefObject } from 'react';
+import { type FlatList } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 
 import { ROUTES } from '@/config';
-import { triggerLightHaptic } from '@/shared/utils';
+import {
+  SUPPORT_CHAT_THREAD_KEY,
+  chatMessagesSheetStore,
+  chatSheetSync,
+  type ChatMessagesSheetRow,
+} from '@/DemoData';
+import { triggerLightHaptic, showAppAlert } from '@/shared/utils';
 import {
   DEFAULT_SUPPORT_CHAT_MESSAGES,
   SUPPORT_CHAT_SCREEN,
@@ -22,12 +29,27 @@ export interface UseSupportChatResult {
   attachFile: () => void;
 }
 
+const mapRow = (row: ChatMessagesSheetRow): SupportChatMessage => ({
+  id: String(row.messageId),
+  sender: row.sender === 'support' ? 'support' : 'user',
+  text: row.text,
+  timeLabel: row.timeLabel,
+  status: row.status === 'sent' || row.status === 'read' ? row.status : undefined,
+});
+
+const getSnapshot = (): string =>
+  chatMessagesSheetStore
+    .getForCurrentUserThread(SUPPORT_CHAT_THREAD_KEY)
+    .map((row) => `${row.messageId}:${row.text}:${row.status}`)
+    .join('|');
+
+const subscribe = (onStoreChange: () => void): (() => void) =>
+  chatMessagesSheetStore.subscribe(() => onStoreChange());
+
 export const useSupportChat = (): UseSupportChatResult => {
   const router = useRouter();
   const listRef = useRef<FlatList<SupportChatMessage> | null>(null);
-  const [messages, setMessages] = useState<SupportChatMessage[]>([
-    ...DEFAULT_SUPPORT_CHAT_MESSAGES,
-  ]);
+  const sheetSnapshot = useSyncExternalStore(subscribe, getSnapshot);
   const [draft, setDraft] = useState('');
   const [isTyping, setIsTyping] = useState(true);
 
@@ -37,6 +59,39 @@ export const useSupportChat = (): UseSupportChatResult => {
     });
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
+      void (async () => {
+        try {
+          await chatSheetSync.pullIntoLocal();
+          await chatSheetSync.ensureSupportThread();
+          if (!active) {
+            return;
+          }
+          if (
+            chatMessagesSheetStore.getForCurrentUserThread(SUPPORT_CHAT_THREAD_KEY).length === 0
+          ) {
+            for (const message of DEFAULT_SUPPORT_CHAT_MESSAGES) {
+              await chatSheetSync.upsertMessageAndSync({
+                threadKey: SUPPORT_CHAT_THREAD_KEY,
+                sender: message.sender,
+                text: message.text,
+                timeLabel: message.timeLabel,
+                status: message.status || '',
+              });
+            }
+          }
+        } catch {
+          // keep local
+        }
+      })();
+      return () => {
+        active = false;
+      };
+    }, []),
+  );
+
   useEffect(() => {
     const hideTyping = setTimeout(() => setIsTyping(false), 2800);
     const scroll = setTimeout(scrollToEnd, 100);
@@ -44,7 +99,13 @@ export const useSupportChat = (): UseSupportChatResult => {
       clearTimeout(hideTyping);
       clearTimeout(scroll);
     };
-  }, [scrollToEnd]);
+  }, [scrollToEnd, sheetSnapshot]);
+
+  const messages = useMemo(
+    () =>
+      chatMessagesSheetStore.getForCurrentUserThread(SUPPORT_CHAT_THREAD_KEY).map(mapRow),
+    [sheetSnapshot],
+  );
 
   const goBack = useCallback(() => {
     if (router.canGoBack()) {
@@ -56,7 +117,7 @@ export const useSupportChat = (): UseSupportChatResult => {
 
   const attachFile = useCallback(() => {
     triggerLightHaptic();
-    Alert.alert(SUPPORT_CHAT_SCREEN.attachTitle, SUPPORT_CHAT_SCREEN.attachMessage);
+    showAppAlert(SUPPORT_CHAT_SCREEN.attachTitle, SUPPORT_CHAT_SCREEN.attachMessage);
   }, []);
 
   const sendMessage = useCallback(() => {
@@ -65,39 +126,45 @@ export const useSupportChat = (): UseSupportChatResult => {
       return;
     }
 
-    const id = `u-${Date.now()}`;
-    const next: SupportChatMessage = {
-      id,
-      sender: 'user',
-      text: content,
-      timeLabel: formatSupportChatTime(),
-      status: 'sent',
-    };
-
-    setMessages((prev) => [...prev, next]);
+    const timeLabel = formatSupportChatTime();
     setDraft('');
     setIsTyping(true);
     scrollToEnd();
 
-    setTimeout(() => {
-      setMessages((prev) =>
-        prev.map((message) => (message.id === id ? { ...message, status: 'read' } : message)),
-      );
-    }, 900);
-
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `s-${Date.now()}`,
-          sender: 'support',
-          text: 'Thanks for the details. I am reviewing this now and will update you shortly.',
-          timeLabel: formatSupportChatTime(),
-        },
-      ]);
-      setIsTyping(false);
+    void (async () => {
+      const result = await chatSheetSync.upsertMessageAndSync({
+        threadKey: SUPPORT_CHAT_THREAD_KEY,
+        sender: 'user',
+        text: content,
+        timeLabel,
+        status: 'sent',
+      });
       scrollToEnd();
-    }, 2200);
+
+      setTimeout(() => {
+        void chatSheetSync.upsertMessageAndSync({
+          messageId: result.id,
+          threadKey: SUPPORT_CHAT_THREAD_KEY,
+          sender: 'user',
+          text: content,
+          timeLabel,
+          status: 'read',
+        });
+      }, 900);
+
+      setTimeout(() => {
+        void (async () => {
+          await chatSheetSync.upsertMessageAndSync({
+            threadKey: SUPPORT_CHAT_THREAD_KEY,
+            sender: 'support',
+            text: 'Thanks for the details. I am reviewing this now and will update you shortly.',
+            timeLabel: formatSupportChatTime(),
+          });
+          setIsTyping(false);
+          scrollToEnd();
+        })();
+      }, 2200);
+    })();
   }, [draft, scrollToEnd]);
 
   return {

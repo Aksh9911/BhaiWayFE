@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
-import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
+import { showAppAlert } from '@/store';
 
 import { ROUTES } from '@/config';
 import {
@@ -54,7 +54,7 @@ export const useEmergencyEndTrip = (): UseEmergencyEndTripResult => {
   const capturePhoto = useCallback(async () => {
     const permission = await ImagePicker.requestCameraPermissionsAsync();
     if (!permission.granted) {
-      Alert.alert('Camera access needed', 'Allow camera access to upload evidence.');
+      showAppAlert('Camera access needed', 'Allow camera access to upload evidence.');
       return;
     }
 
@@ -80,7 +80,7 @@ export const useEmergencyEndTrip = (): UseEmergencyEndTripResult => {
 
   const submit = useCallback(() => {
     if (!selectedIssue) {
-      Alert.alert('Select an issue', EMERGENCY_END_TRIP_SCREEN.selectIssueMessage);
+      showAppAlert('Select an issue', EMERGENCY_END_TRIP_SCREEN.selectIssueMessage);
       return;
     }
     if (submitting) {

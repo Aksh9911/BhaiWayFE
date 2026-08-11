@@ -71,6 +71,13 @@ module.exports = () => {
         process.env.EXPO_PUBLIC_CLOUDINARY_UPLOAD_PRESET,
         base.extra?.cloudinaryUploadPreset,
       ),
+      msg91WidgetId: firstNonEmpty(process.env.EXPO_PUBLIC_MSG91_WIDGET_ID),
+      msg91AuthToken: firstNonEmpty(process.env.EXPO_PUBLIC_MSG91_AUTH_TOKEN),
+      googleSheetId: firstNonEmpty(
+        process.env.EXPO_PUBLIC_GOOGLE_SHEET_ID,
+        '1W_2ZuTbhrlMKuArAov4E5hzH11LtGs_s6xtiI98nj6w',
+      ),
+      googleSheetWebhookUrl: firstNonEmpty(process.env.EXPO_PUBLIC_GOOGLE_SHEETS_WEBHOOK_URL),
     },
   };
 };

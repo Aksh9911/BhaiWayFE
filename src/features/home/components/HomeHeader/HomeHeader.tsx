@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-import { Avatar, IconButton } from '@/shared/components';
+import { IconButton, AppText as Text } from '@/shared/components';
 import { colors } from '@/shared/theme';
 import { styles } from './HomeHeader.styles';
 import type { HomeHeaderProps } from './HomeHeader.types';
@@ -11,10 +11,9 @@ export const HomeHeader = React.memo(
   ({
     brandName,
     location,
-    avatarUri,
     hasUnreadNotifications = false,
-    onProfilePress,
     onNotificationsPress,
+    onProfilePress,
   }: HomeHeaderProps) => {
     const locationLabel = useMemo(() => {
       if (location.label && location.city && location.label !== location.city) {
@@ -44,7 +43,11 @@ export const HomeHeader = React.memo(
             accessibilityLabel="Notifications"
             showBadge={hasUnreadNotifications}
           />
-          <Avatar uri={avatarUri} onPress={onProfilePress} accessibilityLabel="Open profile" />
+          <IconButton
+            icon="person-circle-outline"
+            onPress={onProfilePress}
+            accessibilityLabel="Profile"
+          />
         </View>
       </View>
     );

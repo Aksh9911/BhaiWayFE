@@ -1,10 +1,9 @@
 import { useCallback, useState } from 'react';
-import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { ROUTES } from '@/config';
 import { triggerLightHaptic, triggerSuccessHaptic } from '@/shared/utils';
-import { authSession } from '@/store';
+import { authSession, showAppAlert } from '@/store';
 import { DELETE_ACCOUNT_REASONS, DELETE_ACCOUNT_SCREEN } from '../constants';
 import type { DeleteAccountReason, DeleteAccountReasonId } from '../types';
 
@@ -50,7 +49,7 @@ export const useDeleteAccount = (): UseDeleteAccountResult => {
 
   const deleteAccount = useCallback(() => {
     triggerLightHaptic();
-    Alert.alert(DELETE_ACCOUNT_SCREEN.confirmTitle, DELETE_ACCOUNT_SCREEN.confirmMessage, [
+    showAppAlert(DELETE_ACCOUNT_SCREEN.confirmTitle, DELETE_ACCOUNT_SCREEN.confirmMessage, [
       { text: DELETE_ACCOUNT_SCREEN.confirmCancel, style: 'cancel' },
       {
         text: DELETE_ACCOUNT_SCREEN.confirmAction,

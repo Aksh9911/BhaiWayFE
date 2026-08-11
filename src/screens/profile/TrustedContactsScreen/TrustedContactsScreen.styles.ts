@@ -67,7 +67,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.xxxl,
     paddingBottom: spacing.huge + spacing.xxxl,
-    gap: spacing.huge,
+    gap: spacing.sectionGap,
     maxWidth: layout.maxContentWidth,
     width: '100%',
     alignSelf: 'center',
@@ -78,7 +78,7 @@ export const styles = StyleSheet.create({
     color: trustedContactsTokens.ON_SURFACE_VARIANT,
   },
   list: {
-    gap: spacing.xxxl,
+    gap: spacing.cardGap,
   },
   contactCard: {
     backgroundColor: trustedContactsTokens.SURFACE_LOWEST,

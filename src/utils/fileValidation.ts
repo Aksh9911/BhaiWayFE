@@ -68,8 +68,8 @@ export const validateFileForKind = async (
   kind: UploadKind,
 ): Promise<FileMetadata> => {
   const config = UPLOAD_KIND_CONFIG[kind];
-  const mimeType = resolveMimeType(file);
-  const extension =
+  let mimeType = resolveMimeType(file);
+  let extension =
     extensionFromName(file.fileName) ||
     extensionFromUri(file.uri) ||
     (mimeType === 'image/jpeg'
@@ -79,6 +79,13 @@ export const validateFileForKind = async (
         : mimeType === 'application/pdf'
           ? 'pdf'
           : '');
+
+  // Camera / gallery picks frequently omit mime + filename. Treat as JPEG images
+  // (UploadDocumentSheet / ImagePicker only return images for these flows).
+  if (!mimeType && !extension && file.uri) {
+    mimeType = 'image/jpeg';
+    extension = 'jpg';
+  }
 
   const mimeOk =
     mimeType && (config.allowedMimeTypes as readonly string[]).includes(mimeType);
@@ -106,6 +113,7 @@ export const validateFileForKind = async (
 
   return {
     ...file,
+    fileName: file.fileName ?? (extension ? `upload.${extension}` : undefined),
     mimeType: mimeType ?? file.mimeType,
     sizeBytes,
   };

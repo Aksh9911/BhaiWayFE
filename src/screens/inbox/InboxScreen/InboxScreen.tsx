@@ -1,10 +1,10 @@
 import React, { useCallback } from 'react';
-import { FlatList, Pressable, Text, View } from 'react-native';
+import { FlatList, Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppFooter, Avatar } from '@/shared/components';
-import { useSessionUser } from '@/shared/hooks';
+import { AppFooter, IconButton, AppText as Text } from '@/shared/components';
+import { colors } from '@/shared/theme';
 import { triggerLightHaptic } from '@/shared/utils';
 import { InboxThreadCard } from '@/features/inbox/components';
 import { INBOX_SCREEN } from '@/features/inbox/constants';
@@ -13,15 +13,13 @@ import type { InboxThread } from '@/features/inbox/types';
 import { styles } from './InboxScreen.styles';
 
 export const InboxScreen = () => {
-  const user = useSessionUser();
   const {
-    mode,
     subtitle,
     emptyMessage,
     threads,
     openThread,
     openNotifications,
-    openProfile,
+    mode,
   } = useInbox();
 
   const handleOpenThread = useCallback(
@@ -47,26 +45,12 @@ export const InboxScreen = () => {
           <Text style={styles.subtitle}>{subtitle}</Text>
         </View>
         <View style={styles.headerRight}>
-          <Pressable
-            style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.7 }]}
+          <IconButton
+            icon="notifications-outline"
             onPress={openNotifications}
-            accessibilityRole="button"
+            color={colors.primary}
             accessibilityLabel="Open notifications"
-          >
-            <Ionicons name="notifications-outline" size={22} color="#434655" />
-          </Pressable>
-          <Pressable
-            style={styles.avatarRing}
-            onPress={openProfile}
-            accessibilityRole="button"
-            accessibilityLabel="Open profile"
-          >
-            <Avatar
-              uri={user?.avatarUri}
-              size={36}
-              accessibilityLabel="Profile photo"
-            />
-          </Pressable>
+          />
         </View>
       </View>
 

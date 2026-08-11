@@ -1,8 +1,8 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-import { Button } from '@/shared/components';
+import { Button, AppText as Text } from '@/shared/components';
 import { colors } from '@/shared/theme';
 import { styles } from './RideTypeCard.styles';
 import type { RideTypeCardProps } from './RideTypeCard.types';
@@ -33,7 +33,7 @@ export const RideTypeCard = React.memo(
         <Text style={styles.title}>{title}</Text>
         {badge ? (
           <View style={styles.badge}>
-            <Ionicons name="star" size={12} color="#F97316" />
+            <Ionicons name="star" size={12} color={colors.primary} />
             <Text style={styles.badgeText}>{badge}</Text>
           </View>
         ) : null}

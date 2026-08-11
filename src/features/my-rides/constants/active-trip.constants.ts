@@ -1,6 +1,6 @@
 import { ROUTES } from '@/config';
 
-import type { ActiveTripSummary } from '../types';
+import type { ActiveTripSummary, DriverRideKind } from '../types';
 
 export const DRIVER_ACTIVE_TRIP_SCREEN = {
   brandName: 'BhaiWay',
@@ -44,4 +44,7 @@ export const DEFAULT_DRIVER_ACTIVE_TRIP: ActiveTripSummary = {
   ],
 };
 
-export const getDriverActiveTripPath = () => ROUTES.myRidesActiveTrip;
+export const getDriverActiveTripPath = (rideType: DriverRideKind = 'assured') => ({
+  pathname: ROUTES.myRidesActiveTrip,
+  params: { rideType },
+});

@@ -1,16 +1,9 @@
 import React from 'react';
-import {
-  ActivityIndicator,
-  Pressable,
-  SectionList,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Pressable, SectionList, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppFooter, IconButton } from '@/shared/components';
+import { AppFooter, IconButton, AppText as Text, AppTextInput as TextInput } from '@/shared/components';
 import { colors, spacing } from '@/shared/theme';
 import {
   DestinationConfirmPanel,
@@ -39,6 +32,7 @@ export const MapSearchScreen = () => {
     selected,
     searchedPlaceName,
     handleRegionChangeComplete,
+    markUserMapGesture,
     selectPrediction,
     locateMe,
     confirm,
@@ -92,7 +86,7 @@ export const MapSearchScreen = () => {
           <IconButton
             icon="arrow-back"
             onPress={closeSearch}
-            color={colors.textPrimary}
+            color={colors.primary}
             accessibilityLabel="Close search"
           />
           <View style={styles.searchField}>
@@ -163,7 +157,7 @@ export const MapSearchScreen = () => {
                 <Text style={styles.emptySubtitle}>
                   {isSearching
                     ? 'Try a different name, area, landmark, airport, or station.'
-                    : 'Suggestions appear as you type. Recent and nearby places show when the box is empty.'}
+                    : 'Use current location to set this point, or start typing to search.'}
                 </Text>
               </View>
             )
@@ -179,7 +173,7 @@ export const MapSearchScreen = () => {
         <IconButton
           icon="arrow-back"
           onPress={goBack}
-          color={colors.textPrimary}
+          color={colors.primary}
           accessibilityLabel="Go back"
         />
         <Text style={styles.title}>{copy.title}</Text>
@@ -190,6 +184,7 @@ export const MapSearchScreen = () => {
           region={region}
           boundary={selected.boundary}
           onRegionChangeComplete={handleRegionChangeComplete}
+          onUserGesture={markUserMapGesture}
           onLocatePress={() => {
             void locateMe({ showInSearchBox: true });
           }}

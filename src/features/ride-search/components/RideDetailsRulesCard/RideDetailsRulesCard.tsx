@@ -1,11 +1,12 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { colors } from '@/shared/theme';
 import { RIDE_DETAILS_SCREEN } from '../../constants';
 import type { RideRule } from '../../types';
 import { styles } from './RideDetailsRulesCard.styles';
+import { AppText as Text } from '@/shared/components';
 
 export interface RideDetailsRulesCardProps {
   rules: readonly RideRule[];

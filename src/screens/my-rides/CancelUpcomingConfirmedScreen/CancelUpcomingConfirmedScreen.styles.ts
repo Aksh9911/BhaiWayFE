@@ -22,7 +22,7 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 24,
     fontWeight: '600',
-    color: '#191C1D',
+    color: colors.primary,
   },
   headerSpacer: {
     width: 40,

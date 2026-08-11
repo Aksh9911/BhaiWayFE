@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
 import {
   formatRideDetailsAmount,
@@ -7,6 +7,7 @@ import {
 } from '../../constants';
 import type { RideDetailsFare } from '../../types';
 import { styles } from './RideDetailsFareCard.styles';
+import { AppText as Text } from '@/shared/components';
 
 export interface RideDetailsFareCardProps {
   fare: RideDetailsFare;

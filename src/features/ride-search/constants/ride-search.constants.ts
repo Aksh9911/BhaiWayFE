@@ -7,7 +7,7 @@ import type {
 
 export const RIDE_SEARCH_PASSENGER_LIMITS = {
   min: 1,
-  max: 3,
+  max: 6,
 } as const;
 
 export const DEFAULT_PASSENGER_COUNT = RIDE_SEARCH_PASSENGER_LIMITS.min;
@@ -91,6 +91,15 @@ export const SAVED_PLACES: readonly SavedPlace[] = [
 
 /** Average speed used to estimate travel time from straight-line distance. */
 export const ROUTE_AVERAGE_SPEED_KMPH = 45;
+
+/** Minimum straight-line gap between start and destination for office commute. */
+export const MIN_OFFICE_COMMUTE_DISTANCE_KM = 1.5;
+
+/**
+ * Minimum straight-line gap for outstation / Find Ride.
+ * `0` = no minimum distance between starting point and destination.
+ */
+export const MIN_OUTSTATION_DISTANCE_KM = 0;
 
 export const SELECT_DESTINATION_SCREEN = {
   title: 'Destination',

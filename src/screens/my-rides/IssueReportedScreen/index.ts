@@ -1,0 +1,1 @@
+export { IssueReportedScreen } from './IssueReportedScreen';

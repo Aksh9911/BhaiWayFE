@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
-import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppFooter, IconButton } from '@/shared/components';
+import { AppFooter, IconButton, AppText as Text, AppTextInput as TextInput } from '@/shared/components';
 import { triggerLightHaptic } from '@/shared/utils';
 import {
   HELP_SUPPORT_SCREEN,

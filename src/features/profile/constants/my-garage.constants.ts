@@ -8,26 +8,19 @@ export const MY_GARAGE_SCREEN = {
   whyTitle: 'Why Verify RC?',
   whyBody:
     'Verified vehicles gain higher trust scores, attracting more passengers and ensuring compliance with regional transport regulations. Process typically takes 24-48 hours.',
-  addVehicleLabel: '+ Add New Vehicle',
-  comingSoonTitle: 'Coming Soon',
-  comingSoonMessage: 'This garage action will be available soon.',
-  vehicleActionsTitle: 'Vehicle Options',
+  addVehicleLabel: 'Add New Vehicle',
+  emptyTitle: 'No vehicles yet',
+  emptySubtitle:
+    'Add one or more vehicles. They are saved to your Vehicles sheet and you can use the app as a driver and a rider.',
+  cancelLabel: 'Cancel',
+  deleteTitle: 'Delete vehicle?',
+  deleteMessage: (name: string) => `Remove ${name} from your garage?`,
+  deleteConfirmLabel: 'Delete',
+  deleteFailedTitle: 'Unable to delete',
 } as const;
 
-export const GARAGE_VEHICLES: readonly GarageVehicle[] = [
-  {
-    id: 'v1',
-    name: 'White Swift Dzire',
-    plateNumber: 'DL 01 AB 1234',
-    rcStatus: 'approved',
-  },
-  {
-    id: 'v2',
-    name: 'Hyundai Creta',
-    plateNumber: 'UP 16 XY 9876',
-    rcStatus: 'pending',
-  },
-] as const;
+/** @deprecated Mock list removed — garage reads vehicles from the UserDetails sheet. */
+export const GARAGE_VEHICLES: readonly GarageVehicle[] = [];
 
 export const VEHICLE_RC_STATUS_LABEL = {
   approved: 'RC Approved',

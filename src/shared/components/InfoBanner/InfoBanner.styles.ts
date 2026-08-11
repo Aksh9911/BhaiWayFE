@@ -18,7 +18,7 @@ export const styles = StyleSheet.create({
   verify: {
     backgroundColor: colors.white,
     borderLeftWidth: 4,
-    borderLeftColor: '#FFA500',
+    borderLeftColor: colors.primary,
     ...createShadow({
       color: colors.shadow,
       opacity: 0.04,
@@ -30,7 +30,7 @@ export const styles = StyleSheet.create({
   security: {
     backgroundColor: 'rgba(218, 223, 247, 0.3)',
     borderWidth: 1,
-    borderColor: '#DADFF7',
+    borderColor: colors.accentLight,
   },
   iconWrap: {
     width: 40,
@@ -43,7 +43,7 @@ export const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   iconVerify: {
-    backgroundColor: '#FFDBCA',
+    backgroundColor: colors.accentLight,
   },
   iconSecurity: {
     backgroundColor: colors.white,
@@ -66,7 +66,7 @@ export const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 0.6,
     textTransform: 'uppercase',
-    color: '#5C6276',
+    color: colors.textMuted,
   },
   description: {
     ...typography.caption,
@@ -75,7 +75,7 @@ export const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   descriptionSecurity: {
-    color: '#5C6276',
+    color: colors.textMuted,
   },
   actionText: {
     ...typography.label,
@@ -84,7 +84,7 @@ export const styles = StyleSheet.create({
   },
   actionPill: {
     alignSelf: 'flex-start',
-    backgroundColor: '#0B1C30',
+    backgroundColor: colors.primary,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 999,
@@ -95,6 +95,6 @@ export const styles = StyleSheet.create({
     lineHeight: 16,
     fontWeight: '500',
     letterSpacing: 0.2,
-    color: '#F8F9FF',
+    color: colors.textInverse,
   },
 });

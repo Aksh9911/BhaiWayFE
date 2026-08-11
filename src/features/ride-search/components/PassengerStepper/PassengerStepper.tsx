@@ -1,15 +1,16 @@
 import React, { useCallback } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { colors } from '@/shared/theme';
 import { styles } from './PassengerStepper.styles';
 import type { PassengerStepperProps } from './PassengerStepper.types';
+import { AppText as Text } from '@/shared/components';
 
 export const PassengerStepper = ({
   value,
   min = 1,
-  max = 3,
+  max = 6,
   onChange,
 }: PassengerStepperProps) => {
   const canDecrease = value > min;

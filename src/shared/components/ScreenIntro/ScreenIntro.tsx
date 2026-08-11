@@ -1,8 +1,9 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
 import { styles } from './ScreenIntro.styles';
 import type { ScreenIntroProps } from './ScreenIntro.types';
+import { AppText as Text } from '../AppText';
 
 export const ScreenIntro = ({
   title,

@@ -1,6 +1,6 @@
 export type CloudinaryResourceType = 'image' | 'raw' | 'auto';
 
-export type UploadKind = 'profile' | 'dl' | 'rc' | 'generic';
+export type UploadKind = 'profile' | 'dl' | 'rc' | 'corporateId' | 'issueReport' | 'generic';
 
 export type UploadSource = 'camera' | 'gallery' | 'files';
 
@@ -39,13 +39,20 @@ export interface UploadFileRequest {
    * - profile → bhaiway/profile
    * - dl → bhaiway/documents/dl
    * - rc → bhaiway/documents/rc
+   * - corporateId → bhaiway/documents/CorporateID
+   * - issueReport → bhaiway/IssueReport
    */
   kind?: UploadKind;
   /**
    * Explicit Cloudinary folder path.
-   * Required only when `kind` is omitted. Prefer `kind` for normal uploads.
+   * Required only when `kind` is omitted (unless `skipFolder` is true). Prefer `kind` for normal uploads.
    */
   folder?: string;
+  /**
+   * When true, do not send a `folder` field.
+   * Needed when the unsigned preset is locked to a fixed folder.
+   */
+  skipFolder?: boolean;
   fileName?: string;
   mimeType?: string;
   resourceType?: CloudinaryResourceType;

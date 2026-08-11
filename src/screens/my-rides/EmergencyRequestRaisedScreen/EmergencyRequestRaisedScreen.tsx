@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, {
@@ -11,7 +11,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { AppFooter, IconButton } from '@/shared/components';
+import { AppFooter, IconButton, AppText as Text } from '@/shared/components';
 import { triggerLightHaptic, useExitOnBack } from '@/shared/utils';
 import { EMERGENCY_REQUEST_RAISED_SCREEN } from '@/features/my-rides/constants';
 import { useEmergencyRequestRaised } from '@/features/my-rides/hooks';

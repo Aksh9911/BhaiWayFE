@@ -1,10 +1,11 @@
 import React from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { COMMUTE_RIDE_RESULT_SCREEN } from '../../constants/commute-ride-result.constants';
 import { styles } from './CommuteSearchSummaryCard.styles';
 import type { CommuteSearchSummaryCardProps } from './CommuteSearchSummaryCard.types';
+import { AppText as Text } from '@/shared/components';
 
 export const CommuteSearchSummaryCard = React.memo(
   ({
@@ -18,7 +19,7 @@ export const CommuteSearchSummaryCard = React.memo(
           <Text style={styles.routeLabel} numberOfLines={1}>
             {summary.origin}
           </Text>
-          <Ionicons name="arrow-forward" size={14} color="#0B1C30" />
+          <Ionicons name="arrow-forward" size={14} color="#191C1D" />
           <Text style={styles.routeLabel} numberOfLines={1}>
             {summary.destination}
           </Text>

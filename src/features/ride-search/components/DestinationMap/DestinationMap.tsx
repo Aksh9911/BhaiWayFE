@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import MapView, { type Region } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,6 +8,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import { isGoogleMapsBypassed, MapBypassSurface } from '@/shared/maps';
 import { colors, spacing } from '@/shared/theme';
 import { styles } from './DestinationMap.styles';
 import type { DestinationMapProps } from './DestinationMap.types';
@@ -19,9 +20,10 @@ const isAndroid = Platform.OS === 'android';
 
 export const DestinationMap = ({
   region,
-  boundary,
+  boundary: _boundary,
   controlsBottomInset = 0,
   onRegionChangeComplete,
+  onUserGesture,
   onLocatePress,
 }: DestinationMapProps) => {
   const mapRef = useRef<MapView>(null);
@@ -30,20 +32,12 @@ export const DestinationMap = ({
   regionLiveRef.current = region;
   const [heading, setHeading] = useState(0);
   const compassRotation = useSharedValue(0);
-
-  const boundaryRing = useMemo(() => {
-    if (!boundary || boundary.length < 3) {
-      return null;
-    }
-    const first = boundary[0];
-    const last = boundary[boundary.length - 1];
-    const isClosed =
-      Math.abs(first.latitude - last.latitude) < 0.000001 &&
-      Math.abs(first.longitude - last.longitude) < 0.000001;
-    return isClosed ? boundary : [...boundary, first];
-  }, [boundary]);
+  const bypassMaps = isGoogleMapsBypassed();
 
   const syncHeading = useCallback(async () => {
+    if (bypassMaps) {
+      return;
+    }
     try {
       const camera = await mapRef.current?.getCamera();
       const nextHeading = camera?.heading ?? 0;
@@ -52,7 +46,7 @@ export const DestinationMap = ({
     } catch {
       // Camera may be unavailable during early layout.
     }
-  }, [compassRotation]);
+  }, [bypassMaps, compassRotation]);
 
   const emitRegion = useCallback(
     (next: {
@@ -81,24 +75,18 @@ export const DestinationMap = ({
 
     lastProgrammaticRegion.current = region;
     regionLiveRef.current = region;
-    // animateToRegion applies both center and zoom (delta), unlike animateCamera
-    // which was keeping the previous zoom level.
-    mapRef.current?.animateToRegion(region, 400);
-    void syncHeading();
-  }, [region, syncHeading]);
-
-  useEffect(() => {
-    if (!boundaryRing) {
-      return;
+    if (!bypassMaps) {
+      mapRef.current?.animateToRegion(region, 400);
+      void syncHeading();
     }
-    mapRef.current?.fitToCoordinates(boundaryRing, {
-      edgePadding: { top: 80, right: 56, bottom: 80, left: 56 },
-      animated: true,
-    });
-    void syncHeading();
-  }, [boundaryRing, syncHeading]);
+  }, [bypassMaps, region, syncHeading]);
 
   const resetCompass = useCallback(() => {
+    if (bypassMaps) {
+      setHeading(0);
+      compassRotation.value = withTiming(0, { duration: 300 });
+      return;
+    }
     void (async () => {
       const camera = await mapRef.current?.getCamera();
       mapRef.current?.animateCamera(
@@ -117,7 +105,7 @@ export const DestinationMap = ({
       setHeading(0);
       compassRotation.value = withTiming(0, { duration: 300 });
     })();
-  }, [compassRotation]);
+  }, [bypassMaps, compassRotation]);
 
   const zoomBy = useCallback(
     (direction: 'in' | 'out') => {
@@ -136,10 +124,13 @@ export const DestinationMap = ({
         longitudeDelta: nextLatitudeDelta * aspect,
       };
 
-      mapRef.current?.animateToRegion(next, 220);
+      if (!bypassMaps) {
+        mapRef.current?.animateToRegion(next, 220);
+      }
+      onUserGesture?.();
       emitRegion(next);
     },
-    [emitRegion],
+    [bypassMaps, emitRegion, onUserGesture],
   );
 
   const compassIconStyle = useAnimatedStyle(() => ({
@@ -150,45 +141,68 @@ export const DestinationMap = ({
 
   return (
     <View style={localStyles.fill}>
-      <MapView
-        ref={mapRef}
-        style={styles.map}
-        initialRegion={region}
-        onRegionChangeComplete={(next: Region) => {
-          const mapped = {
-            latitude: next.latitude,
-            longitude: next.longitude,
-            latitudeDelta: next.latitudeDelta,
-            longitudeDelta: next.longitudeDelta,
-          };
-          regionLiveRef.current = mapped;
-          onRegionChangeComplete(mapped);
-          void syncHeading();
-        }}
-        showsUserLocation
-        showsMyLocationButton={false}
-        showsCompass
-        {...(isAndroid
-          ? {
-              compassOffset: { x: -12, y: 72 },
-              zoomControlEnabled: false,
-              minZoomLevel: 3,
-              maxZoomLevel: 20,
-            }
-          : {})}
-        toolbarEnabled={false}
-        rotateEnabled
-        pitchEnabled
-        scrollEnabled
-        zoomEnabled
-      />
+      {bypassMaps ? (
+        <MapBypassSurface
+          style={styles.map}
+          title="Select location"
+          subtitle="Search a place or use locate — Google Maps bypassed"
+          points={[
+            {
+              latitude: region.latitude,
+              longitude: region.longitude,
+              label: 'Pin',
+            },
+          ]}
+        />
+      ) : (
+        <MapView
+          ref={mapRef}
+          style={styles.map}
+          initialRegion={region}
+          onPanDrag={() => {
+            onUserGesture?.();
+          }}
+          onRegionChangeComplete={(next: Region) => {
+            const mapped = {
+              latitude: next.latitude,
+              longitude: next.longitude,
+              latitudeDelta: next.latitudeDelta,
+              longitudeDelta: next.longitudeDelta,
+            };
+            regionLiveRef.current = mapped;
+            onRegionChangeComplete(mapped);
+            void syncHeading();
+          }}
+          showsUserLocation
+          showsMyLocationButton={false}
+          showsCompass
+          {...(isAndroid
+            ? {
+                compassOffset: { x: -12, y: 72 },
+                zoomControlEnabled: false,
+                minZoomLevel: 3,
+                maxZoomLevel: 20,
+              }
+            : {})}
+          toolbarEnabled={false}
+          rotateEnabled
+          pitchEnabled
+          scrollEnabled
+          zoomEnabled
+        />
+      )}
 
       <View style={styles.centerPinWrap}>
         <View style={styles.pin} />
       </View>
 
       <View
-        style={[styles.zoomControls, controlsBottomInset > 0 && { bottom: spacing.lg + 48 + spacing.sm + 48 + spacing.md + controlsBottomInset }]}
+        style={[
+          styles.zoomControls,
+          controlsBottomInset > 0 && {
+            bottom: spacing.lg + 48 + spacing.sm + 48 + spacing.md + controlsBottomInset,
+          },
+        ]}
       >
         <Pressable
           style={styles.zoomButton}

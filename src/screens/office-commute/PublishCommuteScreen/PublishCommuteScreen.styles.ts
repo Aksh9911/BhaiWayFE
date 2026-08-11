@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors } from '@/shared/theme';
+import { colors, spacing } from '@/shared/theme';
 import { createShadow } from '@/shared/utils/platform';
 
 export const styles = StyleSheet.create({
@@ -8,10 +8,10 @@ export const styles = StyleSheet.create({
     backgroundColor: '#F8F9FF',
   },
   scrollContent: {
-    paddingHorizontal: 20,
-    paddingTop: 8,
-    paddingBottom: 32,
-    gap: 16,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.md,
+    gap: spacing.cardGap,
   },
   hero: {
     marginBottom: 8,
@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
     fontSize: 28,
     lineHeight: 36,
     fontWeight: '700',
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   subtitle: {
     fontSize: 16,
@@ -88,7 +88,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     lineHeight: 24,
-    color: '#0B1C30',
+    color: '#191C1D',
     padding: 0,
   },
   locationPlaceholder: {
@@ -139,7 +139,7 @@ export const styles = StyleSheet.create({
     marginBottom: 8,
   },
   optionalBadge: {
-    backgroundColor: '#FFB690',
+    backgroundColor: '#DADFF7',
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 999,
@@ -148,7 +148,7 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 16,
     fontWeight: '500',
-    color: '#341100',
+    color: '#0342D1',
   },
   daysRow: {
     flexDirection: 'row',
@@ -208,7 +208,7 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     fontWeight: '600',
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   returningHint: {
     marginTop: 4,
@@ -245,7 +245,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: '#FFB690',
+    backgroundColor: '#DADFF7',
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 999,
@@ -254,7 +254,7 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 16,
     fontWeight: '500',
-    color: '#341100',
+    color: '#0342D1',
   },
   earningsBox: {
     marginTop: 16,

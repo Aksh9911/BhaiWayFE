@@ -1,11 +1,12 @@
 import React, { useCallback, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
-import { ImageUploader, IconButton } from '@/shared/components';
+import { ImageUploader, IconButton, AppText as Text } from '@/shared/components';
 import { cloudinaryConfig } from '@/config';
 import {
+  saveCorporateIdUrl,
   saveDrivingLicenseUrl,
   saveProfilePhotoUrl,
   saveVehicleRcUrl,
@@ -36,6 +37,10 @@ const persistByKind = async (
   }
   if (kind === 'rc') {
     await saveVehicleRcUrl(result);
+    return;
+  }
+  if (kind === 'corporateId') {
+    await saveCorporateIdUrl(result);
   }
 };
 
@@ -69,9 +74,9 @@ export const MediaUploadExampleScreen = ({
     setIsSaving(true);
     try {
       await persistByKind(kind, lastUpload);
-      showSuccessFeedback('Saved', 'Cloudinary secure_url was sent to the backend.');
+      showSuccessFeedback('Uploaded', 'Saved successfully.');
     } catch {
-      showSuccessFeedback('Save failed', 'Could not persist the Cloudinary URL. Try again.');
+      showSuccessFeedback('Upload failed', 'Could not save. Please try again.');
     } finally {
       setIsSaving(false);
     }

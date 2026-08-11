@@ -3,7 +3,8 @@ export type PaymentMethodId =
   | 'gpay'
   | 'phonepe'
   | 'visa'
-  | 'pay-after-ride';
+  | 'pay-after-ride'
+  | (string & {});
 
 export type PaymentMethodKind = 'wallet' | 'upi' | 'card' | 'pay-after';
 

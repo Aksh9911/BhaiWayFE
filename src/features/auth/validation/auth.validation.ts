@@ -22,6 +22,10 @@ export const profileValidationSchema = z.object({
   }),
 });
 
+export const isProfileFormComplete = (
+  values: Partial<z.infer<typeof profileValidationSchema>>,
+): boolean => profileValidationSchema.safeParse(values).success;
+
 export type PhoneFormValues = z.infer<typeof phoneValidationSchema>;
 export type OtpFormValues = z.infer<typeof otpValidationSchema>;
 export type ProfileFormValues = z.infer<typeof profileValidationSchema>;

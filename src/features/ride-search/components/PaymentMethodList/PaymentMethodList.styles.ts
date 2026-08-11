@@ -75,18 +75,23 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     fontWeight: '600',
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   labelMedium: {
     fontSize: 16,
     lineHeight: 24,
     fontWeight: '500',
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   subtitle: {
     fontSize: 14,
     lineHeight: 20,
     color: '#5C5F61',
+  },
+  balanceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
   },
   balanceValue: {
     fontWeight: '600',
@@ -147,6 +152,9 @@ export const styles = StyleSheet.create({
   bankItemLast: {
     borderRightWidth: 0,
   },
+  bankItemSelected: {
+    backgroundColor: '#EFF4FF',
+  },
   bankIcon: {
     width: 32,
     height: 32,
@@ -159,7 +167,7 @@ export const styles = StyleSheet.create({
     fontWeight: '500',
     letterSpacing: 0.24,
     textAlign: 'center',
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   seeAll: {
     flexDirection: 'row',

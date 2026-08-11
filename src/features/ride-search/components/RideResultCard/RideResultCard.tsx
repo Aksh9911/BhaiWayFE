@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-import { Avatar, Button } from '@/shared/components';
+import { Avatar, Button, AppText as Text } from '@/shared/components';
 import { colors } from '@/shared/theme';
 import { formatDistanceLabel } from '../../utils/route';
 import {
@@ -46,7 +46,7 @@ export const RideResultCard = React.memo(
                 {ride.driver.name}
               </Text>
               <View style={styles.ratingBadge}>
-                <Ionicons name="star" size={14} color="#D95F00" />
+                <Ionicons name="star" size={14} color="#335EEA" />
                 <Text style={styles.ratingText}>{ride.driver.rating.toFixed(1)}</Text>
               </View>
             </View>
@@ -91,7 +91,7 @@ export const RideResultCard = React.memo(
         <View style={styles.footer}>
           <View style={styles.seatsRow}>
             {isUrgent ? (
-              <Ionicons name="warning" size={18} color="#D95F00" />
+              <Ionicons name="warning" size={18} color="#D97706" />
             ) : (
               <Ionicons name="car-outline" size={18} color={colors.textSecondary} />
             )}

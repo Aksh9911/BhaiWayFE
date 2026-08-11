@@ -1,20 +1,13 @@
 import React, { useCallback } from 'react';
-import {
-  Alert,
-  Keyboard,
-  KeyboardAvoidingView,
-  ScrollView,
-  Text,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
+import { Keyboard, KeyboardAvoidingView, ScrollView, TouchableWithoutFeedback, View } from 'react-native';
+
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { Controller } from 'react-hook-form';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ROUTES } from '@/config';
-import { Button, Header, Input } from '@/shared/components';
+import { Button, Header, Input, AppText as Text } from '@/shared/components';
 import { spacing } from '@/shared/theme';
 import {
   keyboardAvoidingBehavior,
@@ -35,7 +28,15 @@ const GENDER_OPTIONS: { label: string; value: Gender; fullWidth?: boolean }[] = 
 export const CompleteProfileScreen = () => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { form, avatarUri, setAvatarUri, loading, submit } = useCompleteProfile();
+  const {
+    form,
+    avatarUri,
+    setAvatarUri,
+    loading,
+    isIdentityVerified,
+    saveDraft,
+    submit,
+  } = useCompleteProfile();
   const {
     control,
     watch,
@@ -53,17 +54,18 @@ export const CompleteProfileScreen = () => {
   );
 
   const handleVerifyIdentity = useCallback(() => {
-    router.push(ROUTES.officeCommuteVerify);
-  }, [router]);
+    saveDraft();
+    router.push(ROUTES.authVerifyAadhaar);
+  }, [router, saveDraft]);
 
   const handleHelp = useCallback(() => {
-    Alert.alert('Help', 'Complete your profile to get started with BhaiWay.');
-  }, []);
+    router.push({ pathname: ROUTES.authFaq, params: { topic: 'profile' } });
+  }, [router]);
 
   return (
     <View style={styles.screen}>
       <Header
-        title="Complete Profile"
+        title="Setup Profile"
         variant="profile"
         onBack={() => router.back()}
         onHelp={handleHelp}
@@ -94,7 +96,7 @@ export const CompleteProfileScreen = () => {
                 name="fullName"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <Input
-                    label="Full Name"
+                    label="Full Name *"
                     placeholder="Enter your full name"
                     value={value}
                     onChangeText={onChange}
@@ -111,7 +113,7 @@ export const CompleteProfileScreen = () => {
                 name="email"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <Input
-                    label="Email Address"
+                    label="Email Address *"
                     placeholder="name@example.com"
                     value={value}
                     onChangeText={onChange}
@@ -127,7 +129,7 @@ export const CompleteProfileScreen = () => {
             </Animated.View>
 
             <Animated.View entering={FadeInDown.delay(180).duration(400)}>
-              <Text style={styles.genderLabel}>Gender</Text>
+              <Text style={styles.genderLabel}>Gender *</Text>
               <View style={styles.genderRow}>
                 {GENDER_OPTIONS.filter((option) => !option.fullWidth).map((option) => (
                   <GenderCard
@@ -157,7 +159,11 @@ export const CompleteProfileScreen = () => {
             </Animated.View>
 
             <Animated.View entering={FadeInDown.delay(260).duration(400)}>
-              <IdentityCard onVerifyPress={handleVerifyIdentity} />
+              <IdentityCard
+                optional
+                verified={isIdentityVerified}
+                onVerifyPress={handleVerifyIdentity}
+              />
             </Animated.View>
           </ScrollView>
         </TouchableWithoutFeedback>

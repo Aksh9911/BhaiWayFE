@@ -1,10 +1,11 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { colors } from '@/shared/theme';
 import { styles } from './SearchSummaryCard.styles';
 import type { SearchSummaryCardProps } from './SearchSummaryCard.types';
+import { AppText as Text } from '@/shared/components';
 
 export const SearchSummaryCard = React.memo(({ summary }: SearchSummaryCardProps) => (
   <View style={styles.card}>

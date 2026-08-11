@@ -12,6 +12,7 @@ export const profileTokens = {
   SURFACE_VARIANT: '#E1E3E4',
   OUTLINE_VARIANT: 'rgba(196, 197, 215, 0.3)',
   SUCCESS: '#0A5D4A',
+  DANGER: '#BA1A1A',
   INSIGHT_BG: '#E7F3EF',
   SECONDARY_SOFT: 'rgba(218, 223, 247, 0.35)',
   SECONDARY: '#585E72',
@@ -56,7 +57,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.xxl,
     paddingBottom: spacing.xxxl,
-    gap: spacing.xxl,
+    gap: spacing.cardGap,
     maxWidth: layout.maxContentWidth,
     width: '100%',
     alignSelf: 'center',
@@ -146,6 +147,9 @@ export const styles = StyleSheet.create({
   badgeSuccess: {
     color: profileTokens.SUCCESS,
   },
+  badgeDanger: {
+    color: profileTokens.DANGER,
+  },
   badgeNeutral: {
     color: profileTokens.ON_SURFACE_VARIANT,
   },
@@ -187,6 +191,12 @@ export const styles = StyleSheet.create({
     lineHeight: 36,
     fontWeight: '700',
     color: profileTokens.PRIMARY,
+  },
+  walletBalanceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 2,
   },
   linkButton: {
     fontSize: 12,

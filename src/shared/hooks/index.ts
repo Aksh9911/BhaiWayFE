@@ -2,6 +2,7 @@ export { useCountdown } from './useCountdown';
 export type { UseCountdownResult } from './useCountdown';
 export { useSessionUser } from './useSessionUser';
 export { useOptionPicker } from './useOptionPicker';
+export { useScrollFocusedInputIntoView } from './useScrollFocusedInputIntoView';
 export { useUpload, useCloudinaryUpload } from './useCloudinaryUpload';
 export type {
   UseUploadOptions,

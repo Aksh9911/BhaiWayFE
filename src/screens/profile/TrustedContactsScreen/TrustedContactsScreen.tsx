@@ -1,25 +1,21 @@
 import React, { useCallback } from 'react';
-import {
-  Image,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from 'react-native';
+import { Image, Pressable, ScrollView, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppFooter, IconButton } from '@/shared/components';
+import { ROUTES } from '@/config';
+import { AppFooter, IconButton, AppText as Text } from '@/shared/components';
 import { triggerLightHaptic } from '@/shared/utils';
 import { TRUSTED_CONTACTS_SCREEN } from '@/features/profile/constants';
 import { useTrustedContacts } from '@/features/profile/hooks';
 import { styles, trustedContactsTokens } from './TrustedContactsScreen.styles';
 
 export const TrustedContactsScreen = () => {
+  const router = useRouter();
   const {
     contacts,
     goBack,
-    openProfile,
     editContact,
     deleteContact,
     callContact,
@@ -30,6 +26,11 @@ export const TrustedContactsScreen = () => {
     triggerLightHaptic();
     goBack();
   }, [goBack]);
+
+  const handleNotifications = useCallback(() => {
+    triggerLightHaptic();
+    router.push(ROUTES.notifications);
+  }, [router]);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
@@ -45,14 +46,12 @@ export const TrustedContactsScreen = () => {
             {TRUSTED_CONTACTS_SCREEN.title}
           </Text>
         </View>
-        <Pressable
-          style={styles.avatarButton}
-          onPress={openProfile}
-          accessibilityRole="button"
-          accessibilityLabel="Open profile"
-        >
-          <Ionicons name="person" size={16} color={trustedContactsTokens.SECONDARY} />
-        </Pressable>
+        <IconButton
+          icon="notifications-outline"
+          onPress={handleNotifications}
+          color={trustedContactsTokens.PRIMARY}
+          accessibilityLabel="Notifications"
+        />
       </View>
 
       <ScrollView

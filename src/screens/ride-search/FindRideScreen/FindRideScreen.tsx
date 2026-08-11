@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 
@@ -10,12 +11,14 @@ import {
   Button,
   InfoBanner,
   KeyboardAwareScrollView,
+  MissingLocationModal,
   NativeDatePicker,
   ScreenIntro,
 } from '@/shared/components';
 import { spacing } from '@/shared/theme';
 import { getSearchParam } from '@/shared/utils';
 import { appModeStore } from '@/store';
+import { myRidesSurfaceStore } from '@/features/my-rides/store';
 import {
   LocationRouteInput,
   PassengerStepper,
@@ -43,8 +46,13 @@ export const FindRideScreen = ({ mode: modeProp }: FindRideScreenProps) => {
     modeProp ?? (isRideSearchMode(paramMode) ? paramMode : 'outstation');
 
   useEffect(() => {
+    if (mode === 'office') {
+      myRidesSurfaceStore.setOfficeCommute();
+    } else {
+      myRidesSurfaceStore.setStandard();
+    }
     appModeStore.setRiding();
-  }, []);
+  }, [mode]);
 
   const {
     config,
@@ -56,6 +64,7 @@ export const FindRideScreen = ({ mode: modeProp }: FindRideScreenProps) => {
     passengerLimits,
     routeInfo,
     searching,
+    toggleSameOrganizationOnly,
     setPassengers,
     setJourneyDate,
     setJourneyTime,
@@ -68,6 +77,9 @@ export const FindRideScreen = ({ mode: modeProp }: FindRideScreenProps) => {
     minimumJourneyDate,
     search,
     verifyIdentity,
+    missingLocationKind,
+    closeMissingLocation,
+    resolveMissingLocation,
   } = useFindRide(mode);
 
   const [datePickerOpen, setDatePickerOpen] = useState(false);
@@ -85,13 +97,9 @@ export const FindRideScreen = ({ mode: modeProp }: FindRideScreenProps) => {
     router.replace(isOffice ? ROUTES.officeCommute : ROUTES.home);
   }, [isOffice, router]);
 
-  const handleProfilePress = useCallback(() => {
-    router.push(ROUTES.profile);
-  }, [router]);
-
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
-      <RideSearchTopBar onMenuPress={handleMenuPress} onProfilePress={handleProfilePress} />
+      <RideSearchTopBar onMenuPress={handleMenuPress} />
 
       <KeyboardAwareScrollView contentContainerStyle={styles.scrollContent} bottomInset={spacing.huge}>
         <Animated.View entering={FadeInDown.duration(350)}>
@@ -161,6 +169,35 @@ export const FindRideScreen = ({ mode: modeProp }: FindRideScreenProps) => {
             ) : null}
           </View>
 
+          {isOffice ? (
+            <Pressable
+              style={styles.checkboxRow}
+              onPress={toggleSameOrganizationOnly}
+              accessibilityRole="checkbox"
+              accessibilityState={{ checked: form.sameOrganizationOnly }}
+              accessibilityLabel="Find rides from same organization only"
+            >
+              <View
+                style={[
+                  styles.checkbox,
+                  form.sameOrganizationOnly && styles.checkboxChecked,
+                ]}
+              >
+                {form.sameOrganizationOnly ? (
+                  <Ionicons name="checkmark" size={14} color="#FFFFFF" />
+                ) : null}
+              </View>
+              <View style={styles.checkboxCopy}>
+                <Animated.Text style={styles.checkboxLabel}>
+                  Find rides from same organization only
+                </Animated.Text>
+                <Animated.Text style={styles.checkboxHint}>
+                  Show commute options from colleagues in your verified company.
+                </Animated.Text>
+              </View>
+            </Pressable>
+          ) : null}
+
           <Button
             label={config.actionLabel}
             onPress={search}
@@ -215,6 +252,14 @@ export const FindRideScreen = ({ mode: modeProp }: FindRideScreenProps) => {
           onClose={() => setTimePickerOpen(false)}
         />
       ) : null}
+
+      <MissingLocationModal
+        visible={missingLocationKind != null}
+        kind={missingLocationKind}
+        context={mode === 'publish' ? 'drive' : 'ride'}
+        onClose={closeMissingLocation}
+        onSelect={resolveMissingLocation}
+      />
 
       <AppFooter />
     </SafeAreaView>

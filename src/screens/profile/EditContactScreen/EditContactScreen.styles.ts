@@ -51,7 +51,7 @@ export const styles = StyleSheet.create({
     maxWidth: 448,
     width: '100%',
     alignSelf: 'center',
-    gap: spacing.xxxl,
+    gap: spacing.cardGap,
   },
   avatarSection: {
     alignItems: 'center',

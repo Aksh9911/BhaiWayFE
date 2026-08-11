@@ -1,7 +1,8 @@
 import React from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import { colors, spacing } from '@/shared/theme';
+import { AppText as Text } from '../AppText';
 
 export interface UploadProgressProps {
   progress: number;

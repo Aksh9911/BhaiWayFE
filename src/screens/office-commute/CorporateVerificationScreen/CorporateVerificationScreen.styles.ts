@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-import { colors } from '@/shared/theme';
+import { colors, spacing } from '@/shared/theme';
 import { androidTextInputFix, createShadow } from '@/shared/utils/platform';
 
 export const styles = StyleSheet.create({
@@ -25,11 +25,19 @@ export const styles = StyleSheet.create({
       elevation: 4,
     }),
   },
+  headerCentered: {
+    justifyContent: 'center',
+  },
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
     flex: 1,
+  },
+  headerSide: {
+    width: 40,
+    alignItems: 'flex-start',
+    justifyContent: 'center',
   },
   title: {
     fontSize: 14,
@@ -39,17 +47,21 @@ export const styles = StyleSheet.create({
     color: '#335EEA',
     textTransform: 'uppercase',
   },
+  titleCentered: {
+    flex: 1,
+    textAlign: 'center',
+  },
   scrollContent: {
     paddingHorizontal: 16,
     paddingTop: 24,
     paddingBottom: 32,
-    gap: 32,
+    gap: spacing.sectionGap,
   },
   section: {
-    gap: 24,
+    gap: spacing.cardGap,
   },
   fields: {
-    gap: 24,
+    gap: spacing.cardGap,
   },
   field: {
     gap: 8,
@@ -216,5 +228,74 @@ export const styles = StyleSheet.create({
     lineHeight: 28,
     fontWeight: '600',
     color: colors.white,
+  },
+  otpCard: {
+    width: '100%',
+    alignItems: 'center',
+    gap: 24,
+    paddingTop: 8,
+  },
+  otpHero: {
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+    backgroundColor: '#DDE1FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  otpIntro: {
+    width: '100%',
+    alignItems: 'center',
+    gap: 8,
+  },
+  otpTitle: {
+    fontSize: 28,
+    lineHeight: 36,
+    fontWeight: '700',
+    color: '#0342D1',
+    textAlign: 'center',
+  },
+  otpSubtitle: {
+    fontSize: 15,
+    lineHeight: 22,
+    color: '#434655',
+    textAlign: 'center',
+    maxWidth: 320,
+  },
+  otpInputWrap: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  hintChip: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 999,
+    backgroundColor: '#F3F4F5',
+    borderWidth: 1,
+    borderColor: 'rgba(196, 197, 215, 0.5)',
+  },
+  hintText: {
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: '600',
+    color: '#5C6276',
+  },
+  otpActions: {
+    width: '100%',
+    alignItems: 'center',
+    gap: 12,
+    marginTop: 4,
+  },
+  otpLink: {
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: '700',
+    color: '#0342D1',
+  },
+  otpLinkMuted: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '600',
+    color: '#747686',
   },
 });

@@ -1,9 +1,8 @@
 import { useCallback } from 'react';
-import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { ROUTES } from '@/config';
-import { resetTo } from '@/shared/utils';
+import { resetTo, showAppAlert } from '@/shared/utils';
 import { FEEDBACK_SUBMITTED_SCREEN } from '../constants';
 
 export interface UseFeedbackSubmittedParams {
@@ -29,7 +28,7 @@ export const useFeedbackSubmitted = (
   }, [router]);
 
   const viewReceipt = useCallback(() => {
-    Alert.alert(
+    showAppAlert(
       FEEDBACK_SUBMITTED_SCREEN.receiptTitle,
       FEEDBACK_SUBMITTED_SCREEN.receiptMessage,
     );

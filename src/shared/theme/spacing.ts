@@ -7,6 +7,12 @@ export const spacing = {
   xxl: 24,
   xxxl: 32,
   huge: 40,
+  /** Space between stacked peer cards / form sections. */
+  cardGap: 16,
+  /** Space between major screen sections (hero → cards, section groups). */
+  sectionGap: 24,
+  /** Dense list rows (inbox threads, short transaction rows). */
+  listGap: 12,
   screenHorizontal: 24,
   screenVertical: 16,
 } as const;

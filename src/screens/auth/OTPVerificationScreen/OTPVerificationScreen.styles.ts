@@ -1,12 +1,23 @@
 import { StyleSheet } from 'react-native';
-import { colors, layout, spacing, typography } from '@/shared/theme';
+import { colors, layout, spacing, typography } from '@/theme';
 
 export const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.surface,
   },
   flex: {
+    flex: 1,
+  },
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.screenHorizontal,
+    paddingTop: spacing.xs,
+    minHeight: 44,
+  },
+  topBarSpacer: {
     flex: 1,
   },
   scrollContent: {
@@ -14,9 +25,9 @@ export const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.surface,
     paddingHorizontal: spacing.screenHorizontal,
-    paddingTop: spacing.xxxl,
+    paddingTop: spacing.xl,
     alignItems: 'center',
   },
   lockWrapper: {
@@ -32,7 +43,7 @@ export const styles = StyleSheet.create({
   },
   heading: {
     ...typography.heading,
-    color: colors.primary,
+    color: colors.textPrimary,
     textAlign: 'center',
     marginBottom: spacing.md,
   },

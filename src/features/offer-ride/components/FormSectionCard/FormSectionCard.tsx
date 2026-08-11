@@ -1,10 +1,11 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { colors } from '@/shared/theme';
 import { styles } from './FormSectionCard.styles';
 import type { FormSectionCardProps } from './FormSectionCard.types';
+import { AppText as Text } from '@/shared/components';
 
 export const FormSectionCard = ({ title, icon, children }: FormSectionCardProps) => (
   <View style={styles.card}>

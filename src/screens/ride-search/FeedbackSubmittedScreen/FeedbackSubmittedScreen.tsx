@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -12,7 +12,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { APP_CONFIG } from '@/config';
-import { AppFooter, IconButton } from '@/shared/components';
+import { AppFooter, IconButton, AppText as Text } from '@/shared/components';
 import { colors } from '@/shared/theme';
 import { getSearchParam, triggerLightHaptic, useExitOnBack } from '@/shared/utils';
 import { FEEDBACK_SUBMITTED_SCREEN } from '@/features/ride-search/constants';

@@ -1,8 +1,9 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
 import { styles } from './SectionHeader.styles';
 import type { SectionHeaderProps } from './SectionHeader.types';
+import { AppText as Text } from '../AppText';
 
 export const SectionHeader = React.memo(
   ({

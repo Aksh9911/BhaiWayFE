@@ -14,6 +14,17 @@ export const styles = StyleSheet.create({
     paddingHorizontal: spacing.screenHorizontal,
     paddingTop: spacing.xl,
   },
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.screenHorizontal,
+    paddingTop: spacing.xs,
+    minHeight: 44,
+  },
+  topBarSpacer: {
+    flex: 1,
+  },
   heading: {
     ...typography.heading,
     color: colors.primary,

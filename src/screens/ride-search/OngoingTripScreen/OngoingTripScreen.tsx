@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -14,7 +14,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { AppFooter, Avatar } from '@/shared/components';
+import { AppFooter, Avatar, AppText as Text } from '@/shared/components';
+import { isGoogleMapsBypassed, MapBypassSurface } from '@/shared/maps';
 import { spacing } from '@/shared/theme';
 import { getSearchParam, triggerLightHaptic } from '@/shared/utils';
 import { ONGOING_TRIP_SCREEN } from '@/features/ride-search/constants';
@@ -186,42 +187,53 @@ export const OngoingTripScreen = () => {
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
       <View style={styles.mapLayer}>
-        <MapView
-          ref={mapRef}
-          style={styles.map}
-          initialRegion={initialRegion}
-          onMapReady={fitRoute}
-          showsCompass={false}
-          toolbarEnabled={false}
-          rotateEnabled={false}
-          pitchEnabled={false}
-        >
-          <Marker coordinate={trip.pickup} tracksViewChanges={false} anchor={{ x: 0.5, y: 0.5 }}>
-            <View style={styles.carMarkerWrap}>
-              <View style={styles.carGlow} />
-              <View style={styles.carIcon}>
-                <Ionicons name="car" size={36} color={ongoingTripTokens.PRIMARY} />
-              </View>
-              <View style={styles.carLiveDot} />
-            </View>
-          </Marker>
-          <Marker coordinate={trip.dropoff} tracksViewChanges={false} anchor={{ x: 0.5, y: 1 }}>
-            <View style={styles.destinationMarker}>
-              <View style={styles.destinationBadge}>
-                <Text style={styles.destinationBadgeText}>
-                  {ONGOING_TRIP_SCREEN.destinationBadge}
-                </Text>
-              </View>
-              <Ionicons name="location" size={36} color={ongoingTripTokens.ERROR} />
-            </View>
-          </Marker>
-          <Polyline
-            coordinates={polyline}
-            strokeColor="#0342D1"
-            strokeWidth={6}
-            lineDashPattern={[1, 12]}
+        {isGoogleMapsBypassed() ? (
+          <MapBypassSurface
+            style={styles.map}
+            title="Ongoing trip"
+            points={[
+              { ...trip.pickup, label: 'You' },
+              { ...trip.dropoff, label: 'Drop-off' },
+            ]}
           />
-        </MapView>
+        ) : (
+          <MapView
+            ref={mapRef}
+            style={styles.map}
+            initialRegion={initialRegion}
+            onMapReady={fitRoute}
+            showsCompass={false}
+            toolbarEnabled={false}
+            rotateEnabled={false}
+            pitchEnabled={false}
+          >
+            <Marker coordinate={trip.pickup} tracksViewChanges={false} anchor={{ x: 0.5, y: 0.5 }}>
+              <View style={styles.carMarkerWrap}>
+                <View style={styles.carGlow} />
+                <View style={styles.carIcon}>
+                  <Ionicons name="car" size={36} color={ongoingTripTokens.PRIMARY} />
+                </View>
+                <View style={styles.carLiveDot} />
+              </View>
+            </Marker>
+            <Marker coordinate={trip.dropoff} tracksViewChanges={false} anchor={{ x: 0.5, y: 1 }}>
+              <View style={styles.destinationMarker}>
+                <View style={styles.destinationBadge}>
+                  <Text style={styles.destinationBadgeText}>
+                    {ONGOING_TRIP_SCREEN.destinationBadge}
+                  </Text>
+                </View>
+                <Ionicons name="location" size={36} color={ongoingTripTokens.ERROR} />
+              </View>
+            </Marker>
+            <Polyline
+              coordinates={polyline}
+              strokeColor="#0342D1"
+              strokeWidth={6}
+              lineDashPattern={[1, 12]}
+            />
+          </MapView>
+        )}
         <LinearGradient
           colors={['rgba(248,249,250,0.8)', 'rgba(248,249,250,0)']}
           style={styles.mapFade}

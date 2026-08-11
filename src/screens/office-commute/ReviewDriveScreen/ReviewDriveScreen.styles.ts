@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors } from '@/shared/theme';
+import { colors, spacing } from '@/shared/theme';
 import { createShadow } from '@/shared/utils/platform';
 
 export const styles = StyleSheet.create({
@@ -28,7 +28,7 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     lineHeight: 28,
     fontWeight: '600',
-    color: '#0B1C30',
+    color: colors.primary,
   },
   scrollContent: {
     paddingBottom: 24,
@@ -36,7 +36,7 @@ export const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 20,
     marginTop: -16,
-    gap: 24,
+    gap: spacing.cardGap,
   },
   card: {
     backgroundColor: '#FFFFFF',
@@ -61,11 +61,11 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
     letterSpacing: 0.8,
     textTransform: 'uppercase',
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   routeTimeline: {
     paddingLeft: 32,
-    gap: 24,
+    gap: spacing.cardGap,
     position: 'relative',
   },
   routeLine: {
@@ -107,7 +107,7 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     fontWeight: '600',
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   bentoGrid: {
     flexDirection: 'row',
@@ -139,7 +139,7 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     lineHeight: 28,
     fontWeight: '600',
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   daysRow: {
     flexDirection: 'row',
@@ -172,7 +172,7 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     fontWeight: '600',
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   halfCard: {
     width: '48%',
@@ -188,7 +188,7 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     lineHeight: 28,
     fontWeight: '600',
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   priceCurrency: {
     fontSize: 20,
@@ -237,7 +237,7 @@ export const styles = StyleSheet.create({
   warningCard: {
     backgroundColor: '#FFF7ED',
     borderLeftWidth: 4,
-    borderLeftColor: '#D95F00',
+    borderLeftColor: '#D97706',
     borderRadius: 8,
     padding: 16,
     flexDirection: 'row',
@@ -247,10 +247,27 @@ export const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     lineHeight: 20,
-    color: '#D95F00',
+    color: '#D97706',
   },
   warningBold: {
     fontWeight: '700',
+  },
+  verifiedCard: {
+    backgroundColor: '#EEF2FF',
+    borderLeftWidth: 4,
+    borderLeftColor: '#0342D1',
+    borderRadius: 8,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  verifiedText: {
+    flex: 1,
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '600',
+    color: '#0342D1',
   },
   verifyButton: {
     flexDirection: 'row',

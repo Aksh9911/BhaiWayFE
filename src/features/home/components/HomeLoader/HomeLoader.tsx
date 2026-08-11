@@ -1,8 +1,9 @@
 import React from 'react';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 
 import { colors } from '@/shared/theme';
 import { styles } from './HomeLoader.styles';
+import { AppText as Text } from '@/shared/components';
 
 export interface HomeLoaderProps {
   label?: string;

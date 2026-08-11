@@ -1,3 +1,5 @@
+import type { DriverRideKind } from './my-rides.types';
+
 export interface DriverTripCompletedPassenger {
   id: string;
   name: string;
@@ -8,6 +10,8 @@ export interface DriverTripCompletedPassenger {
 export interface DriverTripCompletedFareLine {
   label: string;
   amountLabel: string;
+  /** Emphasize bonus / incentive lines in primary color. */
+  highlight?: boolean;
 }
 
 export interface DriverTripCompletedCoordinate {
@@ -17,6 +21,7 @@ export interface DriverTripCompletedCoordinate {
 
 export interface DriverTripCompletedSummary {
   rideId: string;
+  rideType: DriverRideKind;
   dateLabel: string;
   statusLabel: string;
   pickupTitle: string;
@@ -26,6 +31,9 @@ export interface DriverTripCompletedSummary {
   distanceLabel: string;
   earningsLabel: string;
   earningsAmount: number;
+  rideFareLabel: string;
+  assuredBonusLabel: string;
+  hasAssuredBonus: boolean;
   passengers: readonly DriverTripCompletedPassenger[];
   fareLines: readonly DriverTripCompletedFareLine[];
   pickup: DriverTripCompletedCoordinate;

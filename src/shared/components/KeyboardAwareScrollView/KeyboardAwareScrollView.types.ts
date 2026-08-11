@@ -15,4 +15,9 @@ export interface KeyboardAwareScrollViewProps {
   scrollEventThrottle?: number;
   /** Override default platform keyboardVerticalOffset (e.g. header height). */
   keyboardVerticalOffset?: number;
+  /**
+   * Extra space reserved below the focused field (e.g. external AppFooter height)
+   * so the keyboard + footer never cover the active input.
+   */
+  extraBottomOffset?: number;
 }

@@ -1,21 +1,33 @@
-import React from 'react';
-import { Text } from 'react-native';
+import React, { useCallback } from 'react';
+import { useRouter } from 'expo-router';
 
+import { ROUTES } from '@/config';
 import { AppTopBar } from '../AppTopBar/AppTopBar';
-import { Avatar } from '../Avatar/Avatar';
 import { IconButton } from '../IconButton/IconButton';
 import { colors, typography } from '@/shared/theme';
-import { useSessionUser } from '@/shared/hooks';
 import type { ScreenHeaderProps } from './ScreenHeader.types';
+import { AppText as Text } from '../AppText';
 
+/**
+ * Top bar for screens that also show AppFooter (which includes Profile).
+ * Right action defaults to notifications — never a profile avatar.
+ */
 export const ScreenHeader = ({
   title,
   onBack,
-  onProfilePress,
+  onNotificationsPress,
   right,
   showBack = true,
 }: ScreenHeaderProps) => {
-  const user = useSessionUser();
+  const router = useRouter();
+
+  const openNotifications = useCallback(() => {
+    if (onNotificationsPress) {
+      onNotificationsPress();
+      return;
+    }
+    router.push(ROUTES.notifications);
+  }, [onNotificationsPress, router]);
 
   return (
     <AppTopBar
@@ -24,14 +36,14 @@ export const ScreenHeader = ({
           <IconButton
             icon="arrow-back"
             onPress={onBack}
-            color={colors.textPrimary}
+            color={colors.primary}
             accessibilityLabel="Go back"
           />
         ) : null
       }
       center={
         <Text
-          style={[typography.title, { fontSize: 18, color: colors.textPrimary }]}
+          style={[typography.title, { fontSize: 18, color: colors.primary }]}
           numberOfLines={1}
           accessibilityRole="header"
         >
@@ -40,10 +52,11 @@ export const ScreenHeader = ({
       }
       right={
         right ?? (
-          <Avatar
-            uri={user?.avatarUri}
-            onPress={onProfilePress ?? onBack}
-            accessibilityLabel="Open profile"
+          <IconButton
+            icon="notifications-outline"
+            onPress={openNotifications}
+            color={colors.primary}
+            accessibilityLabel="Notifications"
           />
         )
       }

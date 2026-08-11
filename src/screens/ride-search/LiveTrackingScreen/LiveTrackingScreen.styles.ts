@@ -1,5 +1,5 @@
 import { Dimensions, StyleSheet } from 'react-native';
-import { colors } from '@/shared/theme';
+import { colors, spacing } from '@/shared/theme';
 import { createShadow } from '@/shared/utils/platform';
 
 const PRIMARY = '#0342D1';
@@ -58,6 +58,53 @@ export const styles = StyleSheet.create({
       offsetY: 4,
       elevation: 4,
     }),
+  },
+  waitingMap: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: spacing.xxl,
+    gap: spacing.md,
+    backgroundColor: '#EFF4FF',
+  },
+  waitingIconWrap: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: OUTLINE_VARIANT,
+    marginBottom: spacing.sm,
+  },
+  waitingBadge: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: 999,
+    backgroundColor: SECONDARY_CONTAINER,
+  },
+  waitingBadgeText: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '700',
+    letterSpacing: 0.2,
+    color: PRIMARY,
+    textTransform: 'uppercase',
+  },
+  waitingTitle: {
+    fontSize: 20,
+    lineHeight: 28,
+    fontWeight: '700',
+    color: ON_SURFACE,
+    textAlign: 'center',
+  },
+  waitingMessage: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: ON_SURFACE_VARIANT,
+    textAlign: 'center',
+    maxWidth: 280,
   },
   map: {
     ...StyleSheet.absoluteFillObject,
@@ -188,7 +235,7 @@ export const styles = StyleSheet.create({
   content: {
     marginTop: -32,
     paddingHorizontal: 16,
-    gap: 24,
+    gap: spacing.cardGap,
     zIndex: 10,
   },
   driverCard: {
@@ -197,7 +244,7 @@ export const styles = StyleSheet.create({
     padding: 24,
     borderWidth: 1,
     borderColor: OUTLINE_VARIANT,
-    gap: 24,
+    gap: spacing.cardGap,
     ...createShadow({
       color: colors.shadow,
       opacity: 0.1,

@@ -13,4 +13,8 @@ export const ENDPOINTS = {
     /** Backend-signed Cloudinary destroy. */
     deleteAsset: '/media/cloudinary/delete',
   },
+  vehicles: {
+    /** Create / register a vehicle with RC Cloudinary URL. */
+    create: '/vehicles',
+  },
 } as const;

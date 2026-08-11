@@ -1,4 +1,5 @@
 import type { RideDetailsData, RideDetailsMode, RideRule, RideType } from '../types';
+import { formatBhaiWayCoins } from '@/shared/utils';
 
 export const RIDE_DETAILS_SCREEN = {
   title: 'Ride Details',
@@ -95,7 +96,7 @@ export const getRideDetailsMock = (params: {
 };
 
 export const formatRideDetailsAmount = (value: number): string =>
-  `₹${value.toFixed(2)}`;
+  formatBhaiWayCoins(value, { spaced: false, minimumFractionDigits: 2 });
 
 export const getRideDetailsPath = (params: {
   rideId: string;
@@ -108,6 +109,8 @@ export const getRideDetailsPath = (params: {
   price?: number;
   distanceLabel?: string;
   durationLabel?: string;
+  dateLabel?: string;
+  departureTime?: string;
   originLat?: number;
   originLng?: number;
   destinationLat?: number;
@@ -125,6 +128,8 @@ export const getRideDetailsPath = (params: {
     price: params.price != null ? String(params.price) : '',
     distanceLabel: params.distanceLabel ?? '',
     durationLabel: params.durationLabel ?? '',
+    dateLabel: params.dateLabel ?? '',
+    departureTime: params.departureTime ?? '',
     originLat: params.originLat != null ? String(params.originLat) : '',
     originLng: params.originLng != null ? String(params.originLng) : '',
     destinationLat: params.destinationLat != null ? String(params.destinationLat) : '',

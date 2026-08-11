@@ -1,11 +1,12 @@
 import React, { useCallback, useMemo } from 'react';
-import { ActivityIndicator, Image, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Image, Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { formatRidePrice, getSeatUrgency } from '@/features/ride-search/constants';
 import { COMMUTE_RIDE_RESULT_SCREEN } from '../../constants/commute-ride-result.constants';
 import { styles } from './CommuteRideResultCard.styles';
 import type { CommuteRideResultCardProps } from './CommuteRideResultCard.types';
+import { AppText as Text } from '@/shared/components';
 
 export const CommuteRideResultCard = React.memo(
   ({ ride, requestState = 'idle', onPress, onRequestPress }: CommuteRideResultCardProps) => {
@@ -52,7 +53,7 @@ export const CommuteRideResultCard = React.memo(
                     {ride.driver.name}
                   </Text>
                   <View style={styles.ratingRow}>
-                    <Ionicons name="star" size={14} color="#D95F00" />
+                    <Ionicons name="star" size={14} color="#335EEA" />
                     <Text style={styles.ratingText}>{ride.driver.rating.toFixed(1)}</Text>
                   </View>
                 </View>
@@ -86,7 +87,7 @@ export const CommuteRideResultCard = React.memo(
           <View style={styles.badges}>
             {verified ? (
               <View style={styles.badgeVerified}>
-                <Ionicons name="shield-checkmark" size={14} color="#341100" />
+                <Ionicons name="shield-checkmark" size={14} color="#0342D1" />
                 <Text style={styles.badgeVerifiedText}>
                   {COMMUTE_RIDE_RESULT_SCREEN.verifiedBadge}
                 </Text>

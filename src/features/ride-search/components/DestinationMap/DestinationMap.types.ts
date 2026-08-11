@@ -15,5 +15,7 @@ export interface DestinationMapProps {
     latitudeDelta: number;
     longitudeDelta: number;
   }) => void;
+  /** Fired when the user drags/pinches the map (not programmatic camera moves). */
+  onUserGesture?: () => void;
   onLocatePress: () => void;
 }

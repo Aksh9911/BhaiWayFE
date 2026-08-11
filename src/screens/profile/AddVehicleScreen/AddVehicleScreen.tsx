@@ -1,16 +1,9 @@
 import React, { useCallback } from 'react';
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { IconButton, UploadDocumentSheet } from '@/shared/components';
+import { IconButton, KeyboardAwareScrollView, UploadDocumentSheet, AppText as Text, AppTextInput as TextInput } from '@/shared/components';
 import { triggerLightHaptic } from '@/shared/utils';
 import { ADD_VEHICLE_SCREEN } from '@/features/profile/constants';
 import { useAddVehicle } from '@/features/profile/hooks';
@@ -31,6 +24,8 @@ export const AddVehicleScreen = () => {
     applyDocument,
     submit,
     goBack,
+    isUploadingDocument,
+    uploadProgress,
   } = useAddVehicle();
 
   const handleBack = useCallback(() => {
@@ -40,7 +35,7 @@ export const AddVehicleScreen = () => {
 
   const isSubmitting = submitState === 'submitting';
   const isSuccess = submitState === 'success';
-  const busy = isSubmitting || isSuccess;
+  const busy = isSubmitting || isSuccess || isUploadingDocument;
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
@@ -56,11 +51,11 @@ export const AddVehicleScreen = () => {
         </Text>
       </View>
 
-      <ScrollView
+      <KeyboardAwareScrollView
         style={styles.body}
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
+        bottomInset={40}
       >
         <View style={styles.hero}>
           <Ionicons name="car" size={48} color={addVehicleTokens.PRIMARY} />
@@ -186,9 +181,11 @@ export const AddVehicleScreen = () => {
                 <View style={{ flex: 1 }}>
                   <Text style={styles.documentTitle}>{ADD_VEHICLE_SCREEN.documentTitle}</Text>
                   <Text style={styles.documentSubtitle}>
-                    {form.documentName
-                      ? form.documentName
-                      : ADD_VEHICLE_SCREEN.documentSubtitle}
+                    {form.documentSecureUrl
+                      ? ADD_VEHICLE_SCREEN.documentUploadedLabel
+                      : isUploadingDocument
+                        ? 'Uploading…'
+                        : ADD_VEHICLE_SCREEN.documentSubtitle}
                   </Text>
                 </View>
               </View>
@@ -204,16 +201,24 @@ export const AddVehicleScreen = () => {
                 <Text style={styles.priorityLabel}>{ADD_VEHICLE_SCREEN.priorityLabel}</Text>
               </View>
               <Text
-                style={form.documentUri ? styles.uploadedLabel : styles.optionalLabel}
+                style={
+                  form.documentSecureUrl || isUploadingDocument
+                    ? styles.uploadedLabel
+                    : styles.optionalLabel
+                }
               >
-                {form.documentUri
-                  ? ADD_VEHICLE_SCREEN.documentUploadedLabel
-                  : ADD_VEHICLE_SCREEN.optionalLabel}
+                {isUploadingDocument
+                  ? uploadProgress > 0
+                    ? `Uploading… ${uploadProgress}%`
+                    : 'Uploading…'
+                  : form.documentSecureUrl
+                    ? ADD_VEHICLE_SCREEN.documentUploadedLabel
+                    : ADD_VEHICLE_SCREEN.optionalLabel}
               </Text>
             </View>
           </Pressable>
         </View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
       <View style={styles.footer}>
         <Pressable

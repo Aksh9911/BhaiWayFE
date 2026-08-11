@@ -32,7 +32,7 @@ export interface UseCommuteReviewBookingResult {
   applyPromo: () => void;
   confirmBooking: () => void;
   goBack: () => void;
-  openProfile: () => void;
+  openNotifications: () => void;
 }
 
 const PROMO_CODE = 'BHAIWAY10';
@@ -141,8 +141,8 @@ export const useCommuteReviewBooking = (
     router.replace(ROUTES.officeCommuteResult);
   }, [router]);
 
-  const openProfile = useCallback(() => {
-    router.push(ROUTES.profile);
+  const openNotifications = useCallback(() => {
+    router.push(ROUTES.notifications);
   }, [router]);
 
   return {
@@ -155,6 +155,6 @@ export const useCommuteReviewBooking = (
     applyPromo,
     confirmBooking,
     goBack,
-    openProfile,
+    openNotifications,
   };
 };

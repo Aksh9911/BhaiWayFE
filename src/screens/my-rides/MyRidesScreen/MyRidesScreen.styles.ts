@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-import { colors } from '@/shared/theme';
+import { colors, spacing } from '@/shared/theme';
 import { createShadow } from '@/shared/utils/platform';
 
 const PRIMARY = '#0342D1';
@@ -57,7 +57,7 @@ export const styles = StyleSheet.create({
   headerRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    gap: spacing.cardGap,
   },
   notifyBtn: {
     width: 40,
@@ -84,11 +84,15 @@ export const styles = StyleSheet.create({
     paddingTop: 24,
     paddingBottom: 32,
   },
+  upcomingList: {
+    gap: 16,
+    marginTop: 8,
+  },
   tabs: {
     flexDirection: 'row',
     borderBottomWidth: 1,
     borderBottomColor: OUTLINE_VARIANT,
-    marginBottom: 32,
+    marginBottom: spacing.sectionGap,
   },
   tab: {
     paddingHorizontal: 24,
@@ -128,8 +132,8 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 24,
-    gap: 12,
+    marginBottom: spacing.sectionGap,
+    gap: spacing.listGap,
   },
   cardHeaderLeft: {
     flex: 1,
@@ -147,6 +151,23 @@ export const styles = StyleSheet.create({
     lineHeight: 36,
     fontWeight: '600',
     color: ON_SURFACE,
+  },
+  modifyChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: PRIMARY,
+    backgroundColor: colors.white,
+  },
+  modifyChipLabel: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '700',
+    color: PRIMARY,
   },
   assuredBadge: {
     alignSelf: 'flex-start',
@@ -192,7 +213,7 @@ export const styles = StyleSheet.create({
     color: PRIMARY,
   },
   mapRouteRow: {
-    gap: 24,
+    gap: spacing.sectionGap,
   },
   mapPreview: {
     height: 160,
@@ -203,7 +224,7 @@ export const styles = StyleSheet.create({
   routeBlock: {
     paddingLeft: 32,
     position: 'relative',
-    gap: 32,
+    gap: spacing.sectionGap,
   },
   routeLine: {
     position: 'absolute',
@@ -254,7 +275,7 @@ export const styles = StyleSheet.create({
     paddingTop: 24,
     borderTopWidth: 1,
     borderTopColor: OUTLINE_VARIANT,
-    gap: 16,
+    gap: spacing.cardGap,
   },
   peerLabel: {
     fontSize: 11,
@@ -264,10 +285,41 @@ export const styles = StyleSheet.create({
     textTransform: 'uppercase',
     color: ON_SURFACE_VARIANT,
   },
+  ridersList: {
+    gap: spacing.cardGap,
+  },
+  seatsBadge: {
+    backgroundColor: '#DADFF7',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  seatsBadgeText: {
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: '700',
+    color: PRIMARY,
+  },
+  emptyRiders: {
+    gap: 4,
+    paddingVertical: 4,
+  },
+  emptyRidersTitle: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '600',
+    color: ON_SURFACE_VARIANT,
+  },
+  emptyRidersHint: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '500',
+    color: PRIMARY,
+  },
   driverRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    gap: spacing.cardGap,
   },
   driverAvatarRing: {
     width: 56,
@@ -378,44 +430,34 @@ export const styles = StyleSheet.create({
     color: ON_SURFACE_VARIANT,
     textAlign: 'center',
   },
-  historyList: {
-    gap: 16,
-  },
-  historyCard: {
+  pastList: {
+    gap: 0,
     backgroundColor: colors.white,
     borderRadius: RADIUS_XL,
     borderWidth: 1,
     borderColor: 'rgba(196, 197, 215, 0.4)',
-    padding: 20,
-    gap: 12,
+    overflow: 'hidden',
   },
-  historyTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: 12,
+  pastRow: {
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(196, 197, 215, 0.35)',
+    gap: 4,
   },
-  historyTitle: {
-    flex: 1,
+  pastRowLast: {
+    borderBottomWidth: 0,
+  },
+  pastRoute: {
     fontSize: 16,
     lineHeight: 24,
     fontWeight: '600',
     color: ON_SURFACE,
   },
-  historyStatus: {
-    fontSize: 12,
-    lineHeight: 16,
-    fontWeight: '700',
-    letterSpacing: 0.4,
-    color: PRIMARY,
-  },
-  historyMeta: {
-    fontSize: 14,
-    lineHeight: 20,
+  pastDate: {
+    fontSize: 13,
+    lineHeight: 18,
     color: ON_SURFACE_VARIANT,
-  },
-  historyMetaGroup: {
-    gap: 4,
   },
   dashedPlaceholder: {
     marginTop: 24,

@@ -1,0 +1,1 @@
+RideID,UserID,Mobile,RideType,Origin,Destination,DepartureDate,DepartureTime,AvailableSeats,PricePerSeat,Preferences,Notes,VehicleName,VehiclePlate,MaxTwoInBack,WomenOnly,OriginLat,OriginLng,DestLat,DestLng,Status,PublishedAt

@@ -8,10 +8,10 @@ export const styles = StyleSheet.create({
   },
   listContent: {
     flexGrow: 1,
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.xl,
     paddingTop: spacing.lg,
     paddingBottom: spacing.huge,
-    gap: spacing.md,
+    gap: spacing.cardGap,
   },
   headerBlock: {
     gap: spacing.md,
@@ -44,25 +44,6 @@ export const styles = StyleSheet.create({
     lineHeight: 16,
     fontWeight: '500',
     color: colors.textInverse,
-  },
-  searchRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: '#C6C6CD',
-    borderRadius: 12,
-    paddingHorizontal: spacing.md,
-    minHeight: 44,
-  },
-  searchInput: {
-    flex: 1,
-    ...typography.body,
-    fontSize: 14,
-    lineHeight: 20,
-    color: colors.textPrimary,
-    paddingVertical: spacing.sm,
   },
   sortBlock: {
     gap: spacing.sm,

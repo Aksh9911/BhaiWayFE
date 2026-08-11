@@ -1,9 +1,10 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Alert, Linking } from 'react-native';
+import { Linking } from 'react-native';
+
 import { useRouter } from 'expo-router';
 
 import { APP_CONFIG, ROUTES } from '@/config';
-import { triggerLightHaptic } from '@/shared/utils';
+import { triggerLightHaptic, showAppAlert } from '@/shared/utils';
 import {
   HELP_SUPPORT_SCREEN,
   SUPPORT_CATEGORIES,
@@ -62,17 +63,17 @@ export const useHelpSupport = (): UseHelpSupportResult => {
 
   const openCategory = useCallback((_id: SupportCategoryId) => {
     triggerLightHaptic();
-    Alert.alert(HELP_SUPPORT_SCREEN.comingSoonTitle, HELP_SUPPORT_SCREEN.comingSoonMessage);
+    showAppAlert(HELP_SUPPORT_SCREEN.comingSoonTitle, HELP_SUPPORT_SCREEN.comingSoonMessage);
   }, []);
 
   const openTicket = useCallback((_id: string) => {
     triggerLightHaptic();
-    Alert.alert(HELP_SUPPORT_SCREEN.comingSoonTitle, HELP_SUPPORT_SCREEN.comingSoonMessage);
+    showAppAlert(HELP_SUPPORT_SCREEN.comingSoonTitle, HELP_SUPPORT_SCREEN.comingSoonMessage);
   }, []);
 
   const viewAllTickets = useCallback(() => {
     triggerLightHaptic();
-    Alert.alert(HELP_SUPPORT_SCREEN.comingSoonTitle, HELP_SUPPORT_SCREEN.comingSoonMessage);
+    showAppAlert(HELP_SUPPORT_SCREEN.comingSoonTitle, HELP_SUPPORT_SCREEN.comingSoonMessage);
   }, []);
 
   const chatWithSupport = useCallback(() => {
@@ -84,7 +85,7 @@ export const useHelpSupport = (): UseHelpSupportResult => {
     triggerLightHaptic();
     const url = `mailto:${APP_CONFIG.supportEmail}`;
     Linking.openURL(url).catch(() => {
-      Alert.alert(HELP_SUPPORT_SCREEN.emailErrorTitle, HELP_SUPPORT_SCREEN.emailErrorMessage);
+      showAppAlert(HELP_SUPPORT_SCREEN.emailErrorTitle, HELP_SUPPORT_SCREEN.emailErrorMessage);
     });
   }, []);
 

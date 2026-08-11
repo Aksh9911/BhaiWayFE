@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 
 import { MY_RIDES_SCREEN_INDEX } from '@/features/my-rides/navigation';
 import { colors } from '@/shared/theme';
-import { stackAnimation } from '@/shared/utils/platform';
+import { stackAnimation, stackGestureOptions } from '@/shared/utils/platform';
 
 export default function MyRidesLayout() {
   return (
@@ -12,7 +12,7 @@ export default function MyRidesLayout() {
         headerShown: false,
         animation: stackAnimation,
         contentStyle: styles.screen,
-        gestureEnabled: true,
+        ...stackGestureOptions,
       }}
     >
       {MY_RIDES_SCREEN_INDEX.map((screen) => (

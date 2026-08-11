@@ -38,7 +38,7 @@ export const styles = StyleSheet.create({
     fontSize: 28,
     lineHeight: 36,
     fontWeight: '700',
-    color: supportChatTokens.ON_SURFACE,
+    color: supportChatTokens.PRIMARY,
     flexShrink: 1,
   },
   list: {

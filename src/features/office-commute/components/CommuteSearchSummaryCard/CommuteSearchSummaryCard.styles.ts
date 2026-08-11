@@ -30,7 +30,7 @@ export const styles = StyleSheet.create({
     lineHeight: 20,
     fontWeight: '600',
     letterSpacing: 0.1,
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   metaRow: {
     flexDirection: 'row',
@@ -65,6 +65,6 @@ export const styles = StyleSheet.create({
     lineHeight: 20,
     fontWeight: '600',
     letterSpacing: 0.1,
-    color: '#0B1C30',
+    color: '#191C1D',
   },
 });

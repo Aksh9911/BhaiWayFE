@@ -1,8 +1,8 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-import { Button } from '@/shared/components';
+import { Button, AppText as Text } from '@/shared/components';
 import { colors } from '@/shared/theme';
 import { styles } from './DestinationConfirmPanel.styles';
 import type { DestinationConfirmPanelProps } from './DestinationConfirmPanel.types';

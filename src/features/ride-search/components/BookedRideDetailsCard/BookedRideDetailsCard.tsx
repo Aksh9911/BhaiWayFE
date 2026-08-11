@@ -1,11 +1,12 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { colors } from '@/shared/theme';
 import { BOOKED_SCREEN } from '../../constants';
 import type { BookedRideDetails } from '../../types';
 import { styles } from './BookedRideDetailsCard.styles';
+import { AppText as Text } from '@/shared/components';
 
 export interface BookedRideDetailsCardProps {
   details: BookedRideDetails;

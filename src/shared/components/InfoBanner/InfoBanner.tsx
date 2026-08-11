@@ -1,11 +1,12 @@
 import React, { useCallback } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { colors } from '@/shared/theme';
 import { triggerLightHaptic } from '@/shared/utils';
 import { styles } from './InfoBanner.styles';
 import type { InfoBannerProps } from './InfoBanner.types';
+import { AppText as Text } from '../AppText';
 
 const DEFAULT_ICONS = {
   accent: 'shield-checkmark' as const,
@@ -15,8 +16,8 @@ const DEFAULT_ICONS = {
 
 const DEFAULT_ICON_COLORS = {
   accent: colors.primary,
-  verify: '#341100',
-  security: '#0342D1',
+  verify: colors.primary,
+  security: colors.primary,
 };
 
 export const InfoBanner = React.memo(

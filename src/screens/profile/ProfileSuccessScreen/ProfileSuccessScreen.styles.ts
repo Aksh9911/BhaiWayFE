@@ -172,6 +172,12 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: spacing.md,
   },
+  bankTitle: {
+    fontSize: 32,
+    lineHeight: 40,
+    fontWeight: '600',
+    letterSpacing: -0.3,
+  },
   subtitle: {
     fontSize: 16,
     lineHeight: 24,
@@ -221,6 +227,7 @@ export const styles = StyleSheet.create({
     gap: spacing.md,
     flex: 1,
     paddingRight: spacing.md,
+    minWidth: 0,
   },
   bankIcon: {
     width: 40,
@@ -229,6 +236,11 @@ export const styles = StyleSheet.create({
     backgroundColor: successTokens.SECONDARY_CONTAINER,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  bankText: {
+    flex: 1,
+    minWidth: 0,
+    gap: 2,
   },
   bankLabel: {
     fontSize: 12,
@@ -292,9 +304,9 @@ export const styles = StyleSheet.create({
     }),
   },
   primaryLabel: {
-    fontSize: 16,
+    fontSize: 18,
     lineHeight: 24,
-    fontWeight: '700',
+    fontWeight: '600',
     color: successTokens.ON_PRIMARY,
   },
   secondaryButton: {

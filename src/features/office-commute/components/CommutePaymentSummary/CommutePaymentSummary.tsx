@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { colors } from '@/shared/theme';
 import {
@@ -8,6 +8,7 @@ import {
 } from '../../constants/commute-review-booking.constants';
 import { styles } from './CommutePaymentSummary.styles';
 import type { CommutePaymentSummaryProps } from './CommutePaymentSummary.types';
+import { AppText as Text, AppTextInput as TextInput } from '@/shared/components';
 
 export const CommutePaymentSummary = React.memo(
   ({

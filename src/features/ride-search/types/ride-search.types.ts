@@ -4,7 +4,7 @@ import type { MapCoordinate } from './map.types';
 
 export type RideSearchMode = ServiceCardVariant;
 
-export type PassengerCount = 1 | 2 | 3;
+export type PassengerCount = 1 | 2 | 3 | 4 | 5 | 6;
 
 export type LocationFieldType = 'origin' | 'destination';
 
@@ -43,6 +43,7 @@ export interface RideSearchFormValues {
   journeyDate: Date | null;
   journeyTime: Date | null;
   destination: SelectedLocation | null;
+  sameOrganizationOnly: boolean;
 }
 
 export interface RouteInfo {

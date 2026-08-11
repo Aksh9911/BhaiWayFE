@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: spacing.md,
     paddingBottom: spacing.huge,
-    gap: spacing.xxl,
+    gap: spacing.cardGap,
   },
   secureRow: {
     flexDirection: 'row',

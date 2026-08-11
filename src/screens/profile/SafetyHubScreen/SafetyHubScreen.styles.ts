@@ -54,7 +54,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.xxxl,
     paddingBottom: spacing.huge + spacing.xxxl,
-    gap: spacing.xxxl,
+    gap: spacing.sectionGap,
     maxWidth: layout.maxContentWidth,
     width: '100%',
     alignSelf: 'center',
@@ -69,7 +69,7 @@ export const styles = StyleSheet.create({
     color: safetyTokens.ON_SURFACE_VARIANT,
   },
   cardsStack: {
-    gap: spacing.xxl,
+    gap: spacing.cardGap,
   },
   trustedCard: {
     backgroundColor: colors.white,

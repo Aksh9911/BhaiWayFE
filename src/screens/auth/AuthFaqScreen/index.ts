@@ -1,0 +1,1 @@
+export { AuthFaqScreen } from './AuthFaqScreen';

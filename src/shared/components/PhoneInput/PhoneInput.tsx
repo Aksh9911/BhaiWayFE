@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { FlatList, Modal, Pressable, Text, TextInput, View } from 'react-native';
+import { FlatList, Modal, Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -9,6 +9,7 @@ import type { CountryOption } from '@/shared/types';
 import { formatPhoneNumber, sanitizePhoneNumber } from '@/shared/utils';
 import { styles } from './PhoneInput.styles';
 import type { PhoneInputProps } from './PhoneInput.types';
+import { AppText as Text, AppTextInput as TextInput } from '../AppText';
 
 export const PhoneInput = ({
   value,

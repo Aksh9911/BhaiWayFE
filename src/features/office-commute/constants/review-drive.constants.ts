@@ -13,8 +13,9 @@ export const REVIEW_DRIVE_SCREEN = {
   distanceLabel: 'Best route',
   oneTimeLabel: 'One-time',
   verifyWarning:
-    'You have not verified your identity, please verify for smooth onboarding.',
-  verifyLabel: 'Verify Identity',
+    'You have not verified your workspace email, please verify for smooth onboarding.',
+  verifyLabel: 'Verify Workspace Email',
+  verifiedLabel: 'Workspace email verified',
   publishLabel: 'Publish Ride',
   publishingLabel: 'Publishing...',
 } as const;

@@ -1,17 +1,10 @@
 import React, { useCallback } from 'react';
-import {
-  FlatList,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { FlatList, Pressable, ScrollView, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppFooter, Avatar, IconButton } from '@/shared/components';
+import { AppFooter, Avatar, IconButton, AppText as Text, AppTextInput as TextInput } from '@/shared/components';
 import { colors } from '@/shared/theme';
 import { getSearchParam, triggerLightHaptic } from '@/shared/utils';
 import { DRIVER_CHAT_SCREEN } from '@/features/ride-search/constants';
@@ -47,6 +40,7 @@ export const DriverChatScreen = () => {
   const params = useLocalSearchParams<{
     driverName?: string;
     carModel?: string;
+    threadId?: string;
   }>();
 
   const {
@@ -64,6 +58,7 @@ export const DriverChatScreen = () => {
   } = useDriverChat({
     driverName: getSearchParam(params.driverName),
     carModel: getSearchParam(params.carModel),
+    threadId: getSearchParam(params.threadId),
   });
 
   const handleBack = useCallback(() => {

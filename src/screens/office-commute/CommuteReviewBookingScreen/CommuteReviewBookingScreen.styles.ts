@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors } from '@/shared/theme';
+import { colors, layout, spacing } from '@/shared/theme';
 import { createShadow } from '@/shared/utils/platform';
 
 export const styles = StyleSheet.create({
@@ -27,42 +27,50 @@ export const styles = StyleSheet.create({
     lineHeight: 32,
     fontWeight: '600',
     letterSpacing: -0.2,
-    color: '#0B1C30',
+    color: colors.primary,
   },
   scrollContent: {
-    paddingBottom: 24,
+    flexGrow: 1,
+    paddingBottom: spacing.md,
   },
   content: {
     paddingHorizontal: 20,
     paddingTop: 24,
-    gap: 24,
+    gap: spacing.cardGap,
   },
-  footerAction: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 72,
+  footer: {
     paddingHorizontal: 20,
-    zIndex: 20,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.md,
+    backgroundColor: colors.white,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(198, 198, 205, 0.3)',
+    ...createShadow({
+      color: colors.shadow,
+      opacity: 0.04,
+      radius: 20,
+      offsetY: -4,
+      elevation: 8,
+    }),
   },
   confirmButton: {
     width: '100%',
-    backgroundColor: '#0B1C30',
+    height: layout.buttonHeight,
+    backgroundColor: '#0342D1',
     borderRadius: 12,
-    paddingVertical: 24,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 16,
-    ...createShadow({ color: colors.shadow, opacity: 0.2, radius: 16, offsetY: 6, elevation: 8 }),
+    gap: 8,
+    ...createShadow({ color: colors.shadow, opacity: 0.16, radius: 12, offsetY: 4, elevation: 4 }),
   },
   confirmButtonBusy: {
     opacity: 0.85,
   },
   confirmLabel: {
-    fontSize: 20,
-    lineHeight: 28,
-    fontWeight: '600',
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: '700',
     color: colors.white,
   },
 });

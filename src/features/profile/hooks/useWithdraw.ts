@@ -1,24 +1,40 @@
-import { useCallback, useMemo, useState } from 'react';
-import { Alert } from 'react-native';
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { useRouter } from 'expo-router';
 
 import { ROUTES } from '@/config';
+import {
+  bankAccountsSheetStore,
+  bankAccountsSheetSync,
+  formatBhaiWayWalletLabel,
+  getBhaiWayWalletBalance,
+  recordWalletTransaction,
+  subscribeBhaiWayWallet,
+  type BankAccountsSheetRow,
+  updateBhaiWayWalletBalance,
+} from '@/DemoData';
 import { useSessionUser } from '@/shared/hooks';
-import { triggerLightHaptic, triggerSuccessHaptic } from '@/shared/utils';
+import {
+  formatBhaiWayCoins,
+  triggerLightHaptic,
+  triggerSuccessHaptic,
+  showAppAlert,
+} from '@/shared/utils';
 import { DEFAULT_PROFILE_AVATAR } from '../constants/profile.constants';
 import {
   DEFAULT_WITHDRAW_AMOUNT,
-  DEFAULT_WITHDRAW_BANK_ID,
-  WITHDRAW_AVAILABLE_BALANCE,
-  WITHDRAW_AVAILABLE_BALANCE_LABEL,
-  WITHDRAW_BANK_ACCOUNTS,
   WITHDRAW_QUICK_AMOUNTS,
   WITHDRAW_SCREEN,
 } from '../constants/withdraw.constants';
 import type { WithdrawBankAccount, WithdrawQuickAmount } from '../types';
 
-const formatAmountLabel = (amount: number) =>
-  `₹ ${amount.toLocaleString('en-IN')}`;
+const formatAmountLabel = (amount: number) => formatBhaiWayCoins(amount);
+
+const mapSheetRowToWithdrawAccount = (row: BankAccountsSheetRow): WithdrawBankAccount => ({
+  id: String(row.bankAccountId),
+  bankName: row.bankName,
+  accountTypeLabel: row.accountType || 'Savings Account',
+  maskedNumber: `•••• ${row.accountLast4 || row.accountNumber.slice(-4) || '----'}`,
+});
 
 export interface UseWithdrawResult {
   title: string;
@@ -41,8 +57,37 @@ export interface UseWithdrawResult {
 export const useWithdraw = (): UseWithdrawResult => {
   const router = useRouter();
   const user = useSessionUser();
+  const walletBalance = useSyncExternalStore(subscribeBhaiWayWallet, getBhaiWayWalletBalance);
+  const [banks, setBanks] = useState<WithdrawBankAccount[]>(() =>
+    bankAccountsSheetStore.getForCurrentUser().map(mapSheetRowToWithdrawAccount),
+  );
   const [amount, setAmountState] = useState(String(DEFAULT_WITHDRAW_AMOUNT));
-  const [selectedBankId, setSelectedBankId] = useState(DEFAULT_WITHDRAW_BANK_ID);
+  const [selectedBankId, setSelectedBankId] = useState('');
+
+  useEffect(
+    () =>
+      bankAccountsSheetStore.subscribe(() => {
+        setBanks(bankAccountsSheetStore.getForCurrentUser().map(mapSheetRowToWithdrawAccount));
+      }),
+    [],
+  );
+
+  useEffect(() => {
+    void bankAccountsSheetSync.pullIntoLocal().catch((error) => {
+      console.log('[Withdraw] bank accounts pull skipped', error);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (banks.length === 0) {
+      setSelectedBankId('');
+      return;
+    }
+    if (banks.some((bank) => bank.id === selectedBankId)) {
+      return;
+    }
+    setSelectedBankId(banks[0].id);
+  }, [banks, selectedBankId]);
 
   const avatarUri = useMemo(
     () => user?.avatarUri ?? DEFAULT_PROFILE_AVATAR,
@@ -97,42 +142,65 @@ export const useWithdraw = (): UseWithdrawResult => {
     const numericAmount = Number.parseFloat(amount) || 0;
 
     if (numericAmount <= 0) {
-      Alert.alert(WITHDRAW_SCREEN.invalidAmountTitle, WITHDRAW_SCREEN.invalidAmountMessage);
+      showAppAlert(WITHDRAW_SCREEN.invalidAmountTitle, WITHDRAW_SCREEN.invalidAmountMessage);
       return;
     }
 
-    if (numericAmount > WITHDRAW_AVAILABLE_BALANCE) {
-      Alert.alert(WITHDRAW_SCREEN.exceedBalanceTitle, WITHDRAW_SCREEN.exceedBalanceMessage);
+    if (numericAmount > walletBalance) {
+      showAppAlert(WITHDRAW_SCREEN.exceedBalanceTitle, WITHDRAW_SCREEN.exceedBalanceMessage);
       return;
     }
 
-    const bank = WITHDRAW_BANK_ACCOUNTS.find((item) => item.id === selectedBankId);
+    const bank = banks.find((item) => item.id === selectedBankId);
     if (!bank) {
-      Alert.alert(WITHDRAW_SCREEN.selectAccountTitle, WITHDRAW_SCREEN.selectAccountMessage);
+      showAppAlert(WITHDRAW_SCREEN.selectAccountTitle, WITHDRAW_SCREEN.selectAccountMessage);
       return;
     }
 
-    triggerSuccessHaptic();
-    const referenceNumber = `BW-REF-${Date.now().toString().slice(-8)}`;
-    router.replace({
-      pathname: ROUTES.withdrawalInitiated,
-      params: {
-        kind: 'withdrawal-initiated',
-        amountLabel: formatAmountLabel(numericAmount),
-        bankName: bank.bankName,
-        maskedNumber: bank.maskedNumber.replace('••••', '****'),
-        referenceNumber,
-      },
-    });
-  }, [amount, router, selectedBankId]);
+    void (async () => {
+      try {
+        await updateBhaiWayWalletBalance(walletBalance - numericAmount, { mode: 'set' });
+
+        const referenceNumber = `BW-REF-${Date.now().toString().slice(-8)}`;
+        try {
+          await recordWalletTransaction({
+            title: 'Withdrawal',
+            amount: numericAmount,
+            type: 'debit',
+            icon: 'business',
+            reference: referenceNumber,
+          });
+        } catch (error) {
+          console.log('[Withdraw] transaction record failed', error);
+        }
+
+        triggerSuccessHaptic();
+        router.replace({
+          pathname: ROUTES.withdrawalInitiated,
+          params: {
+            kind: 'withdrawal-initiated',
+            amountLabel: formatAmountLabel(numericAmount),
+            bankName: bank.bankName,
+            maskedNumber: bank.maskedNumber.replace('••••', '****'),
+            referenceNumber,
+          },
+        });
+      } catch (error) {
+        showAppAlert(
+          'Withdraw failed',
+          error instanceof Error ? error.message : 'Unable to update wallet balance.',
+        );
+      }
+    })();
+  }, [amount, banks, router, selectedBankId, walletBalance]);
 
   return {
     title: WITHDRAW_SCREEN.title,
     balanceLabel: WITHDRAW_SCREEN.balanceLabel,
-    balanceValueLabel: WITHDRAW_AVAILABLE_BALANCE_LABEL,
+    balanceValueLabel: formatBhaiWayWalletLabel(walletBalance),
     amount,
     selectedBankId,
-    banks: WITHDRAW_BANK_ACCOUNTS,
+    banks,
     quickAmounts: WITHDRAW_QUICK_AMOUNTS,
     avatarUri,
     setAmount,

@@ -14,6 +14,8 @@ export interface CancelRideSummary {
   rideId: string;
   rideType: 'regular' | 'assured';
   routeLabel: string;
+  pickupLabel: string;
+  dropoffLabel: string;
   dateLabel: string;
   timeLabel: string;
 }

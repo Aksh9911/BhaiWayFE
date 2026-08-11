@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { Platform, Text, View } from 'react-native';
+import { Platform, View } from 'react-native';
 import MapView, { Marker, Polyline, type Region } from 'react-native-maps';
 
+import { AppText as Text } from '@/shared/components';
+import { isGoogleMapsBypassed, MapBypassSurface } from '@/shared/maps';
 import { colors, spacing } from '@/shared/theme';
 import type { BookingLocation, MapCoordinate } from '../../types';
 import { styles } from './ReviewBookingMapPreview.styles';
@@ -89,36 +91,47 @@ export const ReviewBookingMapPreview = React.memo(
         style={styles.container}
         accessibilityLabel={`Route ${distanceLabel}, ${durationLabel}`}
       >
-        <MapView
-          ref={mapRef}
-          style={styles.map}
-          initialRegion={initialRegion}
-          onMapReady={fitRoute}
-          scrollEnabled={false}
-          zoomEnabled={false}
-          rotateEnabled={false}
-          pitchEnabled={false}
-          toolbarEnabled={false}
-          showsCompass={false}
-          liteMode={Platform.OS === 'android'}
-          pointerEvents="none"
-        >
-          <Marker
-            coordinate={{ latitude: pickup.latitude, longitude: pickup.longitude }}
-            pinColor={colors.primary}
-            tracksViewChanges={false}
+        {isGoogleMapsBypassed() ? (
+          <MapBypassSurface
+            style={styles.map}
+            title="Route preview"
+            points={[
+              { latitude: pickup.latitude, longitude: pickup.longitude, label: 'Pickup' },
+              { latitude: dropoff.latitude, longitude: dropoff.longitude, label: 'Drop-off' },
+            ]}
           />
-          <Marker
-            coordinate={{ latitude: dropoff.latitude, longitude: dropoff.longitude }}
-            pinColor={colors.error}
-            tracksViewChanges={false}
-          />
-          <Polyline
-            coordinates={polylineCoordinates}
-            strokeColor={colors.primary}
-            strokeWidth={4}
-          />
-        </MapView>
+        ) : (
+          <MapView
+            ref={mapRef}
+            style={styles.map}
+            initialRegion={initialRegion}
+            onMapReady={fitRoute}
+            scrollEnabled={false}
+            zoomEnabled={false}
+            rotateEnabled={false}
+            pitchEnabled={false}
+            toolbarEnabled={false}
+            showsCompass={false}
+            liteMode={Platform.OS === 'android'}
+            pointerEvents="none"
+          >
+            <Marker
+              coordinate={{ latitude: pickup.latitude, longitude: pickup.longitude }}
+              pinColor={colors.primary}
+              tracksViewChanges={false}
+            />
+            <Marker
+              coordinate={{ latitude: dropoff.latitude, longitude: dropoff.longitude }}
+              pinColor={colors.error}
+              tracksViewChanges={false}
+            />
+            <Polyline
+              coordinates={polylineCoordinates}
+              strokeColor={colors.primary}
+              strokeWidth={4}
+            />
+          </MapView>
+        )}
 
         <View style={styles.badge} pointerEvents="none">
           <Text style={styles.badgeText}>

@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
-import { Alert } from 'react-native';
+import { showAppAlert } from '@/store';
 
 export const useOptionPicker = () =>
   useCallback((title: string, options: readonly string[], onSelect: (value: string) => void) => {
-    Alert.alert(
+    showAppAlert(
       title,
       undefined,
       [

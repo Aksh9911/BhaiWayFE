@@ -1,10 +1,11 @@
 import React from 'react';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { colors } from '@/shared/theme';
 import { styles } from './DashedUploadCard.styles';
 import type { DashedUploadCardProps } from './DashedUploadCard.types';
+import { AppText as Text } from '../AppText';
 
 export const DashedUploadCard = React.memo(
   ({

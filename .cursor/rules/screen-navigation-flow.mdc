@@ -1,0 +1,45 @@
+---
+description: Verify full navigation flow whenever screens are added, removed, or altered
+alwaysApply: true
+---
+
+# Screen navigation flow checklist
+
+Whenever a screen is **added**, **removed**, or **altered**, verify the end-to-end flow before finishing. Do not leave screens reachable only via alert, dead `router.push`, or an unregistered route.
+
+## Required wiring (add / alter)
+
+For every new or changed screen, confirm all of these exist and match:
+
+1. **Screen UI** — `src/screens/<feature>/…Screen`
+2. **Feature export** — `src/features/<feature>/index.ts` (and hooks/constants as needed)
+3. **Route file** — `app/.../*.tsx` re-exporting the screen
+4. **Stack registration** — parent `app/.../_layout.tsx` screen index includes the segment (via `*_SCREEN_INDEX`)
+5. **Config** — `src/config/screens.ts`:
+   - entry in the correct `*_SCREENS` map (`path`, `segment`, `id`, `title`)
+   - `ROUTES.<name>` alias
+6. **Navigation call** — a hook or screen uses `router.push` / `replace` to `ROUTES.<name>` (not only `showAppAlert` for success/completion steps)
+
+## Required cleanup (remove)
+
+When removing a screen:
+
+1. Delete `app/` route and screen module
+2. Remove from `*_SCREENS`, `ROUTES`, and `*_SCREEN_INDEX`
+3. Update every `router.push` / `replace` / link that targeted it
+4. Prefer navigating to the next real screen in the flow (success screens stay screens — do not replace them with alerts)
+
+## Flow check (always)
+
+Trace the user journey for the touched feature:
+
+- Entry → intermediate steps → **success / published / booked / cancelled** → exit (home / my-rides / back)
+- Back / Modify / secondary CTAs still land on valid routes
+- Nested stacks (`offer-ride`, `office-commute`, `ride-search`, `my-rides`, `login`) include the new segment
+
+## Anti-patterns
+
+- Success state shown only via `showAppAlert(...)` when a dedicated success screen already exists or is expected
+- Adding `src/screens/...` without `app/` + `ROUTES`
+- Adding `ROUTES` without a matching `app/` file
+- Hardcoded path strings instead of `ROUTES.*`

@@ -22,6 +22,8 @@ export const ADD_BANK_ACCOUNT_SCREEN = {
   validationMessage: 'Please fill in all bank account fields to continue.',
   invalidIfscTitle: 'Invalid IFSC',
   invalidIfscMessage: 'Enter a valid 11-character IFSC code (e.g. HDFC0001234).',
+  invalidAccountTitle: 'Invalid Account Number',
+  invalidAccountMessage: 'Enter a valid bank account number (at least 9 digits).',
   findTitle: 'Find IFSC',
   findMessage: 'Bank branch lookup will be available soon.',
 } as const;

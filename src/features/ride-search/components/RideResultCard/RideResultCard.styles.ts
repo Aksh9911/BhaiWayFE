@@ -46,7 +46,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'flex-start',
     gap: 4,
-    backgroundColor: '#FFDBCA',
+    backgroundColor: '#DADFF7',
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 999,
@@ -56,7 +56,7 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 16,
     fontWeight: '500',
-    color: '#D95F00',
+    color: '#0342D1',
   },
   priceCol: {
     alignItems: 'flex-end',
@@ -158,10 +158,10 @@ export const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   seatsTextUrgent: {
-    color: '#D95F00',
+    color: '#D97706',
   },
   seatsCountUrgent: {
-    color: '#D95F00',
+    color: '#D97706',
   },
   bookButton: {
     minWidth: 132,

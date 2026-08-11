@@ -3,15 +3,15 @@ import type {
   RideResultItem,
   RideResultSortOption,
 } from '../types';
+import { formatBhaiWayCoins } from '@/shared/utils';
 
 export const RIDE_RESULT_SCREEN = {
   title: 'Available Rides',
   emptyTitle: 'No Rides Available',
-  emptySubtitle: 'Try changing the date, filters, or search to find matching rides.',
+  emptySubtitle: 'Try changing the date or filters to find matching rides.',
   modifySearchLabel: 'Modify Search',
   refreshLabel: 'Refresh',
   bookLabel: 'Book Ride',
-  searchPlaceholder: 'Search driver or car…',
   sortLabel: 'Sort',
 } as const;
 
@@ -205,7 +205,7 @@ export const getSeatUrgency = (seatsLeft: number): 'available' | 'limited' | 'la
 };
 
 export const formatRidePrice = (value: number): string =>
-  `₹${value.toLocaleString('en-IN')}`;
+  formatBhaiWayCoins(value, { spaced: false });
 
 export const getRideResultPath = (params: {
   origin: string;

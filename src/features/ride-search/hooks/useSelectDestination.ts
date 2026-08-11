@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, Keyboard } from 'react-native';
+import { Keyboard } from 'react-native';
+
 import * as Location from 'expo-location';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
-import { getSearchParam } from '@/shared/utils';
+import { getSearchParam, showAppAlert } from '@/shared/utils';
 import {
   CURRENT_LOCATION_MAP_DELTA,
   DEFAULT_MAP_COORDINATE,
@@ -25,7 +26,7 @@ import type {
   PlacesAutocompletePrediction,
   SelectedDestination,
 } from '../types';
-import { regionForPrecisePlace } from '../utils';
+import { regionForPrecisePlace, getNearbyAreaSearchLabel } from '../utils';
 
 const toRegion = (
   latitude: number,
@@ -47,8 +48,8 @@ export const useSelectDestination = () => {
   const field: LocationFieldType = isLocationField(fieldParam) ? fieldParam : 'destination';
   const copy = getLocationPickerCopy(field);
   const [query, setQuery] = useState('');
-  // Uber-style: tapping From/To opens search immediately.
-  const [searchMode, setSearchMode] = useState(true);
+  // Open map first (same for starting point and destination); search is opt-in.
+  const [searchMode, setSearchMode] = useState(false);
   const [predictions, setPredictions] = useState<PlacesAutocompletePrediction[]>([]);
   const [nearbyPlaces, setNearbyPlaces] = useState<PlacesAutocompletePrediction[]>([]);
   const [recentPlaces, setRecentPlaces] = useState<PlacesAutocompletePrediction[]>(() =>
@@ -77,6 +78,8 @@ export const useSelectDestination = () => {
   const requestIdRef = useRef(0);
   const geocodeIdRef = useRef(0);
   const skipNextRegionGeocode = useRef(true);
+  /** Keep list-picked place until the user manually moves the map. */
+  const preserveListSelectionRef = useRef(false);
   const abortRef = useRef<AbortController | null>(null);
   const sessionTokenRef = useRef(createPlacesSessionToken());
   const regionRef = useRef(region);
@@ -89,7 +92,7 @@ export const useSelectDestination = () => {
     setGeocoding(true);
     try {
       const destination = await reverseGeocodeCoordinate({ latitude, longitude });
-      if (geocodeIdRef.current === geocodeId) {
+      if (geocodeIdRef.current === geocodeId && !preserveListSelectionRef.current) {
         setSelected(destination);
       }
     } finally {
@@ -129,6 +132,9 @@ export const useSelectDestination = () => {
           longitude: position.coords.longitude,
         };
         setUserLocation(next);
+        if (preserveListSelectionRef.current) {
+          return;
+        }
         skipNextRegionGeocode.current = true;
         setRegion(toRegion(next.latitude, next.longitude));
         // Center the map on GPS, but do not fill the search box — that stays
@@ -149,6 +155,17 @@ export const useSelectDestination = () => {
   useEffect(() => {
     const trimmed = query.trim();
     if (trimmed.length < 1) {
+      abortRef.current?.abort();
+      setPredictions([]);
+      setLoading(false);
+      return;
+    }
+
+    // Area label prefilled from "Use current location" — show nearby list, not text search.
+    if (
+      searchedPlaceName.trim().length > 0 &&
+      trimmed.toLowerCase() === searchedPlaceName.trim().toLowerCase()
+    ) {
       abortRef.current?.abort();
       setPredictions([]);
       setLoading(false);
@@ -183,7 +200,7 @@ export const useSelectDestination = () => {
             return;
           }
           setPredictions([]);
-          Alert.alert('Search failed', placesErrorMessage(error));
+          showAppAlert('Search failed', placesErrorMessage(error));
         } finally {
           if (requestIdRef.current === requestId) {
             setLoading(false);
@@ -196,13 +213,17 @@ export const useSelectDestination = () => {
       clearTimeout(timer);
       controller.abort();
     };
-  }, [query, region.latitude, region.longitude, userLocation]);
+  }, [query, region.latitude, region.longitude, searchedPlaceName, userLocation]);
 
-  const loadNearbySuggestions = useCallback(async () => {
-    const coordinate = userLocation ?? {
-      latitude: region.latitude,
-      longitude: region.longitude,
-    };
+  const loadNearbySuggestions = useCallback(async (coordinateOverride?: {
+    latitude: number;
+    longitude: number;
+  }) => {
+    const coordinate = coordinateOverride ??
+      userLocation ?? {
+        latitude: region.latitude,
+        longitude: region.longitude,
+      };
     try {
       const results = await fetchNearbyPlaces(coordinate);
       setNearbyPlaces(results);
@@ -230,6 +251,11 @@ export const useSelectDestination = () => {
         return;
       }
 
+      // Programmatic camera moves (list pick) must not replace the place.
+      if (preserveListSelectionRef.current) {
+        return;
+      }
+
       if (moved) {
         // Dragging updates the pin / confirm panel only — clear search-box text.
         setSearchedPlaceName('');
@@ -240,8 +266,20 @@ export const useSelectDestination = () => {
     [applyCoordinate],
   );
 
+  const markUserMapGesture = useCallback(() => {
+    if (preserveListSelectionRef.current) {
+      preserveListSelectionRef.current = false;
+      setSearchedPlaceName('');
+    }
+  }, []);
+
   const applySelectedPlace = useCallback((destination: SelectedDestination) => {
     Keyboard.dismiss();
+    // Cancel any in-flight reverse-geocode (bootstrap / map drag) so it cannot
+    // overwrite the place the user just picked from search.
+    geocodeIdRef.current += 1;
+    setGeocoding(false);
+    preserveListSelectionRef.current = true;
     setQuery('');
     setPredictions([]);
     setSearchMode(false);
@@ -272,7 +310,7 @@ export const useSelectDestination = () => {
         const destination = await resolvePlaceDetails(prediction);
         applySelectedPlace(destination);
       } catch (error) {
-        Alert.alert('Location unavailable', placesErrorMessage(error));
+        showAppAlert('Location unavailable', placesErrorMessage(error));
       } finally {
         setSelecting(false);
       }
@@ -291,7 +329,7 @@ export const useSelectDestination = () => {
       }
 
       if (status !== Location.PermissionStatus.GRANTED) {
-        Alert.alert(
+        showAppAlert(
           'Location permission needed',
           'Please allow location access to center the map on your position.',
         );
@@ -310,8 +348,8 @@ export const useSelectDestination = () => {
         longitude: position.coords.longitude,
       };
       setUserLocation(next);
+      preserveListSelectionRef.current = false;
       skipNextRegionGeocode.current = true;
-      // Zoom in tightly so the street-level current location is clear.
       setRegion(toRegion(next.latitude, next.longitude, CURRENT_LOCATION_MAP_DELTA));
 
       const destination = await reverseGeocodeCoordinate(next);
@@ -320,16 +358,20 @@ export const useSelectDestination = () => {
       setSelected(preciseLocation);
 
       if (options?.showInSearchBox) {
-        setSearchedPlaceName(preciseLocation.placeName || 'Current location');
+        setSearchedPlaceName(getNearbyAreaSearchLabel(preciseLocation));
       }
 
       return preciseLocation;
     } catch {
-      Alert.alert('Location unavailable', 'Unable to fetch your current location.');
+      showAppAlert('Location unavailable', 'Unable to fetch your current location.');
       return null;
     } finally {
       setGeocoding(false);
     }
+  }, []);
+
+  const handleQueryChange = useCallback((value: string) => {
+    setQuery(value);
   }, []);
 
   const openSearch = useCallback(() => {
@@ -348,16 +390,30 @@ export const useSelectDestination = () => {
   }, []);
 
   const pickCurrentLocation = useCallback(async () => {
-    Keyboard.dismiss();
-    setSearchMode(false);
+    const location = await locateMe({ showInSearchBox: true });
+    if (!location) {
+      return;
+    }
+
+    // Apply GPS as this field's start/destination and return to the form.
+    geocodeIdRef.current += 1;
+    setGeocoding(false);
+    preserveListSelectionRef.current = true;
+    setSelected(location);
+    setSearchedPlaceName(getNearbyAreaSearchLabel(location));
     setQuery('');
     setPredictions([]);
-    await locateMe({ showInSearchBox: true });
-  }, [locateMe]);
+    setSearchMode(false);
+    skipNextRegionGeocode.current = true;
+    setRegion(regionForPrecisePlace(location));
+    recentPlacesStore.add(location);
+    locationPickerBridge.publish(field, location);
+    router.back();
+  }, [field, locateMe, router]);
 
   const confirm = useCallback(() => {
     if (!selected.placeName.trim()) {
-      Alert.alert(
+      showAppAlert(
         'Select a location',
         field === 'origin'
           ? 'Please choose a starting point on the map.'
@@ -375,7 +431,11 @@ export const useSelectDestination = () => {
     router.back();
   }, [router]);
 
-  const isSearching = query.trim().length >= 1;
+  const isAreaPrefill =
+    searchedPlaceName.trim().length > 0 &&
+    query.trim().length > 0 &&
+    query.trim().toLowerCase() === searchedPlaceName.trim().toLowerCase();
+  const isSearching = query.trim().length >= 1 && !isAreaPrefill;
   const nearbyWithoutRecent = nearbyPlaces.filter(
     (place) =>
       !recentPlaces.some(
@@ -394,21 +454,17 @@ export const useSelectDestination = () => {
         },
       ]
     : [
+        {
+          title: 'Nearby places',
+          data: nearbyWithoutRecent,
+          icon: 'navigate-outline' as const,
+        },
         ...(recentPlaces.length > 0
           ? [
               {
                 title: 'Recent',
                 data: recentPlaces,
                 icon: 'time-outline' as const,
-              },
-            ]
-          : []),
-        ...(nearbyWithoutRecent.length > 0
-          ? [
-              {
-                title: 'Nearby',
-                data: nearbyWithoutRecent,
-                icon: 'navigate-outline' as const,
               },
             ]
           : []),
@@ -420,7 +476,7 @@ export const useSelectDestination = () => {
     field,
     copy,
     query,
-    setQuery,
+    setQuery: handleQueryChange,
     searchMode,
     openSearch,
     closeSearch,
@@ -436,6 +492,7 @@ export const useSelectDestination = () => {
     selected,
     searchedPlaceName,
     handleRegionChangeComplete,
+    markUserMapGesture,
     selectPrediction,
     locateMe,
     confirm,

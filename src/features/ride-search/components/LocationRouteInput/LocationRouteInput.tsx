@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, {
   useAnimatedStyle,
@@ -10,6 +10,7 @@ import Animated, {
 import { colors } from '@/shared/theme';
 import { styles } from './LocationRouteInput.styles';
 import type { LocationRouteInputProps } from './LocationRouteInput.types';
+import { AppText as Text } from '@/shared/components';
 
 interface FieldProps {
   label: string;

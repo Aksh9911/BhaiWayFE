@@ -1,8 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { Platform, Text, View } from 'react-native';
+import { Platform, View } from 'react-native';
 import MapView, { Marker, Polyline, type Region } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 
+import { AppText as Text } from '@/shared/components';
+import { isGoogleMapsBypassed, MapBypassSurface } from '@/shared/maps';
 import { colors, spacing } from '@/shared/theme';
 import { COMMUTE_REVIEW_BOOKING_SCREEN } from '../../constants/commute-review-booking.constants';
 import { styles } from './CommuteBookingMapHero.styles';
@@ -84,36 +86,47 @@ export const CommuteBookingMapHero = React.memo(
 
     return (
       <View style={styles.container}>
-        <MapView
-          ref={mapRef}
-          style={styles.map}
-          initialRegion={initialRegion}
-          onMapReady={fitRoute}
-          scrollEnabled={false}
-          zoomEnabled={false}
-          rotateEnabled={false}
-          pitchEnabled={false}
-          toolbarEnabled={false}
-          showsCompass={false}
-          liteMode={Platform.OS === 'android'}
-          pointerEvents="none"
-        >
-          <Marker
-            coordinate={{ latitude: pickup.latitude, longitude: pickup.longitude }}
-            pinColor={colors.primary}
-            tracksViewChanges={false}
+        {isGoogleMapsBypassed() ? (
+          <MapBypassSurface
+            style={styles.map}
+            title="Commute map"
+            points={[
+              { latitude: pickup.latitude, longitude: pickup.longitude, label: 'Pickup' },
+              { latitude: dropoff.latitude, longitude: dropoff.longitude, label: 'Drop-off' },
+            ]}
           />
-          <Marker
-            coordinate={{ latitude: dropoff.latitude, longitude: dropoff.longitude }}
-            pinColor={colors.error}
-            tracksViewChanges={false}
-          />
-          <Polyline
-            coordinates={polylineCoordinates}
-            strokeColor="#335EEA"
-            strokeWidth={4}
-          />
-        </MapView>
+        ) : (
+          <MapView
+            ref={mapRef}
+            style={styles.map}
+            initialRegion={initialRegion}
+            onMapReady={fitRoute}
+            scrollEnabled={false}
+            zoomEnabled={false}
+            rotateEnabled={false}
+            pitchEnabled={false}
+            toolbarEnabled={false}
+            showsCompass={false}
+            liteMode={Platform.OS === 'android'}
+            pointerEvents="none"
+          >
+            <Marker
+              coordinate={{ latitude: pickup.latitude, longitude: pickup.longitude }}
+              pinColor={colors.primary}
+              tracksViewChanges={false}
+            />
+            <Marker
+              coordinate={{ latitude: dropoff.latitude, longitude: dropoff.longitude }}
+              pinColor={colors.error}
+              tracksViewChanges={false}
+            />
+            <Polyline
+              coordinates={polylineCoordinates}
+              strokeColor="#335EEA"
+              strokeWidth={4}
+            />
+          </MapView>
+        )}
 
         <View style={styles.statsCard} pointerEvents="none">
           <View style={styles.statCol}>
@@ -128,7 +141,7 @@ export const CommuteBookingMapHero = React.memo(
           <View style={styles.statDivider} />
           <View style={[styles.statCol, styles.statEnd]}>
             <View style={styles.matchBadge}>
-              <Ionicons name="flash" size={14} color="#0B1C30" />
+              <Ionicons name="flash" size={14} color="#191C1D" />
               <Text style={styles.matchBadgeText}>{matchPercent}% Match</Text>
             </View>
             <Text style={styles.matchCaption}>{matchCaption}</Text>

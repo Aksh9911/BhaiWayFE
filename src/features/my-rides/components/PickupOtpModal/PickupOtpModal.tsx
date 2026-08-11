@@ -1,14 +1,8 @@
 import React from 'react';
-import {
-  ActivityIndicator,
-  Modal,
-  Pressable,
-  Text,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Modal, Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-import { OTPInput } from '@/shared/components';
+import { OTPInput, AppText as Text } from '@/shared/components';
 import { colors } from '@/shared/theme';
 import { DRIVER_PICKUP_SCREEN } from '../../constants';
 import { styles } from './PickupOtpModal.styles';

@@ -1,40 +1,103 @@
 import 'react-native-gesture-handler';
+import { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import * as SplashScreen from 'expo-splash-screen';
 
 import { ROOT_SCREEN_INDEX } from '@/config';
+import {
+  applySheetProfileToSession,
+  hydrateDemoData,
+  hydrateSessionFromSheet,
+} from '@/DemoData';
 import { setAuthTokenProvider } from '@/network';
-import { authSession } from '@/store';
-import { colors } from '@/shared/theme';
-import { stackAnimation } from '@/shared/utils/platform';
+import { authSession, ReduxProvider } from '@/store';
+import { AppAlertModal } from '@/shared/components';
+import { colors, useBhaiWayFonts } from '@/shared/theme';
+import {
+  isNestedRootSegment,
+  stackAnimation,
+  stackGestureOptions,
+} from '@/shared/utils/platform';
+import { setupGlobalKeyboardDismiss } from '@/shared/utils/setupGlobalKeyboardDismiss';
 
+SplashScreen.preventAutoHideAsync().catch(() => {
+  // Splash may already be hidden in fast refresh.
+});
+
+setupGlobalKeyboardDismiss();
 setAuthTokenProvider(() => authSession.getToken());
+void hydrateDemoData();
 
 export default function RootLayout() {
+  const [fontsLoaded, fontError] = useBhaiWayFonts();
+  const [authReady, setAuthReady] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      await authSession.hydrate();
+      if (authSession.isAuthenticated()) {
+        try {
+          await hydrateSessionFromSheet();
+          applySheetProfileToSession();
+        } catch (error) {
+          console.log('[auth] sheet rehydrate skipped', error);
+        }
+      }
+      if (!cancelled) {
+        setAuthReady(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if ((fontsLoaded || fontError) && authReady) {
+      SplashScreen.hideAsync().catch(() => undefined);
+    }
+  }, [authReady, fontsLoaded, fontError]);
+
+  if ((!fontsLoaded && !fontError) || !authReady) {
+    return null;
+  }
+
   return (
     <GestureHandlerRootView style={styles.root}>
       <SafeAreaProvider>
-        <StatusBar style="dark" />
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            animation: stackAnimation,
-            contentStyle: styles.screen,
-            gestureEnabled: true,
-            fullScreenGestureEnabled: true,
-          }}
-        >
-          {ROOT_SCREEN_INDEX.map((screen) => (
-            <Stack.Screen
-              key={screen.id}
-              name={screen.segment}
-              options={{ title: screen.title }}
-            />
-          ))}
-        </Stack>
+        <ReduxProvider>
+          <View style={styles.root}>
+            <StatusBar style="dark" />
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                animation: stackAnimation,
+                contentStyle: styles.screen,
+                ...stackGestureOptions,
+              }}
+            >
+              {ROOT_SCREEN_INDEX.map((screen) => (
+                <Stack.Screen
+                  key={screen.id}
+                  name={screen.segment}
+                  options={{
+                    title: screen.title,
+                    // Nested stacks handle their own one-screen-back swipe.
+                    // Disabling root gesture here prevents jumping to Home/Login.
+                    gestureEnabled: !isNestedRootSegment(screen.segment),
+                    fullScreenGestureEnabled: false,
+                  }}
+                />
+              ))}
+            </Stack>
+            <AppAlertModal />
+          </View>
+        </ReduxProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

@@ -1,5 +1,6 @@
 import type { OngoingTripData, RideType } from '../types';
 import { DEFAULT_MAP_COORDINATE } from './ride-search.constants';
+import { formatBhaiWayCoins } from '@/shared/utils';
 
 export const ONGOING_TRIP_SCREEN = {
   destinationBadge: 'DESTINATION',
@@ -46,7 +47,7 @@ export const getOngoingTripMock = (params: {
     rideType: params.rideType,
     dropoffEtaLabel: ONGOING_TRIP_SCREEN.defaultDropoffEta,
     remainingLabel: ONGOING_TRIP_SCREEN.defaultRemaining,
-    estimatedFareLabel: `₹${fare.toFixed(2)}`,
+    estimatedFareLabel: formatBhaiWayCoins(fare, { spaced: false, minimumFractionDigits: 2 }),
     driver: {
       name: driverFirst,
       rating: ONGOING_TRIP_SCREEN.defaultRating,

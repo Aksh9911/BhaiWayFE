@@ -1,10 +1,11 @@
 import React from 'react';
-import { Pressable, ScrollView, Text } from 'react-native';
+import { Pressable, ScrollView } from 'react-native';
 
 import { RIDE_RESULT_SORT_OPTIONS } from '../../constants';
 import type { RideResultSortId } from '../../types';
 import { styles } from './ResultSortChips.styles';
 import type { ResultSortChipsProps } from './ResultSortChips.types';
+import { AppText as Text } from '@/shared/components';
 
 export const ResultSortChips = React.memo(
   ({ selectedId, onSelect }: ResultSortChipsProps) => (

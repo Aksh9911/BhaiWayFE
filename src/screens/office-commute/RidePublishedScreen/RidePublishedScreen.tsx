@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, {
@@ -12,7 +12,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { APP_CONFIG } from '@/config';
-import { AppFooter, IconButton } from '@/shared/components';
+import { AppFooter, IconButton, AppText as Text } from '@/shared/components';
 import { colors } from '@/shared/theme';
 import { triggerLightHaptic } from '@/shared/utils';
 import { RIDE_PUBLISHED_SCREEN } from '@/features/office-commute/constants';
@@ -83,12 +83,13 @@ export const RidePublishedScreen = () => {
         <IconButton
           icon="notifications-outline"
           onPress={openNotifications}
-          color="#0B1C30"
+          color={colors.primary}
           accessibilityLabel="Notifications"
         />
       </View>
 
       <ScrollView
+        style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
@@ -111,7 +112,7 @@ export const RidePublishedScreen = () => {
                 <View style={styles.routeTrack}>
                   <View style={styles.routeDot} />
                   <View style={styles.routeLine} />
-                  <Ionicons name="location" size={20} color="#0B1C30" />
+                  <Ionicons name="location" size={20} color="#191C1D" />
                 </View>
                 <View style={styles.routeStops}>
                   <View>
@@ -191,7 +192,7 @@ export const RidePublishedScreen = () => {
           accessibilityRole="button"
           accessibilityLabel={RIDE_PUBLISHED_SCREEN.modifyLabel}
         >
-          <Ionicons name="create-outline" size={18} color="#0B1C30" />
+          <Ionicons name="create-outline" size={18} color="#191C1D" />
           <Text style={styles.secondaryLabel}>{RIDE_PUBLISHED_SCREEN.modifyLabel}</Text>
         </Pressable>
       </View>

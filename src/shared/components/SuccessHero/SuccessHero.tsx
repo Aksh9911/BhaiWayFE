@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, {
   useAnimatedStyle,
@@ -12,6 +12,7 @@ import Animated, {
 import { colors } from '@/shared/theme';
 import { styles } from './SuccessHero.styles';
 import type { SuccessHeroProps } from './SuccessHero.types';
+import { AppText as Text } from '../AppText';
 
 export const SuccessHero = React.memo(
   ({ title, subtitle, iconSize = 56, style, children }: SuccessHeroProps) => {

@@ -1,4 +1,8 @@
-import type { HistoryRideItem, UpcomingRideSummary } from '../types/my-rides.types';
+import type {
+  HistoryRideItem,
+  UpcomingRideRider,
+  UpcomingRideSummary,
+} from '../types/my-rides.types';
 
 export const MY_RIDES_SCREEN = {
   title: 'My Rides',
@@ -13,16 +17,23 @@ export const MY_RIDES_SCREEN = {
   verifiedLabel: 'VERIFIED',
   cancelLabelRiding: 'Cancel Request',
   cancelLabelDriving: 'Cancel Ride',
+  modifyLabel: 'Modify',
   trackLabelRiding: 'Track Ride',
   trackLabelDriving: 'Start Ride',
   peerLabelRiding: 'Your driver',
-  peerLabelDriving: 'Your rider',
+  peerLabelDriving: 'Your Riders',
+  seatsBookedLabel: (count: number) => (count === 1 ? '+1 seat' : `+${count} seats`),
+  emptyRidersDriving: 'No confirmed riders yet',
+  emptyRidersRegularHint: 'Tap this card to view rider requests for onboarding.',
   emptyUpcomingTitle: 'No upcoming rides',
   emptyUpcomingSubtitleRiding: 'Book a carpool or office commute and it will show up here.',
   emptyUpcomingSubtitleDriving: 'Publish a carpool ride and booked trips will show up here.',
   emptyPastTitle: 'No past rides yet',
   emptyPastSubtitleRiding: 'Completed rides will show up in this tab.',
   emptyPastSubtitleDriving: 'Completed published rides will show up in this tab.',
+  emptyUpcomingSubtitleOffice:
+    'Book or publish an office commute and it will show up here.',
+  emptyPastSubtitleOffice: 'Completed office commute rides will show up in this tab.',
   cancelTitleRiding: 'Cancel Request',
   cancelTitleDriving: 'Cancel Ride',
   cancelMessage: 'Cancellation will be available soon.',
@@ -33,6 +44,30 @@ const DRIVER_AVATAR =
 
 const RIDER_AVATAR =
   'https://lh3.googleusercontent.com/aida-public/AB6AXuCR7ViiU6Qfa72nqWMzfLs40ePuMA0iRVfsyayCPGmrTPMUzK7NWTISui3Lpj3DNzSYQsOwKdC257B5AEmyiSFE5jFyWAht7w3xmH_EFfYq2XEwAuK9F--fVXFpKJSv9JDXHI0r5CKBoQ-KrIlBFgb0nVEm6XfBqvlzgDbLxz-beRb0BV9Iy8X442-3IS_z7cbvFOrlY106-u9M-6tqQFxp5iVeyaMcFK_Dv6--e_P6OiFt0Evx3MiHUfG8VeQXbwhhyLCwjsyhqgw';
+
+const AVATAR_PRIYA =
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuAcfH1AW7_5KiRSs2kB9NI0lM4imphLulD-3KnJ-rqK3xhRB-nSTZ1LU9FeupCcBvhbt-yTRDPuT4n9BGjz85egTp8JTK_9EE5VFOkkzfDm4C-etdKwn9fhyi_OpSCmSSP4vrEeH6ooJmvbi8BM3GNmevpNwfEu1po396LIyZBmScW0Tvfne2pOekEvnec51iwNgSWRQke-eptgu1uCQZeSQtnA_vG2oRqIRFHILgd4quNhUWbbx5krfXPdUlW2Ng3uKEPJZASAgoE';
+const AVATAR_ROHAN =
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuDcBd96RX-cSWPbpdQQv04InPo08bZTl6w1iowdZNQKsWDKE-evS0t8cAc1JXZ7u589scy17jic6iNU9wk1oDJZTQ_swPp33AVaBOAZL17bN_nnGAvY91Bny1bpAZXR2vbd8xijkIl1e5-T6oPuhjAHYGYHFF9FJSaiYdxJOCVfA1eft-RztwNpgD2zgR3M5g2GXyJJsRfiEZdYCjcfbDKktvkmYJfLozhEWBYh0vnDLwRPaXjre8VnmZuMOGO7nQYInteepgv94ug';
+
+const ASSURED_RIDERS: readonly UpcomingRideRider[] = [
+  {
+    id: 'assured-rider-priya',
+    name: 'Priya Sharma',
+    subtitle: 'Verified at Infosys',
+    seatsBooked: 2,
+    verified: true,
+    avatarUri: AVATAR_PRIYA,
+  },
+  {
+    id: 'assured-rider-rohan',
+    name: 'Rohan M.',
+    subtitle: 'Verified at Google',
+    seatsBooked: 1,
+    verified: true,
+    avatarUri: AVATAR_ROHAN,
+  },
+];
 
 /** Rider mode: Delhi Sector 12 → Gurugram office corridor */
 const RIDER_PICKUP = { latitude: 28.5921, longitude: 77.046 } as const;
@@ -81,66 +116,215 @@ export const DEFAULT_DRIVING_UPCOMING_RIDE: UpcomingRideSummary = {
   peer: {
     name: 'Priya Sharma',
     vehicleLabel: '2 seats booked',
-    plateNumber: '₹240 earned',
+    plateNumber: '240 earned',
     verified: true,
-    avatarUri: RIDER_AVATAR,
+    avatarUri: AVATAR_PRIYA,
   },
   driver: {
     name: 'Priya Sharma',
     vehicleLabel: '2 seats booked',
-    plateNumber: '₹240 earned',
+    plateNumber: '240 earned',
     verified: true,
-    avatarUri: RIDER_AVATAR,
+    avatarUri: AVATAR_PRIYA,
   },
+  riders: ASSURED_RIDERS,
 };
+
+/** Driver mode: second upcoming card — regular (non-assured) ride.
+ * Confirmed riders start empty; driver accepts from Track My Ride. */
+const DRIVER_REGULAR_PICKUP = { latitude: 28.5244, longitude: 77.2066 } as const;
+const DRIVER_REGULAR_DROPOFF = { latitude: 28.4595, longitude: 77.0266 } as const;
+
+export const DEFAULT_DRIVING_UPCOMING_REGULAR_RIDE: UpcomingRideSummary = {
+  id: 'driving-upcoming-regular-1',
+  dateLabel: 'OCT 25, 09:00 AM',
+  title: 'Ride Published',
+  assured: false,
+  otp: '7529',
+  pickupLabel: 'Saket',
+  dropoffLabel: 'Cyber City',
+  pickup: { ...DRIVER_REGULAR_PICKUP },
+  dropoff: { ...DRIVER_REGULAR_DROPOFF },
+  peer: {
+    name: 'Pending requests',
+    vehicleLabel: '0 seats confirmed',
+    plateNumber: 'Accept riders to confirm',
+    verified: false,
+    avatarUri: AVATAR_PRIYA,
+  },
+  driver: {
+    name: 'Pending requests',
+    vehicleLabel: '0 seats confirmed',
+    plateNumber: 'Accept riders to confirm',
+    verified: false,
+    avatarUri: AVATAR_PRIYA,
+  },
+  riders: [],
+};
+
+export const DEFAULT_DRIVING_UPCOMING_RIDES: readonly UpcomingRideSummary[] = [
+  DEFAULT_DRIVING_UPCOMING_RIDE,
+  DEFAULT_DRIVING_UPCOMING_REGULAR_RIDE,
+];
+
+/** Office commute My Rides: rider booking card (shows OTP). */
+export const DEFAULT_OFFICE_COMMUTE_RIDER_RIDE: UpcomingRideSummary = {
+  ...DEFAULT_UPCOMING_RIDE,
+  id: 'office-rider-upcoming-1',
+  title: 'Office Seat Booked',
+  role: 'rider',
+};
+
+/** Office commute My Rides: published driver card (no OTP). */
+export const DEFAULT_OFFICE_COMMUTE_DRIVER_RIDE: UpcomingRideSummary = {
+  id: 'office-driver-upcoming-1',
+  dateLabel: 'TODAY, 09:00 AM',
+  title: 'Office Ride Published',
+  assured: true,
+  otp: '',
+  pickupLabel: 'Delhi Center, Sector 12',
+  dropoffLabel: 'Altus Mindstream Office',
+  pickup: { ...RIDER_PICKUP },
+  dropoff: { ...RIDER_DROPOFF },
+  role: 'driver',
+  peer: {
+    name: 'Priya Sharma',
+    vehicleLabel: '2 seats booked',
+    plateNumber: '180 earned',
+    verified: true,
+    avatarUri: AVATAR_PRIYA,
+  },
+  driver: {
+    name: 'Priya Sharma',
+    vehicleLabel: '2 seats booked',
+    plateNumber: '180 earned',
+    verified: true,
+    avatarUri: AVATAR_PRIYA,
+  },
+  riders: ASSURED_RIDERS,
+};
+
+export const DEFAULT_OFFICE_COMMUTE_UPCOMING_RIDES: readonly UpcomingRideSummary[] = [
+  DEFAULT_OFFICE_COMMUTE_RIDER_RIDE,
+  DEFAULT_OFFICE_COMMUTE_DRIVER_RIDE,
+];
 
 export const DEFAULT_HISTORY_RIDES: readonly HistoryRideItem[] = [
   {
     id: 'history-1',
-    title: 'Morning Commute',
-    routeLabel: 'Sector 12 → Altus Mindstream Office',
-    dateLabel: 'Yesterday • 08:30 AM',
+    title: 'Delhi → Meerut',
+    routeLabel: 'Delhi → Meerut',
+    dateLabel: '24 Jul 2026 • 08:30 AM',
     statusLabel: 'Completed',
-    pickupLabel: 'Delhi Center, Sector 12',
-    dropoffLabel: 'Altus Mindstream Office',
-    pickup: { ...RIDER_PICKUP },
-    dropoff: { ...RIDER_DROPOFF },
+    pickupLabel: 'Delhi',
+    dropoffLabel: 'Meerut',
+    pickup: { latitude: 28.6139, longitude: 77.209 },
+    dropoff: { latitude: 28.9845, longitude: 77.7064 },
+    role: 'rider',
   },
   {
     id: 'history-2',
-    title: 'Evening Return',
-    routeLabel: 'Altus Mindstream Office → Sector 12',
-    dateLabel: 'Mon • 06:15 PM',
+    title: 'Gurugram → Delhi',
+    routeLabel: 'Gurugram → Delhi',
+    dateLabel: '20 Jul 2026 • 06:15 PM',
     statusLabel: 'Completed',
-    pickupLabel: 'Altus Mindstream Office',
-    dropoffLabel: 'Delhi Center, Sector 12',
+    pickupLabel: 'Gurugram',
+    dropoffLabel: 'Delhi',
     pickup: { ...RIDER_DROPOFF },
     dropoff: { ...RIDER_PICKUP },
+    role: 'rider',
+  },
+  {
+    id: 'history-3',
+    title: 'Noida → Delhi',
+    routeLabel: 'Noida → Delhi',
+    dateLabel: '15 Jul 2026 • 09:00 AM',
+    statusLabel: 'Completed',
+    pickupLabel: 'Noida',
+    dropoffLabel: 'Delhi',
+    pickup: { latitude: 28.5355, longitude: 77.391 },
+    dropoff: { latitude: 28.6139, longitude: 77.209 },
+    role: 'rider',
+  },
+  {
+    id: 'history-4',
+    title: 'Delhi → Ghaziabad',
+    routeLabel: 'Delhi → Ghaziabad',
+    dateLabel: '10 Jul 2026 • 07:45 AM',
+    statusLabel: 'Completed',
+    pickupLabel: 'Delhi',
+    dropoffLabel: 'Ghaziabad',
+    pickup: { latitude: 28.6139, longitude: 77.209 },
+    dropoff: { latitude: 28.6692, longitude: 77.4538 },
+    role: 'rider',
+  },
+] as const;
+
+/** Office commute past list: rider + driver journeys together. */
+export const DEFAULT_OFFICE_COMMUTE_HISTORY_RIDES: readonly HistoryRideItem[] = [
+  ...DEFAULT_HISTORY_RIDES,
+  {
+    id: 'office-history-driver-1',
+    title: 'Delhi → Noida',
+    routeLabel: 'Delhi → Noida',
+    dateLabel: '22 Jul 2026 • 09:00 AM',
+    statusLabel: 'Completed',
+    pickupLabel: 'Delhi',
+    dropoffLabel: 'Noida',
+    pickup: { latitude: 28.6139, longitude: 77.209 },
+    dropoff: { latitude: 28.5355, longitude: 77.391 },
+    role: 'driver',
   },
 ] as const;
 
 export const DEFAULT_DRIVING_HISTORY_RIDES: readonly HistoryRideItem[] = [
   {
     id: 'driving-history-1',
-    title: 'Published Outstation',
-    routeLabel: 'Bengaluru → Mysuru',
-    dateLabel: 'Yesterday • 06:00 AM',
+    title: 'Delhi → Meerut',
+    routeLabel: 'Delhi → Meerut',
+    dateLabel: '24 Jul 2026 • 07:30 AM',
     statusLabel: 'Completed',
-    pickupLabel: 'Bengaluru',
-    dropoffLabel: 'Mysuru',
-    pickup: { latitude: 12.9716, longitude: 77.5946 },
-    dropoff: { latitude: 12.2958, longitude: 76.6394 },
+    pickupLabel: 'Delhi',
+    dropoffLabel: 'Meerut',
+    pickup: { latitude: 28.6139, longitude: 77.209 },
+    dropoff: { latitude: 28.9845, longitude: 77.7064 },
+    role: 'driver',
   },
   {
     id: 'driving-history-2',
-    title: 'Published City Ride',
-    routeLabel: 'Whitefield → MG Road',
-    dateLabel: 'Sun • 09:15 AM',
+    title: 'Ghaziabad → Gurgaon',
+    routeLabel: 'Ghaziabad → Gurgaon',
+    dateLabel: '20 Jul 2026 • 08:00 AM',
     statusLabel: 'Completed',
-    pickupLabel: 'Whitefield',
-    dropoffLabel: 'MG Road',
-    pickup: { latitude: 12.9698, longitude: 77.75 },
-    dropoff: { latitude: 12.975, longitude: 77.6063 },
+    pickupLabel: 'Ghaziabad',
+    dropoffLabel: 'Gurgaon',
+    pickup: { latitude: 28.6692, longitude: 77.4538 },
+    dropoff: { latitude: 28.4595, longitude: 77.0266 },
+    role: 'driver',
+  },
+  {
+    id: 'driving-history-3',
+    title: 'Noida → Delhi',
+    routeLabel: 'Noida → Delhi',
+    dateLabel: '15 Jul 2026 • 06:45 AM',
+    statusLabel: 'Completed',
+    pickupLabel: 'Noida',
+    dropoffLabel: 'Delhi',
+    pickup: { latitude: 28.5355, longitude: 77.391 },
+    dropoff: { latitude: 28.6139, longitude: 77.209 },
+    role: 'driver',
+  },
+  {
+    id: 'driving-history-4',
+    title: 'Faridabad → Delhi',
+    routeLabel: 'Faridabad → Delhi',
+    dateLabel: '10 Jul 2026 • 09:15 AM',
+    statusLabel: 'Completed',
+    pickupLabel: 'Faridabad',
+    dropoffLabel: 'Delhi',
+    pickup: { latitude: 28.4089, longitude: 77.3178 },
+    dropoff: { latitude: 28.6139, longitude: 77.209 },
+    role: 'driver',
   },
 ] as const;
 

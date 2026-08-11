@@ -1,11 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Platform, Pressable, Text, View } from 'react-native';
+import { Platform, Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import MapView, { Marker, Polyline, type Region } from 'react-native-maps';
 
-import { colors, spacing } from '@/shared/theme';
+import { AppText as Text } from '@/shared/components';
 import { fetchDrivingRoute } from '@/features/ride-search/services';
 import type { MapCoordinate } from '@/features/ride-search/types';
+import { isGoogleMapsBypassed, MapBypassSurface } from '@/shared/maps';
+import { colors, spacing } from '@/shared/theme';
 import { styles } from './MyRidesRouteMap.styles';
 import type { MyRidesRouteMapProps } from './MyRidesRouteMap.types';
 
@@ -118,6 +120,39 @@ export const MyRidesRouteMap = React.memo(
     ]
       .filter(Boolean)
       .join(', ');
+
+    if (isGoogleMapsBypassed()) {
+      return (
+        <View style={[styles.container, { height }]} accessibilityLabel={accessibilityLabel}>
+          <MapBypassSurface
+            style={styles.map}
+            title="Route map"
+            points={[
+              { ...pickup, label: pickupLabel || 'Pickup' },
+              { ...dropoff, label: dropoffLabel || 'Drop-off' },
+            ]}
+          />
+          {routeMeta.distanceLabel ? (
+            <View style={styles.badge} pointerEvents="none">
+              <Text style={styles.badgeText}>
+                {routeMeta.distanceLabel}
+                {routeMeta.durationLabel ? ` • ${routeMeta.durationLabel}` : ''}
+              </Text>
+            </View>
+          ) : null}
+          {onExpandPress ? (
+            <Pressable
+              style={({ pressed }) => [styles.expandBtn, pressed && { transform: [{ scale: 0.94 }] }]}
+              onPress={onExpandPress}
+              accessibilityRole="button"
+              accessibilityLabel="Open live map"
+            >
+              <Ionicons name="expand-outline" size={16} color="#0342D1" />
+            </Pressable>
+          ) : null}
+        </View>
+      );
+    }
 
     return (
       <View style={[styles.container, { height }]} accessibilityLabel={accessibilityLabel}>

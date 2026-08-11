@@ -1,0 +1,319 @@
+import { StyleSheet } from 'react-native';
+
+import { colors, spacing } from '@/shared/theme';
+import { createShadow } from '@/shared/utils/platform';
+
+const PRIMARY = '#0342D1';
+const ON_SURFACE = '#191C1D';
+const ON_SURFACE_VARIANT = '#434655';
+const SECONDARY = '#585E72';
+const OUTLINE = '#747686';
+const OUTLINE_VARIANT = '#C4C5D7';
+const SURFACE = '#F8F9FA';
+const SECONDARY_CONTAINER = '#DADFF7';
+const RADIUS_XL = 12;
+
+export const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: SURFACE,
+  },
+  headerWrap: {
+    backgroundColor: colors.white,
+    ...createShadow({ color: colors.shadow, opacity: 0.06, radius: 6, offsetY: 2, elevation: 2 }),
+  },
+  scroll: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 16,
+    paddingTop: 24,
+    paddingBottom: 32,
+    gap: 16,
+    maxWidth: 600,
+    width: '100%',
+    alignSelf: 'center',
+  },
+  card: {
+    backgroundColor: colors.white,
+    borderRadius: RADIUS_XL,
+    padding: 24,
+    ...createShadow({ color: colors.shadow, opacity: 0.05, radius: 20, offsetY: 4, elevation: 3 }),
+  },
+  summaryCard: {
+    alignItems: 'center',
+  },
+  totalCaption: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '700',
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+    color: SECONDARY,
+    marginBottom: 4,
+  },
+  totalAmount: {
+    fontSize: 40,
+    lineHeight: 48,
+    fontWeight: '800',
+    color: PRIMARY,
+  },
+  metaBlock: {
+    marginTop: 16,
+    alignItems: 'center',
+    gap: 4,
+  },
+  metaText: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: ON_SURFACE_VARIANT,
+  },
+  metaStrong: {
+    fontWeight: '600',
+    color: ON_SURFACE,
+  },
+  statusChip: {
+    marginTop: 24,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: 'rgba(218, 223, 247, 0.45)',
+    borderWidth: 1,
+    borderColor: 'rgba(3, 66, 209, 0.12)',
+  },
+  statusChipText: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '700',
+    letterSpacing: 0.4,
+    color: PRIMARY,
+  },
+  sectionTitle: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '700',
+    letterSpacing: 0.6,
+    textTransform: 'uppercase',
+    color: SECONDARY,
+    marginBottom: 16,
+  },
+  tripTrack: {
+    paddingLeft: 32,
+    position: 'relative',
+    gap: 32,
+  },
+  dashLine: {
+    position: 'absolute',
+    left: 11,
+    top: 8,
+    bottom: 8,
+    width: 1,
+    borderStyle: 'dashed',
+    borderWidth: 1,
+    borderColor: OUTLINE,
+  },
+  stopDotOuter: {
+    position: 'absolute',
+    left: -26,
+    top: 2,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: PRIMARY,
+    backgroundColor: colors.white,
+  },
+  stopDotFilled: {
+    position: 'absolute',
+    left: -26,
+    top: 2,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: PRIMARY,
+  },
+  stopBlock: {
+    gap: 2,
+  },
+  stopLabel: {
+    fontSize: 10,
+    lineHeight: 14,
+    fontWeight: '700',
+    letterSpacing: 0.6,
+    textTransform: 'uppercase',
+    color: SECONDARY,
+  },
+  stopValue: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: '600',
+    color: ON_SURFACE,
+  },
+  stopTime: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: ON_SURFACE_VARIANT,
+  },
+  driverHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  verifiedChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#ECFDF5',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 999,
+  },
+  verifiedText: {
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: '700',
+    color: '#059669',
+  },
+  driverRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+  driverAvatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 8,
+    overflow: 'hidden',
+    backgroundColor: '#E1E3E4',
+  },
+  driverMeta: {
+    flex: 1,
+    gap: 2,
+  },
+  driverName: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: '700',
+    color: ON_SURFACE,
+  },
+  driverVehicle: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: ON_SURFACE_VARIANT,
+  },
+  fareRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  fareLabel: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: ON_SURFACE_VARIANT,
+    flex: 1,
+    paddingRight: 12,
+  },
+  fareValue: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: ON_SURFACE,
+  },
+  fareDiscount: {
+    color: '#059669',
+    fontWeight: '600',
+  },
+  fareTotalRow: {
+    marginTop: 4,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: OUTLINE_VARIANT,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  fareTotalLabel: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: '700',
+    color: ON_SURFACE,
+  },
+  fareTotalValue: {
+    fontSize: 20,
+    lineHeight: 28,
+    fontWeight: '800',
+    color: PRIMARY,
+  },
+  paymentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  paymentLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    flex: 1,
+  },
+  paymentIconWrap: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(3, 66, 209, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  paymentMeta: {
+    flex: 1,
+    gap: 2,
+  },
+  paymentCaption: {
+    fontSize: 10,
+    lineHeight: 14,
+    fontWeight: '700',
+    letterSpacing: 0.6,
+    textTransform: 'uppercase',
+    color: SECONDARY,
+  },
+  paymentValue: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: '700',
+    color: ON_SURFACE,
+  },
+  actionsRow: {
+    flexDirection: 'row',
+    gap: 16,
+    marginTop: 8,
+    marginBottom: 8,
+  },
+  actionButton: {
+    flex: 1,
+    minHeight: 48,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: OUTLINE,
+    backgroundColor: colors.white,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingHorizontal: 12,
+  },
+  actionLabel: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '600',
+    color: ON_SURFACE,
+  },
+  reportLabel: {
+    color: '#BA1A1A',
+  },
+});
+
+export const invoiceTokens = {
+  PRIMARY,
+  SECONDARY_CONTAINER,
+  spacing,
+} as const;

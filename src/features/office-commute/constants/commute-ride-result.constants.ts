@@ -11,6 +11,7 @@ export const COMMUTE_RIDE_RESULT_SCREEN = {
   unverifiedBadge: 'Un-verified',
   priceCaption: 'per seat',
   departureLabel: 'Departure',
+  sameOrganizationBadge: 'Same Organization',
   emptyTitle: 'No commute rides found',
   emptySubtitle: 'Try a different time or route to find colleagues heading your way.',
 } as const;
@@ -34,6 +35,7 @@ export const MOCK_COMMUTE_RIDE_RESULTS: readonly CommuteRideResultItem[] = [
     vehicleColor: 'White',
     seatsLeft: 2,
     seatsNote: 'Shared by 2 others',
+    organization: 'Acme Corp',
     ac: true,
     luggage: 'Medium',
     originCity: 'Cyber City',
@@ -62,6 +64,7 @@ export const MOCK_COMMUTE_RIDE_RESULTS: readonly CommuteRideResultItem[] = [
     vehicleColor: 'Black',
     seatsLeft: 3,
     seatsNote: 'Direct ride',
+    organization: 'BhaiWay',
     ac: true,
     luggage: 'Large',
     originCity: 'Cyber City',
@@ -90,6 +93,7 @@ export const MOCK_COMMUTE_RIDE_RESULTS: readonly CommuteRideResultItem[] = [
     vehicleColor: 'Grey',
     seatsLeft: 1,
     seatsNote: '1 pick-up on way',
+    organization: 'Globex',
     ac: true,
     luggage: 'Small',
     originCity: 'Cyber City',
@@ -107,6 +111,7 @@ export const getCommuteRideResultPath = (params: {
   destination: string;
   dateLabel: string;
   timeLabel: string;
+  sameOrganizationOnly?: boolean;
   originLat?: number;
   originLng?: number;
   destinationLat?: number;
@@ -118,6 +123,7 @@ export const getCommuteRideResultPath = (params: {
     destination: params.destination,
     dateLabel: params.dateLabel,
     timeLabel: params.timeLabel,
+    sameOrganizationOnly: params.sameOrganizationOnly ? 'true' : 'false',
     originLat: params.originLat != null ? String(params.originLat) : '',
     originLng: params.originLng != null ? String(params.originLng) : '',
     destinationLat: params.destinationLat != null ? String(params.destinationLat) : '',

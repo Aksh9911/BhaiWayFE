@@ -1,10 +1,10 @@
 export const CORPORATE_VERIFICATION_SUCCESS_SCREEN = {
-  title: 'Verification Submitted!',
+  title: 'Workspace Email Verified!',
   subtitle:
-    'Our team is reviewing your corporate credentials. You will be notified within 24 hours. You can now access community-exclusive rides.',
+    'Your corporate identity is verified via workspace email OTP. You can now publish and book community-exclusive office rides.',
   trustLabel: 'Trust Score',
   trustValue: 95,
   statusLabel: 'Status',
-  statusValue: 'Reviewing',
+  statusValue: 'Verified',
   ctaLabel: 'Go to Dashboard',
 } as const;

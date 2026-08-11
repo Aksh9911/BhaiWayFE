@@ -17,14 +17,14 @@ export const keyboardAvoidingBehavior = selectPlatform({
 });
 
 export const keyboardVerticalOffset = selectPlatform({
-  ios: 0,
+  ios: 8,
   android: 0,
   default: 0,
 });
 
 export const scrollKeyboardDismissMode = selectPlatform({
   ios: 'on-drag' as const,
-  android: 'interactive' as const,
+  android: 'on-drag' as const,
   default: 'on-drag' as const,
 });
 
@@ -33,6 +33,28 @@ export const stackAnimation = selectPlatform({
   android: 'slide_from_right' as const,
   default: 'default' as const,
 });
+
+/**
+ * iOS edge swipe only (same as Back) — not full-screen swipe.
+ * Full-screen gestures often pop the parent stack straight to Home/Login.
+ */
+export const stackGestureOptions = {
+  gestureEnabled: true,
+  fullScreenGestureEnabled: false,
+  gestureDirection: 'horizontal' as const,
+} as const;
+
+/** Root-level Expo Router groups that own their own Stack. */
+export const NESTED_ROOT_SEGMENTS = [
+  'login',
+  'ride-search',
+  'office-commute',
+  'offer-ride',
+  'my-rides',
+] as const;
+
+export const isNestedRootSegment = (segment: string): boolean =>
+  (NESTED_ROOT_SEGMENTS as readonly string[]).includes(segment);
 
 interface ShadowOptions {
   color?: string;

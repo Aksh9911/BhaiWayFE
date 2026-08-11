@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, Linking } from 'react-native';
+import { Linking } from 'react-native';
+
 import { useRouter } from 'expo-router';
 
 import { ROUTES } from '@/config';
-import { triggerErrorHaptic, triggerLightHaptic, triggerSuccessHaptic } from '@/shared/utils';
+import { triggerErrorHaptic, triggerLightHaptic, triggerSuccessHaptic, showAppAlert } from '@/shared/utils';
 import {
   DEFAULT_EMERGENCY_RIDE,
   EMERGENCY_ASSISTANCE_SCREEN,
@@ -88,7 +89,7 @@ export const useEmergencyAssistance = (): UseEmergencyAssistanceResult => {
     setIsHolding(false);
     setHoldProgress(0);
     setTapCount(0);
-    Alert.alert(
+    showAppAlert(
       EMERGENCY_ASSISTANCE_SCREEN.alertTriggeredTitle,
       EMERGENCY_ASSISTANCE_SCREEN.alertTriggeredMessage,
       [
@@ -157,14 +158,14 @@ export const useEmergencyAssistance = (): UseEmergencyAssistanceResult => {
     triggerLightHaptic();
     if (contact.action === 'alarm') {
       triggerSuccessHaptic();
-      Alert.alert(EMERGENCY_ASSISTANCE_SCREEN.alarmTitle, EMERGENCY_ASSISTANCE_SCREEN.alarmMessage);
+      showAppAlert(EMERGENCY_ASSISTANCE_SCREEN.alarmTitle, EMERGENCY_ASSISTANCE_SCREEN.alarmMessage);
       return;
     }
     if (!contact.number) {
       return;
     }
     Linking.openURL(`tel:${contact.number}`).catch(() => {
-      Alert.alert(
+      showAppAlert(
         EMERGENCY_ASSISTANCE_SCREEN.callFailedTitle,
         EMERGENCY_ASSISTANCE_SCREEN.callFailedMessage,
       );
@@ -173,7 +174,7 @@ export const useEmergencyAssistance = (): UseEmergencyAssistanceResult => {
 
   const openMap = useCallback(() => {
     triggerLightHaptic();
-    Alert.alert(EMERGENCY_ASSISTANCE_SCREEN.mapTitle, EMERGENCY_ASSISTANCE_SCREEN.mapMessage);
+    showAppAlert(EMERGENCY_ASSISTANCE_SCREEN.mapTitle, EMERGENCY_ASSISTANCE_SCREEN.mapMessage);
   }, []);
 
   return {

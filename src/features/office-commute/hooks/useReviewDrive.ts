@@ -18,7 +18,7 @@ import {
   formatEstimatedEarnings,
   WEEKDAY_OPTIONS,
 } from '../constants';
-import { publishCommuteDraft } from '../store';
+import { corporateVerificationStore, publishCommuteDraft } from '../store';
 import { publishedCommuteStore } from '../store/publishedCommuteStore';
 import type { PublishCommuteDraft } from '../types';
 
@@ -36,6 +36,7 @@ export interface UseReviewDriveResult {
   estimatedEarnings: string;
   weekdays: typeof WEEKDAY_OPTIONS;
   publishing: boolean;
+  isCorporateVerified: boolean;
   goBack: () => void;
   verifyIdentity: () => void;
   publishRide: () => void;
@@ -58,8 +59,18 @@ export const useReviewDrive = (): UseReviewDriveResult => {
   const [publishing, setPublishing] = useState(false);
   const [route, setRoute] = useState<RouteGeometry | null>(null);
   const [routeLoading, setRouteLoading] = useState(true);
+  const [isCorporateVerified, setIsCorporateVerified] = useState(() =>
+    corporateVerificationStore.isVerified(),
+  );
 
   useEffect(() => publishCommuteDraft.subscribe(setDraft), []);
+  useEffect(
+    () =>
+      corporateVerificationStore.subscribe((record) => {
+        setIsCorporateVerified(record != null);
+      }),
+    [],
+  );
 
   const pickupDetail = draft.startLocationDetail ?? DEFAULT_START_LOCATION;
   const destinationDetail = draft.officeLocationDetail ?? DEFAULT_OFFICE_LOCATION;
@@ -181,6 +192,7 @@ export const useReviewDrive = (): UseReviewDriveResult => {
     estimatedEarnings,
     weekdays: WEEKDAY_OPTIONS,
     publishing,
+    isCorporateVerified,
     goBack,
     verifyIdentity,
     publishRide,

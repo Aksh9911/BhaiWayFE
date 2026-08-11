@@ -1,11 +1,12 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { colors } from '@/shared/theme';
 import { REVIEW_BOOKING_SCREEN } from '../../constants';
 import type { CoPassenger } from '../../types';
 import { styles } from './ReviewBookingCoPassengersCard.styles';
+import { AppText as Text } from '@/shared/components';
 
 export interface ReviewBookingCoPassengersCardProps {
   passengers: CoPassenger[];

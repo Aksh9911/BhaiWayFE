@@ -13,7 +13,7 @@ export const styles = StyleSheet.create({
   },
   cardVerified: {
     borderLeftWidth: 4,
-    borderLeftColor: '#D95F00',
+    borderLeftColor: '#0342D1',
   },
   body: {
     padding: 16,
@@ -51,7 +51,7 @@ export const styles = StyleSheet.create({
     lineHeight: 20,
     fontWeight: '600',
     letterSpacing: 0.1,
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   ratingRow: {
     flexDirection: 'row',
@@ -63,7 +63,7 @@ export const styles = StyleSheet.create({
     lineHeight: 16,
     fontWeight: '500',
     letterSpacing: 0.2,
-    color: '#D95F00',
+    color: '#0342D1',
   },
   vehicle: {
     fontSize: 14,
@@ -77,7 +77,7 @@ export const styles = StyleSheet.create({
     fontSize: 28,
     lineHeight: 36,
     fontWeight: '700',
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   priceCaption: {
     fontSize: 12,
@@ -100,7 +100,7 @@ export const styles = StyleSheet.create({
     lineHeight: 32,
     fontWeight: '600',
     letterSpacing: -0.2,
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   departureLabel: {
     fontSize: 12,
@@ -138,7 +138,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: '#FFDBCA',
+    backgroundColor: colors.accentLight,
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 999,
@@ -147,7 +147,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: '#E0E3E5',
+    backgroundColor: colors.surfaceMuted,
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 999,
@@ -157,18 +157,18 @@ export const styles = StyleSheet.create({
     lineHeight: 16,
     fontWeight: '500',
     letterSpacing: 0.2,
-    color: '#341100',
+    color: colors.primary,
   },
   badgeUnverifiedText: {
     fontSize: 12,
     lineHeight: 16,
     fontWeight: '500',
     letterSpacing: 0.2,
-    color: '#626567',
+    color: colors.textSecondary,
   },
   requestButton: {
     width: '100%',
-    backgroundColor: '#0B1C30',
+    backgroundColor: colors.primary,
     borderRadius: 8,
     paddingVertical: 16,
     alignItems: 'center',
@@ -176,7 +176,7 @@ export const styles = StyleSheet.create({
     ...createShadow({ color: colors.shadow, opacity: 0.08, radius: 6, offsetY: 2, elevation: 2 }),
   },
   requestButtonBusy: {
-    backgroundColor: '#45464D',
+    backgroundColor: colors.disabled,
   },
   requestButtonDone: {
     backgroundColor: '#5C5F61',

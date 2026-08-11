@@ -1,11 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import {
-  Image,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from 'react-native';
+import { Image, Pressable, ScrollView, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, {
@@ -17,7 +11,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { AppFooter, Avatar } from '@/shared/components';
+import { AppFooter, Avatar, AppText as Text } from '@/shared/components';
 import { triggerLightHaptic } from '@/shared/utils';
 import { SwipeToComplete } from '@/features/my-rides/components';
 import { DRIVER_ACTIVE_TRIP_SCREEN } from '@/features/my-rides/constants';

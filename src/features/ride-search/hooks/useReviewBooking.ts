@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import { showAppAlert } from '@/store';
 
 import {
   DEFAULT_PROMO_CODE,
@@ -19,6 +19,8 @@ export interface UseReviewBookingParams {
   driverName?: string;
   carModel?: string;
   price?: number;
+  dateLabel?: string;
+  departureTime?: string;
   originLat?: number;
   originLng?: number;
   destinationLat?: number;
@@ -193,7 +195,7 @@ export const useReviewBooking = (params: UseReviewBookingParams): UseReviewBooki
   const applyPromo = useCallback(() => {
     const code = promoInput.trim().toUpperCase();
     if (!code) {
-      Alert.alert('Promo required', 'Please enter a promo code.');
+      showAppAlert('Promo required', 'Please enter a promo code.');
       return;
     }
     if (code === DEFAULT_PROMO_CODE) {
@@ -201,7 +203,7 @@ export const useReviewBooking = (params: UseReviewBookingParams): UseReviewBooki
       return;
     }
     setPromoApplied(false);
-    Alert.alert('Invalid promo', 'Please enter a valid promo code.');
+    showAppAlert('Invalid promo', 'Please enter a valid promo code.');
   }, [promoInput]);
 
   const confirmBooking = useCallback(() => {
@@ -214,9 +216,16 @@ export const useReviewBooking = (params: UseReviewBookingParams): UseReviewBooki
         driverName: booking.driver.name,
         carModel: booking.driver.subtitle,
         price: fare.total,
+        assuredFee: fare.assuredFee,
+        dateLabel: params.dateLabel,
+        departureTime: params.departureTime,
+        originLat: booking.pickup.latitude,
+        originLng: booking.pickup.longitude,
+        destinationLat: booking.dropoff.latitude,
+        destinationLng: booking.dropoff.longitude,
       }),
     );
-  }, [booking, fare.total, router]);
+  }, [booking, fare.assuredFee, fare.total, params.dateLabel, params.departureTime, router]);
 
   return {
     booking,

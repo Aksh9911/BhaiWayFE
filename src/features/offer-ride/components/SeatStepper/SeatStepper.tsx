@@ -1,10 +1,11 @@
 import React, { useCallback } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { colors } from '@/shared/theme';
 import { styles } from './SeatStepper.styles';
 import type { SeatStepperProps } from './SeatStepper.types';
+import { AppText as Text } from '@/shared/components';
 
 export const SeatStepper = ({ value, min = 1, max = 6, onChange }: SeatStepperProps) => {
   const decrement = useCallback(() => {

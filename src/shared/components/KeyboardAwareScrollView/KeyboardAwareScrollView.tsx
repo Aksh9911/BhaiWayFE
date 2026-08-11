@@ -1,19 +1,29 @@
-import React from 'react';
-import { KeyboardAvoidingView, ScrollView, View } from 'react-native';
+import React, { useCallback, useRef } from 'react';
+import {
+  KeyboardAvoidingView,
+  ScrollView,
+  View,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { spacing } from '@/shared/theme';
+import { useScrollFocusedInputIntoView } from '@/shared/hooks/useScrollFocusedInputIntoView';
 import {
+  isIOS,
   keyboardAvoidingBehavior,
   keyboardVerticalOffset,
   scrollKeyboardDismissMode,
 } from '@/shared/utils/platform';
 import type { KeyboardAwareScrollViewProps } from './KeyboardAwareScrollView.types';
 
+/** Approximate AppFooter height used when screens render footer outside this scroll. */
+export const APP_FOOTER_KEYBOARD_OFFSET = 84;
+
 /**
  * Keyboard-safe scroll container.
- * Uses KeyboardAvoidingView only (no automaticallyAdjustKeyboardInsets)
- * to avoid double-offset / jitter when a sticky footer is present.
+ * Keeps focused inputs above the keyboard and supports an optional sticky footer.
  */
 export const KeyboardAwareScrollView = ({
   children,
@@ -27,8 +37,39 @@ export const KeyboardAwareScrollView = ({
   onScroll,
   scrollEventThrottle = 16,
   keyboardVerticalOffset: offsetOverride,
+  extraBottomOffset = 0,
 }: KeyboardAwareScrollViewProps) => {
   const insets = useSafeAreaInsets();
+  const resolvedRef = useRef<ScrollView | null>(null);
+
+  const { scrollFocusedIntoView, onScroll: trackScrollOffset } =
+    useScrollFocusedInputIntoView(resolvedRef, {
+      enabled: true,
+      extraBottomOffset,
+    });
+
+  const setRefs = useCallback(
+    (node: ScrollView | null) => {
+      resolvedRef.current = node;
+      if (!scrollViewRef) {
+        return;
+      }
+      if (typeof scrollViewRef === 'function') {
+        scrollViewRef(node);
+        return;
+      }
+      (scrollViewRef as React.MutableRefObject<ScrollView | null>).current = node;
+    },
+    [scrollViewRef],
+  );
+
+  const handleScroll = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      trackScrollOffset(event);
+      onScroll?.(event);
+    },
+    [onScroll, trackScrollOffset],
+  );
 
   return (
     <KeyboardAvoidingView
@@ -37,16 +78,20 @@ export const KeyboardAwareScrollView = ({
       keyboardVerticalOffset={offsetOverride ?? keyboardVerticalOffset}
     >
       <ScrollView
-        ref={scrollViewRef}
+        ref={setRefs}
         contentContainerStyle={[
           contentContainerStyle,
-          { paddingBottom: insets.bottom + bottomInset },
+          { paddingBottom: insets.bottom + bottomInset, flexGrow: 1 },
         ]}
         keyboardShouldPersistTaps={keyboardShouldPersistTaps}
         keyboardDismissMode={scrollKeyboardDismissMode}
+        automaticallyAdjustKeyboardInsets={!isIOS}
         showsVerticalScrollIndicator={showsVerticalScrollIndicator}
-        onScroll={onScroll}
+        onScroll={handleScroll}
         scrollEventThrottle={scrollEventThrottle}
+        onContentSizeChange={() => {
+          scrollFocusedIntoView();
+        }}
       >
         {children}
       </ScrollView>

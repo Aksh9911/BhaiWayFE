@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     fontWeight: '700',
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   subtitle: {
     fontSize: 14,

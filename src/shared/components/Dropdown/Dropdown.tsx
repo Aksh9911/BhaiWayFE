@@ -1,11 +1,12 @@
 import React, { useCallback } from 'react';
-import { Modal, Pressable, Text, View } from 'react-native';
+import { Modal, Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { colors, spacing } from '@/shared/theme';
 import { styles } from './Dropdown.styles';
 import type { DropdownProps } from './Dropdown.types';
+import { AppText as Text } from '../AppText';
 
 export const Dropdown = <T extends string | number>({
   visible,

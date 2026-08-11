@@ -70,7 +70,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.xxl,
     paddingBottom: spacing.huge + spacing.xxxl,
-    gap: spacing.xxxl,
+    gap: spacing.cardGap,
     maxWidth: layout.maxContentWidth,
     width: '100%',
     alignSelf: 'center',
@@ -78,7 +78,7 @@ export const styles = StyleSheet.create({
   hero: {
     alignItems: 'center',
     paddingVertical: spacing.xxxl,
-    gap: spacing.xxxl,
+    gap: spacing.cardGap,
   },
   sosWrap: {
     width: 192,

@@ -3,7 +3,7 @@ import { WALLET_BALANCE_LABEL } from './wallet-shared.constants';
 
 export const PROFILE_SCREEN = {
   title: 'Profile',
-  walletTitle: 'BhaiWay Wallet',
+  walletTitle: 'BhaiWay Coins Wallet',
   addRedeemLabel: 'Open Wallet',
   paymentMethodsTitle: 'Payment Methods',
   driverEarningsTitle: 'Driver Earnings',
@@ -23,32 +23,32 @@ export const PROFILE_SCREEN = {
 export const DEFAULT_PROFILE_AVATAR = '';
 
 export const DEFAULT_MASTER_PROFILE: MasterProfileData = {
-  fullName: 'Arjun Sharma',
-  phoneLabel: '+91 98765 43210',
+  fullName: 'User',
+  phoneLabel: '',
   avatarUri: DEFAULT_PROFILE_AVATAR,
   walletBalanceLabel: WALLET_BALANCE_LABEL,
   paymentMethodsSubtitle: 'UPI, Cards linked',
-  driverEarningsLabel: '₹ 2,450',
+  driverEarningsLabel: '2,450',
   earningBreakdown: [
-    { label: 'Regular Rides', amountLabel: '₹1,850' },
-    { label: 'Assured Rides', amountLabel: '₹600' },
+    { label: 'Regular Rides', amountLabel: '1,850' },
+    { label: 'Assured Rides', amountLabel: '600' },
   ],
   earningInsight:
-    "You earned ₹600 from Assured Rides. If your Regular Rides had been 'Assured', you could have earned an additional ₹450!",
+    "You earned 600 from Assured Rides. If your Regular Rides had been 'Assured', you could have earned an additional 450!",
   badges: [
-    { id: 'corporate', label: 'Corporate ID', icon: 'verified', tone: 'success' },
-    { id: 'rating', label: '4.8', icon: 'star', tone: 'neutral' },
+    { id: 'corporate', label: 'Corporate ID', icon: 'close-circle', tone: 'danger' },
+    { id: 'rating', label: '0', icon: 'star', tone: 'neutral' },
     { id: 'trust', label: '98% Trust', icon: 'shield-checkmark', tone: 'primary' },
   ],
-  ratingLabel: '4.8',
+  ratingLabel: '0',
   trustLabel: '98% Trust',
 };
 
 export const PROFILE_MENU_ITEMS: readonly ProfileMenuItem[] = [
   {
     id: 'verify',
-    title: 'Verify Identity & Documents',
-    subtitle: 'Corporate ID, Driving License, RC',
+    title: 'Verify Your Identity',
+    subtitle: 'Verify Aadhaar to unlock trust & features',
     icon: 'id-card-outline',
   },
   {
@@ -81,4 +81,19 @@ export const PROFILE_MENU_ITEMS: readonly ProfileMenuItem[] = [
     subtitle: 'Terms, Privacy, Policies',
     icon: 'document-text-outline',
   },
+  {
+    id: 'demoData',
+    title: 'Local Demo Data',
+    subtitle: 'View users, vehicles & bookings saved on this device',
+    icon: 'folder-open-outline',
+  },
 ] as const;
+
+/** Only this phone can open Local Demo Data while BhaiWay is in testing. */
+export const DEMO_DATA_TESTER_PHONE = '9911224906';
+
+export const normalizeDemoTesterPhone = (value?: string | null): string =>
+  (value ?? '').replace(/\D/g, '').slice(-10);
+
+export const canAccessLocalDemoData = (phone?: string | null): boolean =>
+  normalizeDemoTesterPhone(phone) === DEMO_DATA_TESTER_PHONE;

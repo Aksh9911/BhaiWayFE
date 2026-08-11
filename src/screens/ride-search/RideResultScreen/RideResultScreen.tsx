@@ -1,20 +1,11 @@
 import { useCallback } from 'react';
-import {
-  FlatList,
-  ListRenderItem,
-  Pressable,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { FlatList, ListRenderItem, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 
 import { ROUTES } from '@/config';
-import { AppFooter } from '@/shared/components';
-import { colors } from '@/shared/theme';
+import { AppFooter, AppText as Text } from '@/shared/components';
 import { getSearchParam } from '@/shared/utils';
 import {
   EmptyRideResults,
@@ -59,8 +50,6 @@ export const RideResultScreen = () => {
     setActiveFilter,
     sortId,
     setSortId,
-    searchQuery,
-    setSearchQuery,
     refresh,
   } = useRideResult({
     origin: getSearchParam(params.origin),
@@ -75,10 +64,6 @@ export const RideResultScreen = () => {
       return;
     }
     router.replace(ROUTES.home);
-  }, [router]);
-
-  const handleProfilePress = useCallback(() => {
-    router.push(ROUTES.profile);
   }, [router]);
 
   const handleModifySearch = useCallback(() => {
@@ -101,6 +86,8 @@ export const RideResultScreen = () => {
           price: ride.price,
           distanceLabel: formatDistanceLabel(ride.distanceKm),
           durationLabel: ride.durationLabel,
+          dateLabel: summary.dateLabel,
+          departureTime: ride.departureTime,
           originLat: Number.isFinite(originLat) ? originLat : undefined,
           originLng: Number.isFinite(originLng) ? originLng : undefined,
           destinationLat: Number.isFinite(destinationLat) ? destinationLat : undefined,
@@ -114,6 +101,7 @@ export const RideResultScreen = () => {
       originLat,
       originLng,
       router,
+      summary.dateLabel,
       summary.destinationCity,
       summary.originCity,
     ],
@@ -130,6 +118,8 @@ export const RideResultScreen = () => {
           driverName: ride.driver.name,
           carModel: ride.carModel,
           price: ride.price,
+          dateLabel: summary.dateLabel,
+          departureTime: ride.departureTime,
           originLat: Number.isFinite(originLat) ? originLat : undefined,
           originLng: Number.isFinite(originLng) ? originLng : undefined,
           destinationLat: Number.isFinite(destinationLat) ? destinationLat : undefined,
@@ -143,6 +133,7 @@ export const RideResultScreen = () => {
       originLat,
       originLng,
       router,
+      summary.dateLabel,
       summary.destinationCity,
       summary.originCity,
     ],
@@ -176,31 +167,6 @@ export const RideResultScreen = () => {
 
       <SearchSummaryCard summary={summary} />
 
-      <View style={styles.searchRow}>
-        <Ionicons name="search-outline" size={18} color={colors.textSecondary} />
-        <TextInput
-          style={styles.searchInput}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          placeholder={RIDE_RESULT_SCREEN.searchPlaceholder}
-          placeholderTextColor={colors.textPlaceholder}
-          autoCorrect={false}
-          autoCapitalize="none"
-          clearButtonMode="while-editing"
-          accessibilityLabel="Search rides by driver or car"
-        />
-        {searchQuery.length > 0 ? (
-          <Pressable
-            onPress={() => setSearchQuery('')}
-            hitSlop={8}
-            accessibilityRole="button"
-            accessibilityLabel="Clear search"
-          >
-            <Ionicons name="close-circle" size={18} color={colors.textSecondary} />
-          </Pressable>
-        ) : null}
-      </View>
-
       <ResultFilterChips selectedId={activeFilter} onSelect={setActiveFilter} />
 
       <View style={styles.sortBlock}>
@@ -212,7 +178,7 @@ export const RideResultScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
-      <RideSearchTopBar onMenuPress={handleMenuPress} onProfilePress={handleProfilePress} />
+      <RideSearchTopBar onMenuPress={handleMenuPress} />
 
       {loading ? (
         <View style={styles.listContent}>

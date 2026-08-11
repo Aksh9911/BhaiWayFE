@@ -1,6 +1,6 @@
 import { ROUTES } from '@/config';
 
-import type { DriverPickupStop } from '../types';
+import type { DriverPickupStop, DriverRideKind } from '../types';
 
 export const DRIVER_PICKUP_SCREEN = {
   brandName: 'BhaiWay',
@@ -58,4 +58,9 @@ export const DEFAULT_DRIVER_PICKUP_STOPS: readonly DriverPickupStop[] = [
   },
 ] as const;
 
-export const getDriverPickupPath = () => ROUTES.myRidesPickup;
+import type { DriverRideKind } from '../types';
+
+export const getDriverPickupPath = (rideType: DriverRideKind = 'assured') => ({
+  pathname: ROUTES.myRidesPickup,
+  params: { rideType },
+});

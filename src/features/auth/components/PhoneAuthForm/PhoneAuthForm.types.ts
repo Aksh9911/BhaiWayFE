@@ -2,8 +2,10 @@ import type { AuthFlow } from '../../types';
 
 export interface PhoneAuthFormProps {
   flow: AuthFlow;
-  title: string;
+  /** When set, shows the top Header with this title. Omit to hide the titled header. */
+  title?: string;
   heading: string;
   subtitle: string;
-  helpMessage: string;
+  /** @deprecated Help now opens the FAQ screen; kept for call-site compatibility. */
+  helpMessage?: string;
 }

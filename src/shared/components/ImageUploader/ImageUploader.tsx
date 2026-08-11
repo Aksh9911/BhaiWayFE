@@ -1,11 +1,5 @@
 import React, { useMemo } from 'react';
-import {
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useUpload } from '@/hooks/useUpload';
@@ -13,6 +7,7 @@ import { UPLOAD_KIND_CONFIG } from '@/shared/constants/uploadTypes';
 import { colors, layout, spacing } from '@/shared/theme';
 import type { CloudinaryUploadResponse, UploadKind, UploadSource } from '@/types/cloudinary';
 import { UploadProgress } from './UploadProgress';
+import { AppText as Text } from '../AppText';
 
 export interface ImageUploaderProps {
   kind: UploadKind;
@@ -43,7 +38,6 @@ export const ImageUploader = ({
   subtitle,
   onUploaded,
   onSuccess,
-  submitLabel = 'Save to profile',
 }: ImageUploaderProps) => {
   const config = UPLOAD_KIND_CONFIG[kind];
   const {
@@ -120,14 +114,7 @@ export const ImageUploader = ({
       {result ? (
         <View style={styles.resultBox}>
           <Text style={styles.resultTitle}>Uploaded</Text>
-          <Text style={styles.resultMeta} numberOfLines={2}>
-            {result.secureUrl}
-          </Text>
-          <Text style={styles.resultMeta}>public_id: {result.publicId}</Text>
-          <Text style={styles.resultMeta}>
-            {result.format.toUpperCase()} · {(result.bytes / 1024).toFixed(1)} KB
-          </Text>
-          <Text style={styles.submitHint}>{submitLabel} will use this secure_url.</Text>
+          <Text style={styles.resultMeta}>Upload completed successfully.</Text>
         </View>
       ) : null}
     </View>

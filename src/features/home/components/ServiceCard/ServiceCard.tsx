@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
-import { Image, Text, View } from 'react-native';
+import { Image, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { Button } from '@/shared/components';
+import { Button, AppText as Text } from '@/shared/components';
 import { colors } from '@/shared/theme';
 import { styles } from './ServiceCard.styles';
 import type { ServiceCardProps } from './ServiceCard.types';

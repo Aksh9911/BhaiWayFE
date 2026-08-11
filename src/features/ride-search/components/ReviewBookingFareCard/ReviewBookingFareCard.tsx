@@ -1,9 +1,10 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
 import { formatBookingAmount, REVIEW_BOOKING_SCREEN } from '../../constants';
 import type { BookingFareBreakdown } from '../../types';
 import { styles } from './ReviewBookingFareCard.styles';
+import { AppText as Text } from '@/shared/components';
 
 export interface ReviewBookingFareCardProps {
   fare: BookingFareBreakdown;

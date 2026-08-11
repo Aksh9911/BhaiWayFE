@@ -8,3 +8,5 @@ export { IdentityCard } from './IdentityCard';
 export type { IdentityCardProps } from './IdentityCard';
 export { PhoneAuthForm } from './PhoneAuthForm';
 export type { PhoneAuthFormProps } from './PhoneAuthForm';
+export { MorphingOTPInput, MORPHING_OTP_TIMING } from './MorphingOTPInput';
+export type { MorphingOTPInputProps, MorphingOtpStatus } from './MorphingOTPInput';

@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, {
   useAnimatedStyle,
@@ -11,6 +11,7 @@ import { colors } from '@/shared/theme';
 import { triggerLightHaptic } from '@/shared/utils';
 import { styles } from './Button.styles';
 import type { ButtonProps } from './Button.types';
+import { AppText as Text } from '../AppText';
 
 export const Button = ({
   label,

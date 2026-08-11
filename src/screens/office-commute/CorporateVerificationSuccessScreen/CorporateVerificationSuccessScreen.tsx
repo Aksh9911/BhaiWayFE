@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, {
@@ -10,7 +10,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { AppFooter, IconButton, SuccessHero } from '@/shared/components';
+import { AppFooter, IconButton, SuccessHero, AppText as Text } from '@/shared/components';
 import { triggerLightHaptic } from '@/shared/utils';
 import { CORPORATE_VERIFICATION_SUCCESS_SCREEN } from '@/features/office-commute/constants';
 import { useCorporateVerificationSuccess } from '@/features/office-commute/hooks';

@@ -1,9 +1,8 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { ROUTES } from '@/config';
-import { resetTo } from '@/shared/utils';
+import { resetTo, showAppAlert, triggerLightHaptic } from '@/shared/utils';
 import {
   CANCEL_RIDE_SCREEN,
   CANCEL_REASONS,
@@ -25,6 +24,8 @@ export interface UseCancelRideResult {
   selectedReason: CancelReasonId | null;
   comments: string;
   isAssured: boolean;
+  subtitle: string;
+  showOtherNote: boolean;
   submitting: boolean;
   selectReason: (id: CancelReasonId) => void;
   setComments: (value: string) => void;
@@ -50,8 +51,14 @@ export const useCancelRide = (params: UseCancelRideParams): UseCancelRideResult 
     [params.destination, params.origin, params.rideId, params.rideType],
   );
 
+  const isAssured = summary.rideType === 'assured';
+
   const selectReason = useCallback((id: CancelReasonId) => {
+    triggerLightHaptic();
     setSelectedReason(id);
+    if (id !== 'other') {
+      setComments('');
+    }
   }, []);
 
   const goBack = useCallback(() => {
@@ -68,7 +75,7 @@ export const useCancelRide = (params: UseCancelRideParams): UseCancelRideResult 
 
   const confirmCancellation = useCallback(() => {
     if (!selectedReason) {
-      Alert.alert(
+      showAppAlert(
         CANCEL_RIDE_SCREEN.reasonRequiredTitle,
         CANCEL_RIDE_SCREEN.reasonRequiredMessage,
       );
@@ -78,16 +85,25 @@ export const useCancelRide = (params: UseCancelRideParams): UseCancelRideResult 
     setSubmitting(true);
     setTimeout(() => {
       setSubmitting(false);
-      resetTo(router, getCancelConfirmedPath());
+      resetTo(
+        router,
+        getCancelConfirmedPath({
+          rideType: summary.rideType,
+        }),
+      );
     }, 1200);
-  }, [router, selectedReason]);
+  }, [router, selectedReason, summary.rideType]);
 
   return {
     summary,
     reasons: CANCEL_REASONS,
     selectedReason,
     comments,
-    isAssured: summary.rideType === 'assured',
+    isAssured,
+    subtitle: isAssured
+      ? CANCEL_RIDE_SCREEN.subtitleAssured
+      : CANCEL_RIDE_SCREEN.subtitleRegular,
+    showOtherNote: selectedReason === 'other',
     submitting,
     selectReason,
     setComments,

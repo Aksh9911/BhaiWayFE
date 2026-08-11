@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react';
-import { Text } from 'react-native';
 
 import { APP_CONFIG } from '@/config/constants';
 import { colors, typography } from '@/shared/theme';
 import { AppTopBar } from '../AppTopBar/AppTopBar';
 import { IconButton } from '../IconButton/IconButton';
+import { AppText as Text } from '../AppText';
 
 export interface BrandTopBarProps {
   onMenuPress: () => void;
@@ -15,15 +15,15 @@ export const BrandTopBar = ({ onMenuPress, right }: BrandTopBarProps) => (
   <AppTopBar
     left={
       <IconButton
-        icon="menu"
+        icon="arrow-back"
         onPress={onMenuPress}
         size={26}
-        color={colors.textPrimary}
+        color={colors.primary}
         accessibilityLabel="Go back"
       />
     }
     center={
-      <Text style={[typography.title, { color: colors.textPrimary }]} accessibilityRole="header">
+      <Text style={[typography.title, { color: colors.primary }]} accessibilityRole="header">
         {APP_CONFIG.name}
       </Text>
     }

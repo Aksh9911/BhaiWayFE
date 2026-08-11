@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import { showAppAlert } from '@/store';
 
 import { ROUTES } from '@/config';
+import type { MissingLocationKind } from '@/shared/components';
+import { getRouteTooCloseMessage } from '@/features/ride-search/utils';
 import {
   formatEstimatedEarnings,
   formatTimeLabel,
@@ -31,12 +33,18 @@ export interface UsePublishCommuteResult {
   submit: () => void;
   goBack: () => void;
   openNotifications: () => void;
+  missingLocationKind: MissingLocationKind | null;
+  closeMissingLocation: () => void;
+  resolveMissingLocation: () => void;
 }
 
 export const usePublishCommute = (): UsePublishCommuteResult => {
   const router = useRouter();
   const [draft, setDraft] = useState<PublishCommuteDraft>(() => publishCommuteDraft.get());
   const [timePickerOpen, setTimePickerOpen] = useState(false);
+  const [missingLocationKind, setMissingLocationKind] = useState<MissingLocationKind | null>(
+    null,
+  );
 
   useEffect(() => publishCommuteDraft.subscribe(setDraft), []);
 
@@ -104,21 +112,63 @@ export const usePublishCommute = (): UsePublishCommuteResult => {
   }, [router]);
 
   const submit = useCallback(() => {
-    if (!draft.startLocation.trim() || !draft.officeLocation.trim()) {
-      Alert.alert('Missing route', 'Please select both start and office locations.');
+    const hasStart = draft.startLocation.trim().length > 0;
+    const hasOffice = draft.officeLocation.trim().length > 0;
+
+    if (!hasStart && !hasOffice) {
+      setMissingLocationKind('both');
+      return;
+    }
+    if (!hasStart) {
+      setMissingLocationKind('origin');
+      return;
+    }
+    if (!hasOffice) {
+      setMissingLocationKind('destination');
       return;
     }
     if (!draft.departureTime) {
-      Alert.alert('Missing schedule', 'Please select a departure time.');
+      showAppAlert('Missing schedule', 'Please select a departure time.');
       return;
     }
     if (!(Number(draft.pricePerSeat) > 0)) {
-      Alert.alert('Missing price', 'Please enter a price per seat.');
+      showAppAlert('Missing price', 'Please enter a price per seat.');
       return;
+    }
+
+    const start = draft.startLocationDetail;
+    const office = draft.officeLocationDetail;
+    if (
+      start &&
+      office &&
+      Number.isFinite(start.latitude) &&
+      Number.isFinite(start.longitude) &&
+      Number.isFinite(office.latitude) &&
+      Number.isFinite(office.longitude)
+    ) {
+      const tooCloseMessage = getRouteTooCloseMessage(start, office, 'office');
+      if (tooCloseMessage) {
+        showAppAlert('Locations too close', tooCloseMessage);
+        return;
+      }
     }
 
     router.push(ROUTES.officeCommuteReview);
   }, [draft, router]);
+
+  const closeMissingLocation = useCallback(() => {
+    setMissingLocationKind(null);
+  }, []);
+
+  const resolveMissingLocation = useCallback(() => {
+    const kind = missingLocationKind;
+    setMissingLocationKind(null);
+    if (kind === 'destination') {
+      openLocationPicker('office');
+      return;
+    }
+    openLocationPicker('start');
+  }, [missingLocationKind, openLocationPicker]);
 
   return {
     draft,
@@ -137,5 +187,8 @@ export const usePublishCommute = (): UsePublishCommuteResult => {
     submit,
     goBack,
     openNotifications,
+    missingLocationKind,
+    closeMissingLocation,
+    resolveMissingLocation,
   };
 };

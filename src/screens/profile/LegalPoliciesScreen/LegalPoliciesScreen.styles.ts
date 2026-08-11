@@ -50,7 +50,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.xxxl,
     paddingBottom: spacing.huge + spacing.xxxl,
-    gap: spacing.xxl,
+    gap: spacing.cardGap,
     maxWidth: layout.maxContentWidth,
     width: '100%',
     alignSelf: 'center',
@@ -86,7 +86,7 @@ export const styles = StyleSheet.create({
     maxWidth: 480,
   },
   list: {
-    gap: spacing.xxl,
+    gap: spacing.cardGap,
   },
   card: {
     flexDirection: 'row',

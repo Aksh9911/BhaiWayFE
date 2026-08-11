@@ -7,6 +7,7 @@ import { APP_CONFIG, ROUTES } from '@/config';
 import { ScreenIntro } from '@/shared/components';
 import { colors, spacing } from '@/shared/theme';
 import { appModeStore } from '@/store';
+import { myRidesSurfaceStore } from '@/features/my-rides/store';
 import {
   EmptyHomeState,
   HomeHeader,
@@ -26,7 +27,6 @@ export const HomeScreen = () => {
     error,
     firstName,
     greetingSubtitle,
-    user,
     location,
     serviceCards,
     refresh,
@@ -37,24 +37,27 @@ export const HomeScreen = () => {
     router.push(ROUTES.notifications);
   }, [router]);
 
-  const handleProfilePress = useCallback(() => {
+  const handleProfile = useCallback(() => {
     router.push(ROUTES.profile);
   }, [router]);
 
   const handleCardPress = useCallback(
     (data: ServiceCardData) => {
       if (data.variant === 'office') {
+        myRidesSurfaceStore.setOfficeCommute();
         appModeStore.setRiding();
         router.push(ROUTES.officeCommute);
         return;
       }
 
       if (data.variant === 'publish') {
+        myRidesSurfaceStore.setStandard();
         appModeStore.setDriving();
         router.push(ROUTES.offerRide);
         return;
       }
 
+      myRidesSurfaceStore.setStandard();
       appModeStore.setRiding();
       router.push({
         pathname: ROUTES.rideSearch,
@@ -71,9 +74,8 @@ export const HomeScreen = () => {
       <HomeHeader
         brandName={APP_CONFIG.name}
         location={location}
-        avatarUri={user?.avatarUri}
-        onProfilePress={handleProfilePress}
         onNotificationsPress={handleNotifications}
+        onProfilePress={handleProfile}
       />
 
       <ScrollView

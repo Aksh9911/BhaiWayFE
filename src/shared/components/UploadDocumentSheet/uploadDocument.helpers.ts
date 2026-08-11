@@ -1,5 +1,7 @@
-import { Alert, Platform } from 'react-native';
+
 import * as ImagePicker from 'expo-image-picker';
+import { showAppAlert } from '@/store';
+import { Platform } from 'react-native';
 
 import type { UploadedDocument } from '../UploadDocumentSheet/UploadDocumentSheet.types';
 
@@ -59,7 +61,7 @@ export const pickDocumentFromCamera = async (
     }
 
     if (!permission.granted) {
-      Alert.alert(
+      showAppAlert(
         'Camera permission needed',
         permission.canAskAgain === false
           ? 'Camera access is blocked. Enable it in Settings → BhaiWay → Camera.'
@@ -90,7 +92,7 @@ export const pickDocumentFromCamera = async (
 
     return toUploadedDocument(result.assets[0]);
   } catch (error) {
-    Alert.alert(
+    showAppAlert(
       'Camera unavailable',
       error instanceof Error
         ? error.message
@@ -114,7 +116,7 @@ export const pickDocumentFromGallery = async (
     }
 
     if (!permission.granted) {
-      Alert.alert(
+      showAppAlert(
         'Photos permission needed',
         permission.canAskAgain === false
           ? 'Photo access is blocked. Enable it in Settings → BhaiWay → Photos.'
@@ -144,7 +146,7 @@ export const pickDocumentFromGallery = async (
 
     return toUploadedDocument(result.assets[0]);
   } catch (error) {
-    Alert.alert(
+    showAppAlert(
       'Gallery unavailable',
       error instanceof Error
         ? error.message

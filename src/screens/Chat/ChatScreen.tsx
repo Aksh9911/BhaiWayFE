@@ -1,5 +1,5 @@
 import React, { useCallback, useRef } from 'react';
-import { ActivityIndicator, FlatList, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -10,7 +10,7 @@ import {
   chatScreenStyles as styles,
   chatTokens,
 } from '@/components/Chat';
-import { AppFooter } from '@/shared/components';
+import { AppFooter, AppText as Text } from '@/shared/components';
 import { getSearchParam, triggerLightHaptic } from '@/shared/utils';
 import { useChatConversation } from '@/features/chat/hooks';
 import { authSession } from '@/store';

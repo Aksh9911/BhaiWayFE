@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-import { colors } from '@/shared/theme';
+import { colors, spacing } from '@/shared/theme';
 import { createShadow } from '@/shared/utils/platform';
 
 export const styles = StyleSheet.create({
@@ -21,13 +21,16 @@ export const styles = StyleSheet.create({
     fontSize: 28,
     lineHeight: 36,
     fontWeight: '700',
-    color: '#0B1C30',
+    color: colors.primary,
+  },
+  scroll: {
+    flex: 1,
   },
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: 20,
     paddingTop: 40,
-    paddingBottom: 200,
+    paddingBottom: spacing.xxxl,
     alignItems: 'center',
   },
   content: {
@@ -40,7 +43,7 @@ export const styles = StyleSheet.create({
     height: 128,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 24,
+    marginBottom: spacing.sectionGap,
   },
   ping: {
     position: 'absolute',
@@ -54,14 +57,14 @@ export const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: 48,
-    backgroundColor: '#0B1C30',
+    backgroundColor: '#0342D1',
     alignItems: 'center',
     justifyContent: 'center',
     ...createShadow({ color: colors.shadow, opacity: 0.08, radius: 16, offsetY: 4, elevation: 6 }),
   },
   titleBlock: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: spacing.huge,
     paddingHorizontal: 8,
   },
   title: {
@@ -69,7 +72,7 @@ export const styles = StyleSheet.create({
     lineHeight: 32,
     fontWeight: '600',
     letterSpacing: -0.2,
-    color: '#0B1C30',
+    color: '#191C1D',
     textAlign: 'center',
     marginBottom: 8,
   },
@@ -81,7 +84,7 @@ export const styles = StyleSheet.create({
   },
   section: {
     width: '100%',
-    gap: 16,
+    gap: spacing.cardGap,
   },
   routeCard: {
     backgroundColor: colors.white,
@@ -94,7 +97,7 @@ export const styles = StyleSheet.create({
   routeRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 16,
+    gap: spacing.cardGap,
   },
   routeTrack: {
     alignItems: 'center',
@@ -106,7 +109,7 @@ export const styles = StyleSheet.create({
     height: 12,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: '#0B1C30',
+    borderColor: '#191C1D',
     backgroundColor: colors.white,
   },
   routeLine: {
@@ -118,7 +121,7 @@ export const styles = StyleSheet.create({
   },
   routeStops: {
     flex: 1,
-    gap: 16,
+    gap: spacing.cardGap,
   },
   stopLabel: {
     fontSize: 12,
@@ -133,11 +136,11 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     fontWeight: '600',
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   statsRow: {
     flexDirection: 'row',
-    gap: 16,
+    gap: spacing.cardGap,
   },
   statCard: {
     flex: 1,
@@ -164,7 +167,7 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     lineHeight: 28,
     fontWeight: '600',
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   daysRow: {
     flexDirection: 'row',
@@ -182,7 +185,7 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 16,
     fontWeight: '500',
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   oneTime: {
     marginTop: 8,
@@ -199,33 +202,29 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     fontWeight: '700',
-    color: '#D95F00',
+    color: '#0342D1',
   },
   priceSuffix: {
     fontSize: 12,
     lineHeight: 16,
     fontWeight: '500',
-    color: '#D95F00',
+    color: '#0342D1',
     marginLeft: 4,
   },
   actions: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 72,
     backgroundColor: colors.white,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: '#C6C6CD',
     paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 12,
-    gap: 12,
+    paddingTop: spacing.cardGap,
+    paddingBottom: spacing.md,
+    gap: spacing.listGap,
   },
   primaryButton: {
     width: '100%',
     height: 56,
     borderRadius: 12,
-    backgroundColor: '#0B1C30',
+    backgroundColor: '#0342D1',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -256,6 +255,6 @@ export const styles = StyleSheet.create({
     lineHeight: 20,
     fontWeight: '600',
     letterSpacing: 0.2,
-    color: '#0B1C30',
+    color: '#191C1D',
   },
 });

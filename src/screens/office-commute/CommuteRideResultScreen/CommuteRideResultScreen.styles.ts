@@ -1,31 +1,33 @@
 import { StyleSheet } from 'react-native';
 
+import { spacing } from '@/shared/theme';
+
 export const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#F8F9FF',
   },
   listContent: {
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 32,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.xxxl,
     flexGrow: 1,
   },
   headerBlock: {
-    gap: 24,
-    marginBottom: 16,
+    gap: spacing.sectionGap,
+    marginBottom: spacing.cardGap,
   },
   title: {
     fontSize: 20,
     lineHeight: 28,
     fontWeight: '600',
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   separator: {
-    height: 16,
+    height: spacing.cardGap,
   },
   skeletonStack: {
-    gap: 16,
+    gap: spacing.cardGap,
   },
   skeletonCard: {
     height: 280,
@@ -41,7 +43,7 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 24,
     fontWeight: '600',
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   emptySubtitle: {
     fontSize: 14,

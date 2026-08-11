@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import MapView, { Marker, type Region } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppFooter, BrandTopBar, IconButton } from '@/shared/components';
+import { AppFooter, BrandTopBar, IconButton, AppText as Text } from '@/shared/components';
+import { isGoogleMapsBypassed, MapBypassSurface } from '@/shared/maps';
 import { triggerLightHaptic } from '@/shared/utils';
 import { ArrivalConfirmedModal, PickupOtpModal, SwipeToComplete } from '@/features/my-rides/components';
 import { DRIVER_PICKUP_MAP_DELTA, DRIVER_PICKUP_SCREEN } from '@/features/my-rides/constants';
@@ -24,6 +25,7 @@ export const DriverPickupScreen = () => {
     stop,
     stopTitle,
     confirming,
+    requiresOtp,
     otpVisible,
     otpValue,
     otpError,
@@ -44,6 +46,9 @@ export const DriverPickupScreen = () => {
   );
 
   useEffect(() => {
+    if (isGoogleMapsBypassed()) {
+      return;
+    }
     mapRef.current?.animateToRegion(
       toRegion(stop.coordinate.latitude, stop.coordinate.longitude),
       450,
@@ -100,32 +105,41 @@ export const DriverPickupScreen = () => {
       />
 
       <View style={styles.mapLayer}>
-        <MapView
-          ref={mapRef}
-          style={styles.map}
-          initialRegion={initialRegionRef.current}
-          showsCompass={false}
-          toolbarEnabled={false}
-          rotateEnabled={false}
-          pitchEnabled={false}
-          showsUserLocation
-          showsMyLocationButton={false}
-        >
-          <Marker
-            coordinate={stop.coordinate}
-            tracksViewChanges={false}
-            anchor={{ x: 0.5, y: 1 }}
-            title={stop.passengerName}
-            description={stop.locationLabel}
+        {isGoogleMapsBypassed() ? (
+          <MapBypassSurface
+            style={styles.map}
+            title={stopTitle}
+            subtitle={stop.locationLabel}
+            points={[{ ...stop.coordinate, label: stop.passengerName || 'Pickup' }]}
+          />
+        ) : (
+          <MapView
+            ref={mapRef}
+            style={styles.map}
+            initialRegion={initialRegionRef.current}
+            showsCompass={false}
+            toolbarEnabled={false}
+            rotateEnabled={false}
+            pitchEnabled={false}
+            showsUserLocation
+            showsMyLocationButton={false}
           >
-            <View style={styles.pickupMarker}>
-              <View style={styles.pickupBadge}>
-                <Text style={styles.pickupBadgeText}>Pickup</Text>
+            <Marker
+              coordinate={stop.coordinate}
+              tracksViewChanges={false}
+              anchor={{ x: 0.5, y: 1 }}
+              title={stop.passengerName}
+              description={stop.locationLabel}
+            >
+              <View style={styles.pickupMarker}>
+                <View style={styles.pickupBadge}>
+                  <Text style={styles.pickupBadgeText}>Pickup</Text>
+                </View>
+                <Ionicons name="location" size={40} color="#335EEA" />
               </View>
-              <Ionicons name="location" size={40} color="#335EEA" />
-            </View>
-          </Marker>
-        </MapView>
+            </Marker>
+          </MapView>
+        )}
         <LinearGradient
           colors={[
             'rgba(248,249,250,1)',
@@ -176,18 +190,20 @@ export const DriverPickupScreen = () => {
         </View>
       </View>
 
-      <PickupOtpModal
-        visible={otpVisible}
-        passengerName={stop.passengerName}
-        otpLength={DRIVER_PICKUP_SCREEN.otpLength}
-        value={otpValue}
-        error={otpError}
-        verifying={otpVerifying}
-        hintOtp={stop.otp}
-        onChange={setOtpValue}
-        onVerify={handleVerify}
-        onClose={handleCloseOtp}
-      />
+      {requiresOtp ? (
+        <PickupOtpModal
+          visible={otpVisible}
+          passengerName={stop.passengerName}
+          otpLength={DRIVER_PICKUP_SCREEN.otpLength}
+          value={otpValue}
+          error={otpError}
+          verifying={otpVerifying}
+          hintOtp={stop.otp}
+          onChange={setOtpValue}
+          onVerify={handleVerify}
+          onClose={handleCloseOtp}
+        />
+      ) : null}
 
       <ArrivalConfirmedModal
         visible={confirmedVisible}

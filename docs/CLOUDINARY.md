@@ -43,6 +43,8 @@ Uploads send a `folder` field to Cloudinary. Folders are created automatically o
 | Profile photo | `bhaiway/profile` | `bhaiway` → `profile` → `user1.jpg` |
 | Driving licence | `bhaiway/documents/dl` | `bhaiway` → `documents` → `dl` → `dl123.jpg` |
 | Vehicle RC | `bhaiway/documents/rc` | `bhaiway` → `documents` → `rc` → `rc123.jpg` |
+| Corporate ID | `bhaiway/documents/CorporateID` | `bhaiway` → `documents` → `CorporateID` → `id.jpg` |
+| Issue report | `bhaiway/IssueReport` | `bhaiway` → `IssueReport` → `photo.jpg` |
 
 ```ts
 import { uploadFile } from '@/services/cloudinary';
@@ -50,9 +52,11 @@ import { uploadFile } from '@/services/cloudinary';
 await uploadFile({ uri, kind: 'profile' }); // → bhaiway/profile
 await uploadFile({ uri, kind: 'dl' });      // → bhaiway/documents/dl
 await uploadFile({ uri, kind: 'rc' });      // → bhaiway/documents/rc
+await uploadFile({ uri, kind: 'corporateId' }); // → bhaiway/documents/CorporateID
+await uploadFile({ uri, kind: 'issueReport' }); // → bhaiway/IssueReport
 ```
 
-`useUpload({ kind: 'profile' | 'dl' | 'rc' })` resolves the same folders automatically.
+`useUpload({ kind: 'profile' | 'dl' | 'rc' | 'corporateId' | 'issueReport' })` resolves the same folders automatically.
 
 ## File map
 
@@ -111,13 +115,30 @@ Or drop-in UI:
 
 ```json
 {
-  "kind": "profile",
-  "secureUrl": "https://res.cloudinary.com/…",
-  "publicId": "bhaiway/profile/abc",
+  "kind": "rc",
+  "secureUrl": "https://res.cloudinary.com/mzh4sidd/image/upload/v123/bhaiway/documents/rc/xxx.jpg",
+  "publicId": "bhaiway/documents/rc/xxx",
   "format": "jpg",
   "bytes": 184320
 }
 ```
+
+### Create vehicle with RC URL
+
+`POST /vehicles`
+
+```json
+{
+  "category": "sedan",
+  "model": "Honda City",
+  "color": "White",
+  "plateNumber": "KA01AB1234",
+  "rcDocumentUrl": "https://res.cloudinary.com/mzh4sidd/image/upload/v123/bhaiway/documents/rc/xxx.jpg",
+  "rcDocumentPublicId": "bhaiway/documents/rc/xxx"
+}
+```
+
+Backend stores `rcDocumentUrl` (Cloudinary `secure_url`) — do not re-upload the binary.
 
 Store **only** Cloudinary URL / public id in your DB.
 

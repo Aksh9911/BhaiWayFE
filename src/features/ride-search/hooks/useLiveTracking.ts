@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert, Linking, Share } from 'react-native';
+import { showAppAlert } from '@/store';
+import { Linking, Share } from 'react-native';
+
 import { useRouter } from 'expo-router';
 
 import { ROUTES } from '@/config';
@@ -10,6 +12,7 @@ import {
   LIVE_TRACKING_SCREEN,
 } from '../constants';
 import { fetchDrivingRoute } from '../services';
+import { tripStartedStore } from '../store';
 import type { LiveTrackingData, MapCoordinate, RideType } from '../types';
 
 export interface UseLiveTrackingParams {
@@ -30,6 +33,8 @@ export interface UseLiveTrackingResult {
   tracking: LiveTrackingData;
   routeCoordinates: MapCoordinate[];
   otpDigits: string[];
+  /** Map is shown only after the driver starts the ride (start OTP). */
+  isRideStarted: boolean;
   goBack: () => void;
   openNotifications: () => void;
   shareTrip: () => void;
@@ -43,6 +48,9 @@ export interface UseLiveTrackingResult {
 export const useLiveTracking = (params: UseLiveTrackingParams): UseLiveTrackingResult => {
   const router = useRouter();
   const [routeCoordinates, setRouteCoordinates] = useState<MapCoordinate[]>([]);
+  const [isRideStarted, setIsRideStarted] = useState(() =>
+    tripStartedStore.isStarted(params.rideId),
+  );
 
   const tracking = useMemo(
     () =>
@@ -78,6 +86,18 @@ export const useLiveTracking = (params: UseLiveTrackingParams): UseLiveTrackingR
   );
 
   useEffect(() => {
+    setIsRideStarted(tripStartedStore.isStarted(params.rideId));
+    return tripStartedStore.subscribe(() => {
+      setIsRideStarted(tripStartedStore.isStarted(params.rideId));
+    });
+  }, [params.rideId]);
+
+  useEffect(() => {
+    if (!isRideStarted) {
+      setRouteCoordinates([]);
+      return;
+    }
+
     let cancelled = false;
 
     const loadRoute = async () => {
@@ -97,7 +117,7 @@ export const useLiveTracking = (params: UseLiveTrackingParams): UseLiveTrackingR
     return () => {
       cancelled = true;
     };
-  }, [tracking.dropoff, tracking.pickup]);
+  }, [isRideStarted, tracking.dropoff, tracking.pickup]);
 
   const goBack = useCallback(() => {
     if (router.canGoBack()) {
@@ -119,7 +139,7 @@ export const useLiveTracking = (params: UseLiveTrackingParams): UseLiveTrackingR
         tracking.startOtp,
       ),
     }).catch(() => {
-      Alert.alert(
+      showAppAlert(
         LIVE_TRACKING_SCREEN.shareTripLabel,
         LIVE_TRACKING_SCREEN.shareTripMessage(
           tracking.driver.name,
@@ -131,10 +151,15 @@ export const useLiveTracking = (params: UseLiveTrackingParams): UseLiveTrackingR
   }, [tracking.driver.name, tracking.etaMinutes, tracking.startOtp]);
 
   const explainOtp = useCallback(() => {
-    Alert.alert(LIVE_TRACKING_SCREEN.whyOtpTitle, LIVE_TRACKING_SCREEN.whyOtpMessage);
+    showAppAlert(LIVE_TRACKING_SCREEN.whyOtpTitle, LIVE_TRACKING_SCREEN.whyOtpMessage);
   }, []);
 
   const openOngoingTrip = useCallback(() => {
+    if (!tripStartedStore.isStarted(params.rideId)) {
+      showAppAlert(LIVE_TRACKING_SCREEN.waitingTitle, LIVE_TRACKING_SCREEN.waitingMessage);
+      return;
+    }
+
     router.push(
       getOngoingTripPath({
         rideId: params.rideId,
@@ -154,7 +179,7 @@ export const useLiveTracking = (params: UseLiveTrackingParams): UseLiveTrackingR
 
   const callDriver = useCallback(() => {
     Linking.openURL('tel:+919999999999').catch(() => {
-      Alert.alert('Call', 'Unable to start a call right now.');
+      showAppAlert('Call', 'Unable to start a call right now.');
     });
   }, []);
 
@@ -168,13 +193,14 @@ export const useLiveTracking = (params: UseLiveTrackingParams): UseLiveTrackingR
   }, [router, tracking.driver.name, tracking.driver.vehicleLabel]);
 
   const openSupport = useCallback(() => {
-    Alert.alert(LIVE_TRACKING_SCREEN.supportTitle, LIVE_TRACKING_SCREEN.supportMessage);
-  }, []);
+    router.push(ROUTES.helpSupport);
+  }, [router]);
 
   return {
     tracking,
     routeCoordinates,
     otpDigits,
+    isRideStarted,
     goBack,
     openNotifications,
     shareTrip,

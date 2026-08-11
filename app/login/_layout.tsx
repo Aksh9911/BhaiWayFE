@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 
 import { AUTH_SCREEN_INDEX } from '@/features/auth/navigation';
 import { colors } from '@/shared/theme';
-import { stackAnimation } from '@/shared/utils/platform';
+import { stackAnimation, stackGestureOptions } from '@/shared/utils/platform';
 
 export default function LoginLayout() {
   return (
@@ -12,7 +12,7 @@ export default function LoginLayout() {
         headerShown: false,
         animation: stackAnimation,
         contentStyle: styles.screen,
-        gestureEnabled: true,
+        ...stackGestureOptions,
       }}
     >
       {AUTH_SCREEN_INDEX.map((screen) => (

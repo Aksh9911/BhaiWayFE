@@ -1,4 +1,5 @@
 import type { ReviewBookingData, RideType } from '../types';
+import { formatBhaiWayCoins } from '@/shared/utils';
 
 export const REVIEW_BOOKING_SCREEN = {
   title: 'Review Booking',
@@ -91,7 +92,7 @@ export const getReviewBookingMock = (
 });
 
 export const formatBookingAmount = (value: number): string =>
-  `₹${value.toFixed(2)}`;
+  formatBhaiWayCoins(value, { spaced: false, minimumFractionDigits: 2 });
 
 export const getReviewBookingPath = (params: {
   rideId: string;
@@ -101,6 +102,8 @@ export const getReviewBookingPath = (params: {
   driverName?: string;
   carModel?: string;
   price?: number;
+  dateLabel?: string;
+  departureTime?: string;
   originLat?: number;
   originLng?: number;
   destinationLat?: number;
@@ -115,6 +118,8 @@ export const getReviewBookingPath = (params: {
     driverName: params.driverName ?? '',
     carModel: params.carModel ?? '',
     price: params.price != null ? String(params.price) : '',
+    dateLabel: params.dateLabel ?? '',
+    departureTime: params.departureTime ?? '',
     originLat: params.originLat != null ? String(params.originLat) : '',
     originLng: params.originLng != null ? String(params.originLng) : '',
     destinationLat: params.destinationLat != null ? String(params.destinationLat) : '',

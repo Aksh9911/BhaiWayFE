@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react';
-import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { APP_CONFIG } from '@/config';
-import { AppFooter, Avatar, IconButton } from '@/shared/components';
+import { AppFooter, Avatar, IconButton, AppText as Text, AppTextInput as TextInput } from '@/shared/components';
 import { colors } from '@/shared/theme';
 import { getSearchParam, triggerLightHaptic } from '@/shared/utils';
 import { TRIP_REVIEW_SCREEN } from '@/features/ride-search/constants';

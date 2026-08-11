@@ -10,7 +10,10 @@ export {
   formatDurationLabel,
   buildRouteInfo,
   formatTimeLabel,
+  minDistanceKmForRouteKind,
+  getRouteTooCloseMessage,
 } from './route';
+export type { RouteDistanceKind } from './route';
 export {
   viewportToBoundary,
   nominatimBoundingBoxToBoundary,
@@ -23,5 +26,12 @@ export {
   ZOOM_AREA_MAX_DELTA,
   getZoomAddressDetail,
   getVisibleAddressForZoom,
+  getNearbyAreaSearchLabel,
 } from './zoomAddress';
 export type { ZoomAddressDetail } from './zoomAddress';
+export {
+  mapPublishedRideToResult,
+  getPublishedRidesForSearch,
+  getPublishedRideOrganization,
+  getPublishedRideVehicleColor,
+} from './mapPublishedRide';

@@ -1,10 +1,11 @@
 import React, { useCallback } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { styles } from './RecentSearchesSection.styles';
 import type { RecentSearchesSectionProps } from './RecentSearchesSection.types';
 import type { RecentSearchItem } from '../../types';
+import { AppText as Text } from '@/shared/components';
 
 export const RecentSearchesSection = React.memo(
   ({

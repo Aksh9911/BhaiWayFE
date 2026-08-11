@@ -1,0 +1,1 @@
+export { VerifyAadhaarScreen } from './VerifyAadhaarScreen';

@@ -1,10 +1,12 @@
 import { useCallback, useMemo } from 'react';
-import { Alert, Linking } from 'react-native';
+import { Linking } from 'react-native';
+
 import { useRouter } from 'expo-router';
 
 import { ROUTES } from '@/config';
 import { getDriverChatPath, getLiveTrackingPath } from '@/features/ride-search/constants';
-import { triggerLightHaptic } from '@/shared/utils';
+import { triggerLightHaptic, showAppAlert } from '@/shared/utils';
+import { getCommuteCancelRidePath } from '../constants/commute-cancel-ride.constants';
 import { COMMUTE_RIDE_BOOKED_SCREEN } from '../constants/commute-ride-booked.constants';
 
 export interface UseCommuteRideBookedParams {
@@ -90,7 +92,7 @@ export const useCommuteRideBooked = (
   const callDriver = useCallback(() => {
     triggerLightHaptic();
     Linking.openURL('tel:+919999999999').catch(() => {
-      Alert.alert('Call', 'Unable to start a call right now.');
+      showAppAlert('Call', 'Unable to start a call right now.');
     });
   }, []);
 
@@ -115,11 +117,16 @@ export const useCommuteRideBooked = (
 
   const openRideOptions = useCallback(() => {
     triggerLightHaptic();
-    Alert.alert(
-      COMMUTE_RIDE_BOOKED_SCREEN.optionsLabel,
-      'Ride options and cancellation will be available soon.',
+    router.push(
+      getCommuteCancelRidePath({
+        rideId: details.rideId,
+        origin: details.pickupTitle,
+        destination: details.dropoffTitle,
+        dateLabel: details.dateLabel,
+        timeLabel: details.timeLabel,
+      }),
     );
-  }, []);
+  }, [details, router]);
 
   return {
     details,

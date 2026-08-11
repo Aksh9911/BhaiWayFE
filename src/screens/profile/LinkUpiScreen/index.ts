@@ -1,0 +1,1 @@
+export { LinkUpiScreen } from './LinkUpiScreen';

@@ -1,10 +1,11 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { colors } from '@/shared/theme';
 import { formatBookingAmount, REVIEW_BOOKING_SCREEN } from '../../constants';
 import { styles } from './ReviewBookingAssuredSection.styles';
+import { AppText as Text } from '@/shared/components';
 
 export interface ReviewBookingAssuredSectionProps {
   fee: number;

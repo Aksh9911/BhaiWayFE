@@ -43,6 +43,6 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     fontWeight: '600',
-    color: '#0B1C30',
+    color: '#191C1D',
   },
 });

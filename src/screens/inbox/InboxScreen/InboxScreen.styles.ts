@@ -77,7 +77,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   separator: {
-    height: spacing.md,
+    height: spacing.cardGap,
   },
   empty: {
     alignItems: 'center',

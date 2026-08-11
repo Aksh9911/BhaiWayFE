@@ -1,18 +1,11 @@
 import React, { useCallback } from 'react';
-import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ROUTES } from '@/config';
-import {
-  AppFooter,
-  BrandTopBar,
-  Button,
-  IconButton,
-  NativeDatePicker,
-  ScreenIntro,
-} from '@/shared/components';
+import { AppFooter, BrandTopBar, Button, IconButton, KeyboardAwareScrollView, MissingLocationModal, NativeDatePicker, ScreenIntro, BhaiWayCoinIcon, AppText as Text, AppTextInput as TextInput } from '@/shared/components';
 import { colors, spacing } from '@/shared/theme';
 import {
   CheckboxRow,
@@ -43,7 +36,9 @@ export const PublishRideScreen = () => {
     selectedTime,
     selectTime,
     submit,
-    isValid,
+    missingLocationKind,
+    closeMissingLocation,
+    resolveMissingLocation,
   } = usePublishRide();
 
   const rideTypeTitle = draft.rideType === 'assured' ? 'Assured Ride' : 'Regular Ride';
@@ -65,7 +60,21 @@ export const PublishRideScreen = () => {
         }
       />
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <KeyboardAwareScrollView
+        contentContainerStyle={styles.scrollContent}
+        bottomInset={24}
+        footer={
+          <View style={[styles.footer, { paddingBottom: insets.bottom + spacing.lg }]}>
+            <Button
+              label="Next"
+              onPress={submit}
+              variant="primary"
+              showArrow
+              accessibilityLabel="Continue to next step"
+            />
+          </View>
+        }
+      >
         <ScreenIntro
           title={rideTypeTitle}
           subtitle={PUBLISH_RIDE_SCREEN.intro.subtitle}
@@ -146,7 +155,7 @@ export const PublishRideScreen = () => {
 
           <Text style={styles.fieldLabel}>Price per Seat</Text>
           <View style={[styles.pressableField, styles.fieldIconRow]}>
-            <Text style={styles.fieldValue}>₹</Text>
+            <BhaiWayCoinIcon size={18} />
             <TextInput
               style={styles.priceInput}
               value={draft.pricePerSeat}
@@ -158,18 +167,7 @@ export const PublishRideScreen = () => {
             />
           </View>
         </FormSectionCard>
-      </ScrollView>
-
-      <View style={[styles.footer, { paddingBottom: insets.bottom + spacing.lg }]}>
-        <Button
-          label="Next"
-          onPress={submit}
-          variant="primary"
-          showArrow
-          disabled={!isValid}
-          accessibilityLabel="Continue to next step"
-        />
-      </View>
+      </KeyboardAwareScrollView>
 
       <NativeDatePicker
         visible={datePickerOpen}
@@ -187,6 +185,14 @@ export const PublishRideScreen = () => {
         title="Departure Time"
         onChange={selectTime}
         onClose={closeTimePicker}
+      />
+
+      <MissingLocationModal
+        visible={missingLocationKind != null}
+        kind={missingLocationKind}
+        context="drive"
+        onClose={closeMissingLocation}
+        onSelect={resolveMissingLocation}
       />
 
       <AppFooter />

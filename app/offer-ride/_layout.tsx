@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 
 import { OFFER_RIDE_SCREEN_INDEX } from '@/features/offer-ride/navigation';
 import { colors } from '@/shared/theme';
-import { stackAnimation } from '@/shared/utils/platform';
+import { stackAnimation, stackGestureOptions } from '@/shared/utils/platform';
 
 export default function OfferRideLayout() {
   return (
@@ -12,7 +12,7 @@ export default function OfferRideLayout() {
         headerShown: false,
         animation: stackAnimation,
         contentStyle: styles.screen,
-        gestureEnabled: true,
+        ...stackGestureOptions,
       }}
     >
       {OFFER_RIDE_SCREEN_INDEX.map((screen) => (

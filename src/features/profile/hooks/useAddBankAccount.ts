@@ -1,10 +1,10 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { ROUTES } from '@/config';
+import { bankAccountsSheetSync } from '@/DemoData';
 import { useSessionUser } from '@/shared/hooks';
-import { delay, triggerLightHaptic, triggerSuccessHaptic } from '@/shared/utils';
+import { delay, triggerLightHaptic, triggerSuccessHaptic, showAppAlert } from '@/shared/utils';
 import { DEFAULT_PROFILE_AVATAR } from '../constants/profile.constants';
 import {
   ADD_BANK_ACCOUNT_SCREEN,
@@ -80,7 +80,7 @@ export const useAddBankAccount = (): UseAddBankAccountResult => {
 
   const findIfsc = useCallback(() => {
     triggerLightHaptic();
-    Alert.alert(ADD_BANK_ACCOUNT_SCREEN.findTitle, ADD_BANK_ACCOUNT_SCREEN.findMessage);
+    showAppAlert(ADD_BANK_ACCOUNT_SCREEN.findTitle, ADD_BANK_ACCOUNT_SCREEN.findMessage);
   }, []);
 
   const submit = useCallback(async () => {
@@ -96,15 +96,23 @@ export const useAddBankAccount = (): UseAddBankAccountResult => {
     const ifsc = form.ifsc.trim().toUpperCase();
 
     if (!holderName || !bankName || !accountNumber || !ifsc) {
-      Alert.alert(
+      showAppAlert(
         ADD_BANK_ACCOUNT_SCREEN.validationTitle,
         ADD_BANK_ACCOUNT_SCREEN.validationMessage,
       );
       return;
     }
 
+    if (accountNumber.length < 9) {
+      showAppAlert(
+        ADD_BANK_ACCOUNT_SCREEN.invalidAccountTitle,
+        ADD_BANK_ACCOUNT_SCREEN.invalidAccountMessage,
+      );
+      return;
+    }
+
     if (!IFSC_PATTERN.test(ifsc)) {
-      Alert.alert(
+      showAppAlert(
         ADD_BANK_ACCOUNT_SCREEN.invalidIfscTitle,
         ADD_BANK_ACCOUNT_SCREEN.invalidIfscMessage,
       );
@@ -112,20 +120,36 @@ export const useAddBankAccount = (): UseAddBankAccountResult => {
     }
 
     setSubmitState('submitting');
-    await delay(2000);
-    setSubmitState('success');
-    triggerSuccessHaptic();
-    await delay(800);
-
-    const maskedNumber = `•••• ${accountNumber.slice(-4)}`;
-    router.replace({
-      pathname: ROUTES.bankAccountAdded,
-      params: {
-        kind: 'bank-account-added',
+    try {
+      const saved = await bankAccountsSheetSync.upsertAndSync({
+        holderName,
         bankName,
-        maskedNumber,
-      },
-    });
+        accountNumber,
+        ifsc,
+        accountType: 'Savings Account',
+      });
+
+      setSubmitState('success');
+      triggerSuccessHaptic();
+      await delay(600);
+
+      const maskedNumber = `•••• ${accountNumber.slice(-4)}`;
+      router.replace({
+        pathname: ROUTES.bankAccountAdded,
+        params: {
+          kind: 'bank-account-added',
+          bankName,
+          maskedNumber,
+          bankAccountId: String(saved.bankAccountId),
+        },
+      });
+    } catch (error) {
+      setSubmitState('idle');
+      showAppAlert(
+        'Could not save',
+        error instanceof Error ? error.message : 'Unable to save bank account. Please try again.',
+      );
+    }
   }, [form, router, submitState]);
 
   return {

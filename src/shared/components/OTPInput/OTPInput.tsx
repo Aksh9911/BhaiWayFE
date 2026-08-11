@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { Platform, Text, useWindowDimensions, type LayoutChangeEvent } from 'react-native';
+import { Platform, useWindowDimensions, type LayoutChangeEvent } from 'react-native';
 import {
   CodeField,
   Cursor,
@@ -15,6 +15,7 @@ import Animated, {
 import { colors, layout, spacing } from '@/shared/theme';
 import { styles } from './OTPInput.styles';
 import type { OTPInputProps } from './OTPInput.types';
+import { AppText as Text } from '../AppText';
 
 const DEFAULT_CELL_COUNT = 4;
 

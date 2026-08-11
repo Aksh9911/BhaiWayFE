@@ -44,7 +44,22 @@ export const styles = StyleSheet.create({
   title: {
     ...typography.button,
     color: colors.primary,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
     marginBottom: spacing.xs,
+  },
+  optionalBadge: {
+    ...typography.caption,
+    color: colors.textSecondary,
+    backgroundColor: colors.accentLight,
+    overflow: 'hidden',
+    borderRadius: layout.radiusSm,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
   },
   subtitle: {
     ...typography.caption,
@@ -68,5 +83,17 @@ export const styles = StyleSheet.create({
     ...typography.button,
     fontSize: 16,
     color: colors.textInverse,
+  },
+  verifiedPill: {
+    marginTop: spacing.xs,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    alignSelf: 'flex-start',
+  },
+  verifiedLabel: {
+    ...typography.button,
+    fontSize: 14,
+    color: colors.primary,
   },
 });

@@ -55,7 +55,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.xxxl,
     paddingBottom: spacing.huge + spacing.xxxl,
-    gap: spacing.huge,
+    gap: spacing.sectionGap,
     maxWidth: layout.maxContentWidth,
     width: '100%',
     alignSelf: 'center',
@@ -135,16 +135,18 @@ export const styles = StyleSheet.create({
   },
   actionsRow: {
     flexDirection: 'row',
-    gap: spacing.xxxl,
+    alignItems: 'stretch',
+    gap: spacing.lg,
   },
   withdrawButton: {
     flex: 1,
+    minHeight: 56,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.sm,
     backgroundColor: walletTokens.PRIMARY,
-    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.md,
     borderRadius: layout.radiusMd,
     ...createShadow({
       color: walletTokens.PRIMARY,
@@ -156,6 +158,7 @@ export const styles = StyleSheet.create({
   },
   addMoneyButton: {
     flex: 1,
+    minHeight: 56,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -163,7 +166,7 @@ export const styles = StyleSheet.create({
     backgroundColor: walletTokens.SURFACE_LOWEST,
     borderWidth: 2,
     borderColor: walletTokens.PRIMARY,
-    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.md,
     borderRadius: layout.radiusMd,
   },
   actionLabelPrimary: {
@@ -172,6 +175,8 @@ export const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 0.6,
     color: walletTokens.ON_PRIMARY,
+    textAlign: 'center',
+    includeFontPadding: false,
   },
   actionLabelOutline: {
     fontSize: 12,
@@ -179,6 +184,8 @@ export const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 0.6,
     color: walletTokens.PRIMARY,
+    textAlign: 'center',
+    includeFontPadding: false,
   },
   transactionsSection: {
     gap: spacing.lg,
@@ -188,19 +195,21 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  transactionsTitle: {
-    fontSize: 28,
-    lineHeight: 36,
-    fontWeight: '600',
-    color: walletTokens.ON_SURFACE,
-    flexShrink: 1,
-  },
   viewAllLabel: {
     fontSize: 12,
     lineHeight: 16,
     fontWeight: '700',
     letterSpacing: 0.6,
     color: walletTokens.PRIMARY,
+    flexShrink: 0,
+  },
+  transactionsTitle: {
+    fontSize: 28,
+    lineHeight: 36,
+    fontWeight: '600',
+    color: walletTokens.ON_SURFACE,
+    flexShrink: 1,
+    paddingRight: spacing.md,
   },
   filtersRow: {
     flexDirection: 'row',
@@ -226,7 +235,7 @@ export const styles = StyleSheet.create({
     color: walletTokens.ON_PRIMARY,
   },
   transactionList: {
-    gap: spacing.md,
+    gap: spacing.cardGap,
   },
   transactionCard: {
     flexDirection: 'row',
@@ -278,6 +287,11 @@ export const styles = StyleSheet.create({
   },
   transactionRight: {
     alignItems: 'flex-end',
+  },
+  amountRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
   },
   amountDebit: {
     fontSize: 16,

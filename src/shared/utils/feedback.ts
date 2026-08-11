@@ -1,7 +1,8 @@
-import { Alert } from 'react-native';
+import { showAppAlert } from '@/store';
 
 import { CloudinaryUploadError } from '@/types/cloudinary';
 import type { UploadErrorCode } from '@/types/cloudinary';
+
 const TITLE_BY_CODE: Record<UploadErrorCode, string> = {
   NOT_CONFIGURED: 'Setup required',
   NO_INTERNET: 'No internet',
@@ -35,9 +36,9 @@ export const showUploadFeedback = (error: unknown): void => {
       ? TITLE_BY_CODE[error.code]
       : TITLE_BY_CODE.UNKNOWN;
 
-  Alert.alert(title, getUploadErrorMessage(error));
+  showAppAlert(title, getUploadErrorMessage(error));
 };
 
 export const showSuccessFeedback = (title: string, message: string): void => {
-  Alert.alert(title, message);
+  showAppAlert(title, message);
 };

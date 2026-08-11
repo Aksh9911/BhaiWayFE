@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.white,
     borderRadius: layout.radiusXl,
-    marginBottom: spacing.lg,
+    marginBottom: spacing.cardGap,
     overflow: 'hidden',
     ...createShadow({ opacity: 0.06, radius: 14, offsetY: 6, elevation: 3 }),
   },
@@ -65,7 +65,7 @@ export const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 22,
     color: colors.textSecondary,
-    marginBottom: spacing.lg,
+    marginBottom: spacing.cardGap,
   },
   action: {
     flexDirection: 'row',

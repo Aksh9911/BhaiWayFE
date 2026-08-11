@@ -5,4 +5,7 @@ export type {
   SelectedLocation,
   PublishRideFormValues,
   PublishRideDraft,
+  PublishRidePreferences,
+  PublishRideVehicleOption,
+  RidePreferenceId,
 } from './offer-ride.types';

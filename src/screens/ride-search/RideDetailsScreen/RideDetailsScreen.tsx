@@ -1,13 +1,13 @@
 import React, { useCallback } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ROUTES } from '@/config';
-import { AppFooter, Button, IconButton } from '@/shared/components';
+import { AppFooter, Button, IconButton, AppText as Text } from '@/shared/components';
 import { colors } from '@/shared/theme';
-import { getSearchParam, triggerLightHaptic } from '@/shared/utils';
+import { formatBhaiWayCoins, getSearchParam, triggerLightHaptic } from '@/shared/utils';
 import {
   RideDetailsCoPassengers,
   RideDetailsDriverCard,
@@ -40,6 +40,8 @@ export const RideDetailsScreen = () => {
     price?: string;
     distanceLabel?: string;
     durationLabel?: string;
+    dateLabel?: string;
+    departureTime?: string;
     originLat?: string;
     originLng?: string;
     destinationLat?: string;
@@ -76,6 +78,8 @@ export const RideDetailsScreen = () => {
     price: Number.isFinite(priceParam) ? priceParam : undefined,
     distanceLabel: getSearchParam(params.distanceLabel) || undefined,
     durationLabel: getSearchParam(params.durationLabel) || undefined,
+    dateLabel: getSearchParam(params.dateLabel) || undefined,
+    departureTime: getSearchParam(params.departureTime) || undefined,
     originLat: Number.isFinite(originLat) ? originLat : undefined,
     originLng: Number.isFinite(originLng) ? originLng : undefined,
     destinationLat: Number.isFinite(destinationLat) ? destinationLat : undefined,
@@ -112,7 +116,7 @@ export const RideDetailsScreen = () => {
           <IconButton
             icon="arrow-back"
             onPress={handleBack}
-            color="#191C1D"
+            color={colors.primary}
             accessibilityLabel="Go back"
           />
           <Text style={styles.headerTitle}>{RIDE_DETAILS_SCREEN.title}</Text>
@@ -120,7 +124,7 @@ export const RideDetailsScreen = () => {
         <IconButton
           icon="ellipsis-vertical"
           onPress={openMore}
-          color="#191C1D"
+          color={colors.primary}
           accessibilityLabel="More options"
         />
       </View>
@@ -203,7 +207,7 @@ export const RideDetailsScreen = () => {
           <View style={styles.bookingPriceCol}>
             <Text style={styles.bookingPriceLabel}>{RIDE_DETAILS_SCREEN.totalLabel}</Text>
             <Text style={styles.bookingPrice}>
-              ₹{details.fare.total.toLocaleString('en-IN')}
+              {formatBhaiWayCoins(details.fare.total, { spaced: false })}
             </Text>
           </View>
           <View style={styles.bookingActions}>

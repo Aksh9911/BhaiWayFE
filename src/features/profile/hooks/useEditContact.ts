@@ -1,16 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { ROUTES } from '@/config';
 import type { UploadedDocument } from '@/shared/components';
-import {
-  delay,
-  generateId,
-  getSearchParam,
-  triggerLightHaptic,
-  triggerSuccessHaptic,
-} from '@/shared/utils';
+import { delay, generateId, getSearchParam, triggerLightHaptic, triggerSuccessHaptic, showAppAlert } from '@/shared/utils';
 import {
   CONTACT_RELATIONS,
   EDIT_CONTACT_SCREEN,
@@ -135,7 +128,7 @@ export const useEditContact = (): UseEditContactResult => {
     const phoneLabel = form.phoneLabel.trim();
 
     if (!name || !phoneLabel) {
-      Alert.alert(EDIT_CONTACT_SCREEN.validationTitle, EDIT_CONTACT_SCREEN.validationMessage);
+      showAppAlert(EDIT_CONTACT_SCREEN.validationTitle, EDIT_CONTACT_SCREEN.validationMessage);
       return;
     }
 
@@ -162,7 +155,7 @@ export const useEditContact = (): UseEditContactResult => {
       return;
     }
     triggerLightHaptic();
-    Alert.alert(
+    showAppAlert(
       EDIT_CONTACT_SCREEN.deleteTitle,
       EDIT_CONTACT_SCREEN.deleteMessage(form.name || 'this contact'),
       [

@@ -5,7 +5,7 @@ import { createShadow } from '@/shared/utils/platform';
 
 export const addVehicleTokens = {
   PRIMARY: '#0342D1',
-  ON_SURFACE: '#0B1C30',
+  ON_SURFACE: '#191C1D',
   ON_SURFACE_VARIANT: '#45464D',
   OUTLINE: '#76777D',
   OUTLINE_VARIANT: '#C6C6CD',
@@ -13,10 +13,10 @@ export const addVehicleTokens = {
   SURFACE_LOW: '#EFF4FF',
   SURFACE_CONTAINER: '#E5EEFF',
   PRIMARY_FIXED: '#DAE2FD',
-  TERTIARY_FIXED: '#FFDBCA',
-  TERTIARY_ACCENT: '#FFB690',
-  ON_TERTIARY_FIXED: '#783200',
-  SUCCESS: '#C2410C',
+  TERTIARY_FIXED: '#DADFF7',
+  TERTIARY_ACCENT: '#DADFF7',
+  ON_TERTIARY_FIXED: '#0342D1',
+  SUCCESS: '#16A34A',
 } as const;
 
 export const styles = StyleSheet.create({
@@ -37,7 +37,7 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     lineHeight: 28,
     fontWeight: '600',
-    color: addVehicleTokens.ON_SURFACE,
+    color: addVehicleTokens.PRIMARY,
     flexShrink: 1,
   },
   body: {
@@ -47,7 +47,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: spacing.sm,
     paddingBottom: spacing.huge,
-    gap: spacing.xxxl,
+    gap: spacing.cardGap,
   },
   hero: {
     height: 160,

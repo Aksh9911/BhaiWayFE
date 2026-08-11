@@ -2,13 +2,15 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'expo-router';
 
 import { ROUTES } from '@/config';
+import { publishedRidesSheetStore, publishedRidesSheetSync } from '@/DemoData';
 import { delay, triggerLightHaptic } from '@/shared/utils';
 import { getCommuteReviewBookingPath } from '../constants/commute-review-booking.constants';
-import { MOCK_COMMUTE_RIDE_RESULTS } from '../constants/commute-ride-result.constants';
+import { corporateVerificationStore } from '../store';
 import type {
   CommuteRideResultItem,
   CommuteSearchSummary,
 } from '../types/commute-ride-result.types';
+import { getPublishedRidesForCommuteSearch } from '../utils';
 import type { CommuteRequestState } from '../components/CommuteRideResultCard';
 
 export interface UseCommuteRideResultParams {
@@ -16,6 +18,7 @@ export interface UseCommuteRideResultParams {
   destination?: string;
   dateLabel?: string;
   timeLabel?: string;
+  sameOrganizationOnly?: boolean;
   originLat?: number;
   originLng?: number;
   destinationLat?: number;
@@ -41,8 +44,15 @@ export const useCommuteRideResult = (
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [sourceRides, setSourceRides] = useState<CommuteRideResultItem[]>([]);
+  const [publishedVersion, setPublishedVersion] = useState(0);
   const [requestStates, setRequestStates] = useState<Record<string, CommuteRequestState>>({});
   const loadTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const normalizedCompany = corporateVerificationStore
+    .get()
+    ?.companyName.trim()
+    .toLowerCase();
 
   const summary = useMemo<CommuteSearchSummary>(
     () => ({
@@ -50,26 +60,79 @@ export const useCommuteRideResult = (
       destination: params.destination?.trim() || 'Noida Sector 62',
       dateLabel: params.dateLabel?.trim() || 'Today',
       timeLabel: params.timeLabel?.trim() || '06:30 PM',
+      sameOrganizationOnly: params.sameOrganizationOnly === true,
     }),
-    [params.dateLabel, params.destination, params.origin, params.timeLabel],
+    [params.dateLabel, params.destination, params.origin, params.sameOrganizationOnly, params.timeLabel],
   );
 
-  const rides = MOCK_COMMUTE_RIDE_RESULTS;
+  useEffect(
+    () =>
+      publishedRidesSheetStore.subscribe(() => {
+        setPublishedVersion((value) => value + 1);
+      }),
+    [],
+  );
 
-  useEffect(() => {
-    setLoading(true);
-    loadTimerRef.current = setTimeout(() => setLoading(false), 700);
-    return () => {
+  const loadRides = useCallback(
+    (isRefresh = false) => {
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
+
       if (loadTimerRef.current) {
         clearTimeout(loadTimerRef.current);
       }
-    };
-  }, [summary.origin, summary.destination, summary.dateLabel, summary.timeLabel]);
+
+      let cancelled = false;
+      loadTimerRef.current = setTimeout(() => {
+        void (async () => {
+          if (isRefresh) {
+            try {
+              await publishedRidesSheetSync.pullIntoLocal();
+            } catch (error) {
+              console.log('[Commute search] published rides pull skipped', error);
+            }
+          }
+
+          if (cancelled) {
+            return;
+          }
+
+          setSourceRides(getPublishedRidesForCommuteSearch());
+          setLoading(false);
+          setRefreshing(false);
+        })();
+      }, isRefresh ? 400 : 700);
+
+      return () => {
+        cancelled = true;
+        if (loadTimerRef.current) {
+          clearTimeout(loadTimerRef.current);
+        }
+      };
+    },
+    [],
+  );
+
+  useEffect(() => {
+    const cleanup = loadRides(false);
+    return cleanup;
+  }, [loadRides, publishedVersion, summary.origin, summary.destination, summary.dateLabel, summary.timeLabel]);
+
+  const rides = useMemo(() => {
+    if (!summary.sameOrganizationOnly || !normalizedCompany) {
+      return sourceRides;
+    }
+    return sourceRides.filter(
+      (ride) => ride.organization.trim().toLowerCase() === normalizedCompany,
+    );
+  }, [normalizedCompany, sourceRides, summary.sameOrganizationOnly]);
 
   const refresh = useCallback(() => {
-    setRefreshing(true);
-    void delay(600).then(() => setRefreshing(false));
-  }, []);
+    loadRides(true);
+  }, [loadRides]);
 
   const editSearch = useCallback(() => {
     if (router.canGoBack()) {

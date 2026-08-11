@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { Image, Pressable, ScrollView, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, {
@@ -9,7 +9,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { AppFooter, IconButton } from '@/shared/components';
+import { AppFooter, IconButton, AppText as Text } from '@/shared/components';
 import { triggerLightHaptic } from '@/shared/utils';
 import { SAFETY_HUB_SCREEN } from '@/features/profile/constants';
 import { useSafetyHub } from '@/features/profile/hooks';

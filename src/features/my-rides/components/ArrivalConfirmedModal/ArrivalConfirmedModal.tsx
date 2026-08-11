@@ -1,10 +1,11 @@
 import React from 'react';
-import { Modal, Pressable, Text, View } from 'react-native';
+import { Modal, Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { DRIVER_PICKUP_SCREEN } from '../../constants';
 import { styles } from './ArrivalConfirmedModal.styles';
 import type { ArrivalConfirmedModalProps } from './ArrivalConfirmedModal.types';
+import { AppText as Text } from '@/shared/components';
 
 export const ArrivalConfirmedModal = ({
   visible,

@@ -15,13 +15,15 @@ export const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 280,
+    height: '35%',
+  },
+  scroll: {
+    flex: 1,
   },
   scrollContent: {
     flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: spacing.lg,
   },
   content: {
     alignItems: 'center',
@@ -31,7 +33,6 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headingContainer: {
-    marginTop: spacing.lg,
     alignItems: 'center',
   },
   headingLine: {
@@ -49,7 +50,6 @@ export const styles = StyleSheet.create({
     ...typography.body,
     color: colors.textSecondary,
     textAlign: 'center',
-    marginTop: spacing.lg,
     maxWidth: 400,
   },
   buttonsContainer: {

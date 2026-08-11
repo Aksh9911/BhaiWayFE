@@ -17,7 +17,32 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: spacing.md,
     paddingBottom: spacing.huge,
-    gap: spacing.xxl,
+    gap: spacing.cardGap,
+  },
+  assuredNotice: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.sm,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: '#C6C6CD',
+    borderRadius: 12,
+    padding: spacing.md,
+  },
+  assuredNoticeText: {
+    flex: 1,
+    gap: 4,
+  },
+  assuredNoticeTitle: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '600',
+    color: colors.textPrimary,
+  },
+  assuredNoticeBody: {
+    fontSize: 13,
+    lineHeight: 18,
+    color: colors.textSecondary,
   },
   secureRow: {
     flexDirection: 'row',

@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo } from 'react';
-import { ScrollView, Text, View, useWindowDimensions } from 'react-native';
+import { ScrollView, View, useWindowDimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -12,10 +12,11 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { ROUTES } from '@/config';
-import { Button } from '@/shared/components';
+import { Button, AppText as Text } from '@/shared/components';
 import { colors } from '@/shared/theme';
 import { scrollKeyboardDismissMode } from '@/shared/utils/platform';
 import { LogoCard } from '@/features/auth/components';
+import { authSession } from '@/store';
 import { styles } from './WelcomeScreen.styles';
 
 const DESCRIPTION_TEXT =
@@ -24,23 +25,36 @@ const DESCRIPTION_TEXT =
 export const WelcomeScreen = () => {
   const router = useRouter();
   const { width, height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    if (authSession.isAuthenticated()) {
+      router.replace(ROUTES.home);
+    }
+  }, [router]);
 
   const responsive = useMemo(() => {
+    const availableHeight = Math.max(height - insets.top - insets.bottom, 1);
     const horizontalPadding = Math.max(width * 0.06, 20);
     const contentWidth = Math.min(width - horizontalPadding * 2, 520);
-    const isCompact = height < 700;
+    const isCompact = availableHeight < 700;
+    const isShort = availableHeight < 640;
 
     return {
+      availableHeight,
       horizontalPadding,
       contentWidth,
-      logoMarginTop: isCompact ? 16 : 32,
+      logoScale: isShort ? 0.88 : isCompact ? 0.94 : 1,
+      headingGap: availableHeight * (isShort ? 0.018 : 0.022),
+      descriptionGap: availableHeight * (isShort ? 0.02 : 0.024),
+      buttonsGap: availableHeight * (isShort ? 0.028 : 0.036),
       headingSize: width < 360 ? 34 : width < 400 ? 40 : 46,
       headingLineHeight: width < 360 ? 40 : width < 400 ? 46 : 52,
       descriptionSize: width < 360 ? 16 : 18,
       descriptionLineHeight: width < 360 ? 26 : width < 400 ? 30 : 34,
-      buttonsMarginTop: isCompact ? 24 : 32,
+      verticalPadding: Math.max(availableHeight * 0.02, 8),
     };
-  }, [width, height]);
+  }, [width, height, insets.top, insets.bottom]);
 
   const screenOpacity = useSharedValue(0);
   const logoScale = useSharedValue(0.6);
@@ -74,20 +88,30 @@ export const WelcomeScreen = () => {
         />
 
         <ScrollView
+          style={styles.scroll}
           contentContainerStyle={[
             styles.scrollContent,
-            { paddingHorizontal: responsive.horizontalPadding, minHeight: height },
+            {
+              paddingHorizontal: responsive.horizontalPadding,
+              paddingVertical: responsive.verticalPadding,
+              minHeight: responsive.availableHeight,
+            },
           ]}
           showsVerticalScrollIndicator={false}
           bounces={false}
           keyboardDismissMode={scrollKeyboardDismissMode}
         >
           <View style={[styles.content, { width: responsive.contentWidth }]}>
-            <View style={[styles.logoWrapper, { marginTop: responsive.logoMarginTop }]}>
+            <View
+              style={[
+                styles.logoWrapper,
+                { transform: [{ scale: responsive.logoScale }] },
+              ]}
+            >
               <LogoCard scale={logoScale} />
             </View>
 
-            <View style={styles.headingContainer}>
+            <View style={[styles.headingContainer, { marginTop: responsive.headingGap }]}>
               <Text
                 style={[
                   styles.headingLine,
@@ -110,6 +134,7 @@ export const WelcomeScreen = () => {
               style={[
                 styles.description,
                 {
+                  marginTop: responsive.descriptionGap,
                   fontSize: responsive.descriptionSize,
                   lineHeight: responsive.descriptionLineHeight,
                 },
@@ -121,7 +146,7 @@ export const WelcomeScreen = () => {
             <Animated.View
               style={[
                 styles.buttonsContainer,
-                { marginTop: responsive.buttonsMarginTop },
+                { marginTop: responsive.buttonsGap },
                 buttonsAnimatedStyle,
               ]}
             >

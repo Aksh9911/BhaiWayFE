@@ -30,11 +30,11 @@ export const styles = StyleSheet.create({
     borderColor: colors.borderLight,
   },
   dark: {
-    backgroundColor: colors.black,
+    backgroundColor: colors.primaryDark,
     ...createShadow({
-      color: colors.black,
+      color: colors.primaryDark,
       offsetY: 4,
-      opacity: 0.2,
+      opacity: 0.24,
       radius: 8,
       elevation: 4,
     }),

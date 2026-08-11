@@ -39,7 +39,7 @@ export const styles = StyleSheet.create({
     fontSize: 28,
     lineHeight: 36,
     fontWeight: '600',
-    color: helpTokens.ON_SURFACE,
+    color: helpTokens.PRIMARY,
     flexShrink: 1,
   },
   scroll: {
@@ -49,7 +49,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.xxxl,
     paddingBottom: spacing.huge + spacing.xxxl,
-    gap: spacing.xxxl,
+    gap: spacing.sectionGap,
     maxWidth: layout.maxContentWidth,
     width: '100%',
     alignSelf: 'center',
@@ -77,7 +77,7 @@ export const styles = StyleSheet.create({
     ...createShadow({ color: colors.shadow, opacity: 0.04, radius: 8, offsetY: 2, elevation: 1 }),
   },
   section: {
-    gap: spacing.xxl,
+    gap: spacing.cardGap,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -100,7 +100,7 @@ export const styles = StyleSheet.create({
     color: helpTokens.PRIMARY,
   },
   categoriesGrid: {
-    gap: spacing.xxl,
+    gap: spacing.cardGap,
   },
   categoryCard: {
     padding: spacing.xxl,

@@ -1,4 +1,8 @@
-import { ROUTE_AVERAGE_SPEED_KMPH } from '../constants';
+import {
+  MIN_OFFICE_COMMUTE_DISTANCE_KM,
+  MIN_OUTSTATION_DISTANCE_KM,
+  ROUTE_AVERAGE_SPEED_KMPH,
+} from '../constants';
 import type { RouteInfo, SelectedLocation } from '../types';
 
 const EARTH_RADIUS_KM = 6371;
@@ -35,6 +39,37 @@ const hasCoordinates = (location: SelectedLocation): boolean =>
   Number.isFinite(location.latitude) &&
   Number.isFinite(location.longitude) &&
   (location.latitude !== 0 || location.longitude !== 0);
+
+export type RouteDistanceKind = 'office' | 'outstation';
+
+export const minDistanceKmForRouteKind = (kind: RouteDistanceKind): number =>
+  kind === 'office' ? MIN_OFFICE_COMMUTE_DISTANCE_KM : MIN_OUTSTATION_DISTANCE_KM;
+
+/**
+ * Returns an error message when start and destination are closer than the
+ * minimum for the ride kind; otherwise null.
+ */
+export const getRouteTooCloseMessage = (
+  origin: { latitude: number; longitude: number },
+  destination: { latitude: number; longitude: number },
+  kind: RouteDistanceKind,
+): string | null => {
+  const minKm = minDistanceKmForRouteKind(kind);
+  if (minKm <= 0) {
+    return null;
+  }
+
+  const distanceKm = haversineDistanceKm(origin, destination);
+  if (distanceKm >= minKm) {
+    return null;
+  }
+
+  const current = formatDistanceLabel(distanceKm);
+  if (kind === 'office') {
+    return `Pickup and drop-off must be at least ${minKm} km apart for office commute (currently ${current}).`;
+  }
+  return `Origin and destination must be at least ${minKm} km apart for outstation rides (currently ${current}).`;
+};
 
 /**
  * Straight-line route estimate between two selected locations. Returns null

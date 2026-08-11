@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -12,10 +12,9 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { APP_CONFIG, ROUTES } from '@/config';
-import { AppFooter, Avatar, IconButton } from '@/shared/components';
+import { AppFooter, IconButton, AppText as Text } from '@/shared/components';
 import { colors } from '@/shared/theme';
 import { getSearchParam, triggerLightHaptic } from '@/shared/utils';
-import { useSessionUser } from '@/shared/hooks';
 import {
   BookedDriverCard,
   BookedRideDetailsCard,
@@ -30,7 +29,6 @@ const isRideType = (value: string): value is RideType =>
 
 export const RideBookedScreen = () => {
   const router = useRouter();
-  const user = useSessionUser();
   const params = useLocalSearchParams<{
     rideId?: string;
     rideType?: string;
@@ -96,8 +94,8 @@ export const RideBookedScreen = () => {
     router.replace(ROUTES.home);
   }, [router]);
 
-  const handleProfilePress = useCallback(() => {
-    router.push(ROUTES.profile);
+  const handleNotifications = useCallback(() => {
+    router.push(ROUTES.notifications);
   }, [router]);
 
   const handleTrack = useCallback(() => {
@@ -125,14 +123,12 @@ export const RideBookedScreen = () => {
             {APP_CONFIG.name}
           </Text>
         </View>
-        <Pressable
-          style={styles.avatarBorder}
-          onPress={handleProfilePress}
-          accessibilityRole="button"
-          accessibilityLabel="Open profile"
-        >
-          <Avatar uri={user?.avatarUri} size={30} accessibilityLabel="Profile photo" />
-        </Pressable>
+        <IconButton
+          icon="notifications-outline"
+          onPress={handleNotifications}
+          color={colors.primary}
+          accessibilityLabel="Notifications"
+        />
       </View>
 
       <ScrollView
@@ -170,7 +166,7 @@ export const RideBookedScreen = () => {
 
         {isAssured ? (
           <View style={styles.cancelNote}>
-            <Ionicons name="information-circle" size={18} color="#EA580C" />
+            <Ionicons name="information-circle" size={18} color="#0342D1" />
             <Text style={styles.cancelNoteText}>{BOOKED_SCREEN.assuredCancelNote}</Text>
           </View>
         ) : null}

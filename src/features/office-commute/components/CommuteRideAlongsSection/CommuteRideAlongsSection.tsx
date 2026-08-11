@@ -1,10 +1,11 @@
 import React from 'react';
-import { Image, Text, View } from 'react-native';
+import { Image, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { COMMUTE_REVIEW_BOOKING_SCREEN } from '../../constants/commute-review-booking.constants';
 import { styles } from './CommuteRideAlongsSection.styles';
 import type { CommuteRideAlongsSectionProps } from './CommuteRideAlongsSection.types';
+import { AppText as Text } from '@/shared/components';
 
 export const CommuteRideAlongsSection = React.memo(
   ({ passengers }: CommuteRideAlongsSectionProps) => (
@@ -34,11 +35,11 @@ export const CommuteRideAlongsSection = React.memo(
               <View style={styles.nameRow}>
                 <Text style={styles.name}>{passenger.name}</Text>
                 {passenger.verified ? (
-                  <Ionicons name="checkmark-circle" size={16} color="#0B1C30" />
+                  <Ionicons name="checkmark-circle" size={16} color="#191C1D" />
                 ) : null}
               </View>
               <View style={styles.ratingRow}>
-                <Ionicons name="star" size={14} color="#FFB690" />
+                <Ionicons name="star" size={14} color="#335EEA" />
                 <Text style={styles.ratingText}>
                   {passenger.rating.toFixed(1)} • {passenger.verificationLabel}
                 </Text>

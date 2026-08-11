@@ -32,7 +32,7 @@ export const styles = StyleSheet.create({
     fontSize: 28,
     lineHeight: 36,
     fontWeight: '600',
-    color: '#191C1D',
+    color: colors.primary,
   },
   scroll: {
     flex: 1,
@@ -41,7 +41,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 24,
     paddingBottom: 24,
-    gap: 24,
+    gap: spacing.cardGap,
   },
   scrollContentWithFooter: {
     paddingBottom: 32,

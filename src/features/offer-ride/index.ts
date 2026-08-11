@@ -1,6 +1,9 @@
 export {
+  OfferRidePaymentScreen,
+  OfferRidePublishedScreen,
   PublishCarpoolRideScreen,
   PublishRideScreen,
+  RidePreferencesScreen,
   SelectLocationScreen,
 } from '@/screens/offer-ride';
 export type {
@@ -8,5 +11,8 @@ export type {
   OutstationRideTypeOption,
   LocationFieldType,
   PublishRideDraft,
+  PublishRidePreferences,
+  PublishRideVehicleOption,
+  RidePreferenceId,
   SelectedLocation,
 } from './types';

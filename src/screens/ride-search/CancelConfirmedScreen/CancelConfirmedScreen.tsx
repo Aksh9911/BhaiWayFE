@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, {
@@ -13,14 +14,18 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { AppFooter, IconButton } from '@/shared/components';
-import { triggerLightHaptic, useExitOnBack } from '@/shared/utils';
+import { AppFooter, IconButton, AppText as Text } from '@/shared/components';
+import { colors } from '@/shared/theme';
+import { getSearchParam, triggerLightHaptic, useExitOnBack } from '@/shared/utils';
 import { CANCEL_CONFIRMED_SCREEN } from '@/features/ride-search/constants';
 import { useCancelConfirmed } from '@/features/ride-search/hooks';
 import { styles } from './CancelConfirmedScreen.styles';
 
 export const CancelConfirmedScreen = () => {
-  const { goBack, bookNewRide } = useCancelConfirmed();
+  const params = useLocalSearchParams<{ rideType?: string }>();
+  const { subtitle, goBack, bookNewRide } = useCancelConfirmed({
+    rideType: getSearchParam(params.rideType),
+  });
   useExitOnBack(goBack);
 
   const iconScale = useSharedValue(0.8);
@@ -100,7 +105,7 @@ export const CancelConfirmedScreen = () => {
         <IconButton
           icon="arrow-back"
           onPress={handleBack}
-          color="#191C1D"
+          color={colors.primary}
           accessibilityLabel="Go back"
         />
         <Text style={styles.headerTitle}>{CANCEL_CONFIRMED_SCREEN.title}</Text>
@@ -120,7 +125,7 @@ export const CancelConfirmedScreen = () => {
           {CANCEL_CONFIRMED_SCREEN.heading}
         </Animated.Text>
         <Animated.Text style={[styles.subtitle, subtitleAnimatedStyle]}>
-          {CANCEL_CONFIRMED_SCREEN.subtitle}
+          {subtitle}
         </Animated.Text>
       </View>
 

@@ -4,6 +4,7 @@ import type {
   RideType,
 } from '../types';
 import { DEFAULT_MAP_COORDINATE } from './ride-search.constants';
+import { formatBhaiWayCoins } from '@/shared/utils';
 
 export const TRIP_COMPLETED_SCREEN = {
   heading: 'Trip Completed!',
@@ -24,8 +25,8 @@ export const TRIP_COMPLETED_SCREEN = {
 export const TRIP_COMPLETED_PAYMENT_OPTIONS: readonly TripCompletedPaymentOption[] = [
   {
     id: 'wallet',
-    label: 'BhaiWay Wallet',
-    subtitle: 'Balance: ₹1,450',
+    label: 'BhaiWay Coins Wallet',
+    subtitle: 'Balance: 1,450',
     icon: 'wallet',
   },
   {
@@ -36,8 +37,8 @@ export const TRIP_COMPLETED_PAYMENT_OPTIONS: readonly TripCompletedPaymentOption
   },
   {
     id: 'cash',
-    label: 'Pay by Cash',
-    subtitle: 'Pay the driver directly',
+    label: 'Pay Driver in BhaiWay Coins',
+    subtitle: 'Settle the driver directly in coins',
     icon: 'cash',
   },
 ] as const;
@@ -76,13 +77,13 @@ export const getTripCompletedMock = (params: {
       : 'DLF Phase 3, Gurugram',
     driverName: driver,
     driverMeta: `4.9 • ${car} (DL 1C AB 1234)`,
-    amountLabel: `₹${Math.round(total)}`,
+    amountLabel: formatBhaiWayCoins(Math.round(total), { spaced: false }),
     totalAmount: total,
     distanceLabel: '18.4 km total distance',
     fareLines: [
-      { label: 'Base Fare', amountLabel: '₹180' },
-      { label: 'Distance (18.4 km)', amountLabel: '₹45' },
-      { label: 'Taxes & Fees', amountLabel: '₹15' },
+      { label: 'Base Fare', amountLabel: formatBhaiWayCoins(180, { spaced: false }) },
+      { label: 'Distance (18.4 km)', amountLabel: formatBhaiWayCoins(45, { spaced: false }) },
+      { label: 'Taxes & Fees', amountLabel: formatBhaiWayCoins(15, { spaced: false }) },
     ],
     pickup: {
       latitude: params.originLat ?? DEFAULT_MAP_COORDINATE.latitude,

@@ -1,10 +1,10 @@
 import React, { useCallback } from 'react';
-import { FlatList, ListRenderItem, Text, View } from 'react-native';
+import { FlatList, ListRenderItem, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 
-import { AppFooter } from '@/shared/components';
+import { AppFooter, AppText as Text } from '@/shared/components';
 import { getSearchParam } from '@/shared/utils';
 import { RideSearchTopBar } from '@/features/ride-search/components';
 import {
@@ -22,6 +22,7 @@ export const CommuteRideResultScreen = () => {
     destination?: string;
     dateLabel?: string;
     timeLabel?: string;
+    sameOrganizationOnly?: string;
     originLat?: string;
     originLng?: string;
     destinationLat?: string;
@@ -43,12 +44,12 @@ export const CommuteRideResultScreen = () => {
     editSearch,
     requestToJoin,
     goBack,
-    openProfile,
   } = useCommuteRideResult({
     origin: getSearchParam(params.origin),
     destination: getSearchParam(params.destination),
     dateLabel: getSearchParam(params.dateLabel),
     timeLabel: getSearchParam(params.timeLabel),
+    sameOrganizationOnly: getSearchParam(params.sameOrganizationOnly) === 'true',
     originLat: Number.isFinite(originLat) ? originLat : undefined,
     originLng: Number.isFinite(originLng) ? originLng : undefined,
     destinationLat: Number.isFinite(destinationLat) ? destinationLat : undefined,
@@ -84,7 +85,7 @@ export const CommuteRideResultScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
-      <RideSearchTopBar onMenuPress={goBack} onProfilePress={openProfile} />
+      <RideSearchTopBar onMenuPress={goBack} />
 
       {loading ? (
         <View style={styles.listContent}>

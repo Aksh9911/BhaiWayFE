@@ -1,29 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { publishedRidesSheetStore, publishedRidesSheetSync } from '@/DemoData';
+import { useSearchRidesQuery } from '@/services/api';
+
 import type { RideTypeTabId } from '../components/ResultFilterChips';
-import {
-  departureTimeToMinutes,
-  getPassengerLabel,
-  MOCK_RIDE_RESULTS,
-} from '../constants';
+import { departureTimeToMinutes, getPassengerLabel } from '../constants';
 import type { RideResultItem, RideResultSortId, RideSearchSummary } from '../types';
 
 const shortPlaceName = (value: string): string => {
   const segment = value.split(',')[0]?.trim();
   return segment && segment.length > 0 ? segment : value;
-};
-
-const matchesSearch = (ride: RideResultItem, query: string): boolean => {
-  const q = query.trim().toLowerCase();
-  if (!q) {
-    return true;
-  }
-  return (
-    ride.driver.name.toLowerCase().includes(q) ||
-    ride.carModel.toLowerCase().includes(q) ||
-    ride.originCity.toLowerCase().includes(q) ||
-    ride.destinationCity.toLowerCase().includes(q)
-  );
 };
 
 const sortRides = (rides: RideResultItem[], sortId: RideResultSortId): RideResultItem[] => {
@@ -63,8 +49,6 @@ export interface UseRideResultResult {
   setActiveFilter: (id: RideTypeTabId) => void;
   sortId: RideResultSortId;
   setSortId: (id: RideResultSortId) => void;
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
   refresh: () => void;
 }
 
@@ -82,65 +66,61 @@ export const useRideResult = (params: UseRideResultParams): UseRideResultResult 
     [params.dateLabel, params.destination, params.origin, passengers],
   );
 
-  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [sourceRides, setSourceRides] = useState<RideResultItem[]>([]);
   const [activeFilter, setActiveFilter] = useState<RideTypeTabId>('regular');
   const [sortId, setSortId] = useState<RideResultSortId>('price-asc');
-  const [searchQuery, setSearchQuery] = useState('');
 
-  const loadRides = useCallback(
-    (isRefresh = false) => {
-      if (isRefresh) {
-        setRefreshing(true);
-      } else {
-        setLoading(true);
-      }
+  const { data, isLoading, isFetching, refetch } = useSearchRidesQuery({
+    from: params.origin,
+    destination: params.destination,
+    date: params.dateLabel,
+    passengers,
+  });
 
-      const timer = setTimeout(() => {
-        const withRoute = MOCK_RIDE_RESULTS.map((ride) => ({
-          ...ride,
-          originCity: shortPlaceName(params.origin || ride.originCity),
-          destinationCity: shortPlaceName(params.destination || ride.destinationCity),
-        }));
-        setSourceRides(withRoute);
-        setLoading(false);
-        setRefreshing(false);
-      }, isRefresh ? 600 : 900);
-
-      return () => clearTimeout(timer);
-    },
-    [params.destination, params.origin],
+  useEffect(
+    () =>
+      publishedRidesSheetStore.subscribe(() => {
+        void refetch();
+      }),
+    [refetch],
   );
 
-  useEffect(() => {
-    const cleanup = loadRides(false);
-    return cleanup;
-  }, [loadRides]);
+  const sourceRides = data?.rides ?? [];
 
   const rides = useMemo(() => {
-    const filtered = sourceRides
-      .filter((ride) => ride.rideType === activeFilter)
-      .filter((ride) => matchesSearch(ride, searchQuery));
+    const filtered = sourceRides.filter((ride) => ride.rideType === activeFilter);
     return sortRides(filtered, sortId);
-  }, [activeFilter, searchQuery, sortId, sourceRides]);
+  }, [activeFilter, sortId, sourceRides]);
 
   const refresh = useCallback(() => {
-    loadRides(true);
-  }, [loadRides]);
+    setRefreshing(true);
+    void (async () => {
+      try {
+        await publishedRidesSheetSync.pullIntoLocal();
+      } catch (error) {
+        console.log('[Ride search] published rides pull skipped', error);
+      }
+      await refetch();
+      setRefreshing(false);
+    })();
+  }, [refetch]);
+
+  useEffect(() => {
+    if (!isFetching) {
+      setRefreshing(false);
+    }
+  }, [isFetching]);
 
   return {
     summary,
     rides,
     totalCount: rides.length,
-    loading,
-    refreshing,
+    loading: isLoading && !data,
+    refreshing: refreshing || (isFetching && !!data),
     activeFilter,
     setActiveFilter,
     sortId,
     setSortId,
-    searchQuery,
-    setSearchQuery,
     refresh,
   };
 };

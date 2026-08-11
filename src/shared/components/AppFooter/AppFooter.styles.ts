@@ -9,9 +9,9 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 12,
     paddingBottom: 8,
-    backgroundColor: '#F8F9FF',
+    backgroundColor: colors.surface,
     borderTopWidth: 1,
-    borderTopColor: '#C6C6CD',
+    borderTopColor: colors.border,
   },
   item: {
     flex: 1,
@@ -24,7 +24,7 @@ export const styles = StyleSheet.create({
     lineHeight: 16,
     fontWeight: '500',
     letterSpacing: 0.24,
-    color: '#45464D',
+    color: colors.textSecondary,
   },
   labelActive: {
     fontWeight: '700',

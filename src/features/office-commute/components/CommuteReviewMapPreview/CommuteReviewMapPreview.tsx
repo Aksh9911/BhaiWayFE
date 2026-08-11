@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { ActivityIndicator, Platform, Text, View } from 'react-native';
+import { ActivityIndicator, Platform, View } from 'react-native';
 import MapView, { Marker, Polyline, type Region } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import type { MapCoordinate } from '@/features/ride-search/types';
+import { AppText as Text } from '@/shared/components';
+import { isGoogleMapsBypassed, MapBypassSurface } from '@/shared/maps';
 import { styles } from './CommuteReviewMapPreview.styles';
 import type { CommuteReviewMapPreviewProps } from './CommuteReviewMapPreview.types';
 
@@ -76,30 +78,41 @@ export const CommuteReviewMapPreview = ({
       style={styles.container}
       accessibilityLabel={`Best route ${distanceLabel}, ${durationLabel}`}
     >
-      <MapView
-        ref={mapRef}
-        style={styles.map}
-        initialRegion={initialRegion}
-        onMapReady={fitRoute}
-        scrollEnabled={false}
-        zoomEnabled={false}
-        rotateEnabled={false}
-        pitchEnabled={false}
-        toolbarEnabled={false}
-        showsCompass={false}
-        liteMode={Platform.OS === 'android'}
-        pointerEvents="none"
-      >
-        <Marker coordinate={pickup} pinColor="#335EEA" tracksViewChanges={false} />
-        <Marker coordinate={dropoff} pinColor="#BA1A1A" tracksViewChanges={false} />
-        <Polyline
-          coordinates={polylineCoordinates}
-          strokeColor="#335EEA"
-          strokeWidth={4}
-          lineJoin="round"
-          lineCap="round"
+      {isGoogleMapsBypassed() ? (
+        <MapBypassSurface
+          style={styles.map}
+          title="Commute route"
+          points={[
+            { ...pickup, label: 'Pickup' },
+            { ...dropoff, label: 'Drop-off' },
+          ]}
         />
-      </MapView>
+      ) : (
+        <MapView
+          ref={mapRef}
+          style={styles.map}
+          initialRegion={initialRegion}
+          onMapReady={fitRoute}
+          scrollEnabled={false}
+          zoomEnabled={false}
+          rotateEnabled={false}
+          pitchEnabled={false}
+          toolbarEnabled={false}
+          showsCompass={false}
+          liteMode={Platform.OS === 'android'}
+          pointerEvents="none"
+        >
+          <Marker coordinate={pickup} pinColor="#335EEA" tracksViewChanges={false} />
+          <Marker coordinate={dropoff} pinColor="#BA1A1A" tracksViewChanges={false} />
+          <Polyline
+            coordinates={polylineCoordinates}
+            strokeColor="#335EEA"
+            strokeWidth={4}
+            lineJoin="round"
+            lineCap="round"
+          />
+        </MapView>
+      )}
 
       <LinearGradient
         colors={['rgba(248,249,255,0)', 'rgba(248,249,255,1)']}

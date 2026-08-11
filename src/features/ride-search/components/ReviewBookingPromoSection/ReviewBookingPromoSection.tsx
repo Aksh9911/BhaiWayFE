@@ -1,10 +1,11 @@
 import React from 'react';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { colors } from '@/shared/theme';
 import { formatBookingAmount, REVIEW_BOOKING_SCREEN } from '../../constants';
 import { styles } from './ReviewBookingPromoSection.styles';
+import { AppText as Text, AppTextInput as TextInput } from '@/shared/components';
 
 export interface ReviewBookingPromoSectionProps {
   value: string;

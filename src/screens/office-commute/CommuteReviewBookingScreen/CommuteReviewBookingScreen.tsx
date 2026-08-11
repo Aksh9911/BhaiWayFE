@@ -5,7 +5,6 @@ import {
   Platform,
   Pressable,
   ScrollView,
-  Text,
   View,
   type LayoutChangeEvent,
 } from 'react-native';
@@ -13,10 +12,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppFooter, Avatar, IconButton, KeyboardAwareScrollView } from '@/shared/components';
-import { spacing } from '@/shared/theme';
+import { AppFooter, IconButton, KeyboardAwareScrollView, AppText as Text } from '@/shared/components';
+import { colors, spacing } from '@/shared/theme';
 import { getSearchParam, triggerLightHaptic } from '@/shared/utils';
-import { useSessionUser } from '@/shared/hooks';
 import {
   CommuteBookingMapHero,
   CommutePaymentSummary,
@@ -29,7 +27,6 @@ import { styles } from './CommuteReviewBookingScreen.styles';
 const PROMO_TOP_GAP = spacing.md;
 
 export const CommuteReviewBookingScreen = () => {
-  const user = useSessionUser();
   const params = useLocalSearchParams<{
     rideId?: string;
     origin?: string;
@@ -59,7 +56,7 @@ export const CommuteReviewBookingScreen = () => {
     applyPromo,
     confirmBooking,
     goBack,
-    openProfile,
+    openNotifications,
   } = useCommuteReviewBooking({
     rideId: getSearchParam(params.rideId) || 'commute-ride-1',
     origin: getSearchParam(params.origin),
@@ -111,23 +108,53 @@ export const CommuteReviewBookingScreen = () => {
           <IconButton
             icon="arrow-back"
             onPress={goBack}
-            color="#0B1C30"
+            color={colors.primary}
             accessibilityLabel="Go back"
           />
           <Text style={styles.headerTitle}>{COMMUTE_REVIEW_BOOKING_SCREEN.title}</Text>
         </View>
-        <Avatar
-          uri={user?.avatarUri}
-          size={40}
-          onPress={openProfile}
-          accessibilityLabel="Open profile"
+        <IconButton
+          icon="notifications-outline"
+          onPress={openNotifications}
+          color={colors.primary}
+          accessibilityLabel="Notifications"
         />
       </View>
 
       <KeyboardAwareScrollView
         scrollViewRef={scrollRef}
         contentContainerStyle={styles.scrollContent}
-        bottomInset={120}
+        footer={
+          <View style={styles.footer}>
+            <Pressable
+              style={({ pressed }) => [
+                styles.confirmButton,
+                confirming && styles.confirmButtonBusy,
+                pressed && !confirming && { opacity: 0.94, transform: [{ scale: 0.98 }] },
+              ]}
+              onPress={handleConfirm}
+              disabled={confirming}
+              accessibilityRole="button"
+              accessibilityLabel={COMMUTE_REVIEW_BOOKING_SCREEN.confirmLabel}
+            >
+              {confirming ? (
+                <>
+                  <ActivityIndicator color="#FFFFFF" />
+                  <Text style={styles.confirmLabel}>
+                    {COMMUTE_REVIEW_BOOKING_SCREEN.confirmingLabel}
+                  </Text>
+                </>
+              ) : (
+                <>
+                  <Text style={styles.confirmLabel}>
+                    {COMMUTE_REVIEW_BOOKING_SCREEN.confirmLabel}
+                  </Text>
+                  <Ionicons name="chevron-forward" size={20} color="#FFFFFF" />
+                </>
+              )}
+            </Pressable>
+          </View>
+        }
       >
         <CommuteBookingMapHero
           pickup={booking.pickup}
@@ -160,34 +187,6 @@ export const CommuteReviewBookingScreen = () => {
           </View>
         </View>
       </KeyboardAwareScrollView>
-
-      <View style={styles.footerAction}>
-        <Pressable
-          style={({ pressed }) => [
-            styles.confirmButton,
-            confirming && styles.confirmButtonBusy,
-            pressed && !confirming && { opacity: 0.94, transform: [{ scale: 0.98 }] },
-          ]}
-          onPress={handleConfirm}
-          disabled={confirming}
-          accessibilityRole="button"
-          accessibilityLabel={COMMUTE_REVIEW_BOOKING_SCREEN.confirmLabel}
-        >
-          {confirming ? (
-            <>
-              <ActivityIndicator color="#FFFFFF" />
-              <Text style={styles.confirmLabel}>
-                {COMMUTE_REVIEW_BOOKING_SCREEN.confirmingLabel}
-              </Text>
-            </>
-          ) : (
-            <>
-              <Text style={styles.confirmLabel}>{COMMUTE_REVIEW_BOOKING_SCREEN.confirmLabel}</Text>
-              <Ionicons name="chevron-forward" size={22} color="#FFFFFF" />
-            </>
-          )}
-        </Pressable>
-      </View>
 
       <AppFooter />
     </SafeAreaView>

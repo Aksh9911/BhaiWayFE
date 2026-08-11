@@ -1,14 +1,14 @@
 import { useCallback, useState } from 'react';
-import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { ROUTES } from '@/config';
-import { resetTo } from '@/shared/utils';
+import { resetTo, showAppAlert } from '@/shared/utils';
 import {
   DEFAULT_DRIVER_ACTIVE_TRIP,
   getDriverTripCompletedPath,
 } from '../constants';
 import type { ActiveTripSummary } from '../types';
+import { useDriverRideKind } from './useDriverRideKind';
 
 export interface UseDriverActiveTripResult {
   trip: ActiveTripSummary;
@@ -21,6 +21,7 @@ export interface UseDriverActiveTripResult {
 
 export const useDriverActiveTrip = (): UseDriverActiveTripResult => {
   const router = useRouter();
+  const rideType = useDriverRideKind();
   const [completed, setCompleted] = useState(false);
   const trip = DEFAULT_DRIVER_ACTIVE_TRIP;
 
@@ -41,16 +42,17 @@ export const useDriverActiveTrip = (): UseDriverActiveTripResult => {
       router,
       getDriverTripCompletedPath({
         destination: trip.destinationLabel,
+        rideType,
       }),
     );
-  }, [completed, router, trip.destinationLabel]);
+  }, [completed, rideType, router, trip.destinationLabel]);
 
   const triggerSos = useCallback(() => {
     router.push(ROUTES.myRidesEmergencyEnd);
   }, [router]);
 
   const toggleVoice = useCallback(() => {
-    Alert.alert('Voice guidance', 'Voice navigation will be available soon.');
+    showAppAlert('Voice guidance', 'Voice navigation will be available soon.');
   }, []);
 
   return {

@@ -2,7 +2,7 @@ import * as Location from 'expo-location';
 
 import { env } from '@/config';
 import type { MapCoordinate, PlacesAutocompletePrediction, SelectedDestination } from '../types';
-import { geojsonToBoundary, nominatimBoundingBoxToBoundary, viewportToBoundary } from '../utils';
+import { nominatimBoundingBoxToBoundary, viewportToBoundary } from '../utils';
 import {
   mapFetchFailureToPlacesError,
   PlacesError,
@@ -53,7 +53,13 @@ interface GeocodeResponse {
   error_message?: string;
   results?: Array<{
     formatted_address?: string;
+    types?: string[];
     geometry?: {
+      location_type?: string;
+      location?: {
+        lat: number;
+        lng: number;
+      };
       viewport?: {
         northeast: { lat: number; lng: number };
         southwest: { lat: number; lng: number };
@@ -119,14 +125,18 @@ interface NominatimSearchResult {
     name?: string;
     amenity?: string;
     building?: string;
+    house_number?: string;
     road?: string;
     neighbourhood?: string;
+    quarter?: string;
+    residential?: string;
     suburb?: string;
     city_district?: string;
     city?: string;
     town?: string;
     village?: string;
     county?: string;
+    state_district?: string;
     state?: string;
     postcode?: string;
     country?: string;
@@ -213,15 +223,18 @@ const isIndiaAddress = (address: string, country?: string | null): boolean => {
 export type { SearchPlacesOptions, PlacesConfigStatus } from './places.options';
 
 export const getPlacesConfigStatus = (): PlacesConfigStatus => {
-  const placesKeyConfigured = env.googlePlacesApiKey.trim().length > 0;
-  const mapsKeyConfigured = env.googleMapsApiKey.trim().length > 0;
+  const bypassed = env.bypassGoogleMaps;
+  const placesKeyConfigured = !bypassed && env.googlePlacesApiKey.trim().length > 0;
+  const mapsKeyConfigured = !bypassed && env.googleMapsApiKey.trim().length > 0;
   return {
     hasApiKey: placesKeyConfigured,
     placesKeyConfigured,
     mapsKeyConfigured,
-    keySourceHint: placesKeyConfigured
-      ? 'API key loaded from env / app config'
-      : 'No key found. Add EXPO_PUBLIC_GOOGLE_PLACES_API_KEY to .env and restart with `npx expo start -c`.',
+    keySourceHint: bypassed
+      ? 'Google Maps/Places bypassed (OSM search + map placeholder). Set EXPO_PUBLIC_BYPASS_GOOGLE_MAPS=false to use Google.'
+      : placesKeyConfigured
+        ? 'API key loaded from env / app config'
+        : 'No key found. Add EXPO_PUBLIC_GOOGLE_PLACES_API_KEY to .env and restart with `npx expo start -c`.',
     requiredApis: [
       'Places API (New)',
       'Places API',
@@ -232,7 +245,8 @@ export const getPlacesConfigStatus = (): PlacesConfigStatus => {
   };
 };
 
-const hasPlacesKey = (): boolean => env.googlePlacesApiKey.trim().length > 0;
+const hasPlacesKey = (): boolean =>
+  !env.bypassGoogleMaps && env.googlePlacesApiKey.trim().length > 0;
 
 const levelsFromLabeledAddress = (
   placeName: string,
@@ -709,82 +723,6 @@ export const fetchNearbyPlaces = async (
   return [];
 };
 
-/**
- * Looks up the real place outline (sector / area polygon) from Nominatim.
- */
-const fetchNominatimBoundary = async (
-  placeName: string,
-  address: string,
-): Promise<MapCoordinate[] | undefined> => {
-  try {
-    const queries = [placeName, address].filter(
-      (value, index, list) => Boolean(value?.trim()) && list.indexOf(value) === index,
-    );
-
-    for (const query of queries) {
-      const params = new URLSearchParams({
-        q: query,
-        format: 'json',
-        limit: '8',
-        countrycodes: 'in',
-        polygon_geojson: '1',
-        addressdetails: '1',
-      });
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?${params.toString()}`,
-        { headers: { 'User-Agent': OSM_USER_AGENT } },
-      );
-      if (!response.ok) {
-        continue;
-      }
-
-      const data = (await response.json()) as NominatimSearchResult[];
-      if (!data.length) {
-        continue;
-      }
-
-      const ranked = [...data].sort((a, b) => {
-        const score = (item: NominatimSearchResult) => {
-          const geometryType = item.geojson?.type ?? '';
-          const isPolygon = geometryType === 'Polygon' || geometryType === 'MultiPolygon';
-          const classBoost =
-            item.class === 'landuse' ||
-            item.class === 'place' ||
-            item.class === 'boundary' ||
-            item.type === 'residential' ||
-            item.type === 'suburb' ||
-            item.type === 'neighbourhood'
-              ? 40
-              : 0;
-          return (isPolygon ? 100 : 0) + classBoost + (item.importance ?? 0) * 10;
-        };
-        return score(b) - score(a);
-      });
-
-      for (const result of ranked) {
-        const polygon = geojsonToBoundary(
-          result.geojson as
-            | { type: 'Polygon'; coordinates: number[][][] }
-            | { type: 'MultiPolygon'; coordinates: number[][][][] }
-            | undefined,
-        );
-        if (polygon && polygon.length >= 3) {
-          return polygon;
-        }
-      }
-
-      const bbox = ranked[0]?.boundingbox;
-      if (bbox) {
-        return nominatimBoundingBoxToBoundary(bbox);
-      }
-    }
-
-    return undefined;
-  } catch {
-    return undefined;
-  }
-};
-
 const parseOsmExtent = (extentCsv: string | undefined): MapCoordinate[] | undefined => {
   if (!extentCsv) {
     return undefined;
@@ -808,13 +746,12 @@ export const resolvePlaceDetails = async (
     const latitude = Number(lat);
     const longitude = Number(lon);
     if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
-      const boundary = await fetchNominatimBoundary(prediction.placeName, prediction.address);
+      // Keep the exact recent pick — do not replace with a Nominatim area polygon.
       return {
         placeName: prediction.placeName,
         address: prediction.address,
         latitude,
         longitude,
-        boundary,
         addressLevels: levelsFromLabeledAddress(prediction.placeName, prediction.address),
       };
     }
@@ -826,16 +763,14 @@ export const resolvePlaceDetails = async (
     const longitude = Number(lon);
 
     if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
-      const boundary =
-        (await fetchNominatimBoundary(prediction.placeName, prediction.address)) ??
-        parseOsmExtent(extentCsv);
-
+      // Prefer the extent baked into the prediction id; avoid name-based Nominatim
+      // lookups that can frame the wrong neighbourhood and overwrite the pick.
       return {
         placeName: prediction.placeName,
         address: prediction.address,
         latitude,
         longitude,
-        boundary,
+        boundary: parseOsmExtent(extentCsv),
         addressLevels: levelsFromLabeledAddress(prediction.placeName, prediction.address),
       };
     }
@@ -878,6 +813,12 @@ export const resolvePlaceDetails = async (
     if (first?.placeId.startsWith('osm:')) {
       return resolvePlaceDetails(first);
     }
+    if (env.bypassGoogleMaps) {
+      throw new PlacesError(
+        'EMPTY',
+        'Unable to resolve that place without Google Maps. Try a nearby city or landmark name.',
+      );
+    }
     throw new PlacesError(
       'NO_KEY',
       'Google Places API key is not configured. Add EXPO_PUBLIC_GOOGLE_PLACES_API_KEY to .env.',
@@ -889,11 +830,8 @@ export const resolvePlaceDetails = async (
     address: prediction.address,
   });
   if (googleDetails) {
-    const osmBoundary = await fetchNominatimBoundary(googleDetails.placeName, googleDetails.address);
-    return {
-      ...googleDetails,
-      boundary: osmBoundary ?? googleDetails.boundary,
-    };
+    // Keep Google's coordinates/name; Nominatim area polygons were overwriting picks.
+    return googleDetails;
   }
 
   const params = new URLSearchParams({
@@ -916,16 +854,13 @@ export const resolvePlaceDetails = async (
 
   const placeName = data.result.name ?? prediction.placeName;
   const address = data.result.formatted_address ?? prediction.address;
-  const osmBoundary = await fetchNominatimBoundary(placeName, address);
   const viewport = data.result.geometry.viewport;
-  const boundary =
-    osmBoundary ??
-    (viewport
-      ? viewportToBoundary({
-          northeast: { latitude: viewport.northeast.lat, longitude: viewport.northeast.lng },
-          southwest: { latitude: viewport.southwest.lat, longitude: viewport.southwest.lng },
-        })
-      : undefined);
+  const boundary = viewport
+    ? viewportToBoundary({
+        northeast: { latitude: viewport.northeast.lat, longitude: viewport.northeast.lng },
+        southwest: { latitude: viewport.southwest.lat, longitude: viewport.southwest.lng },
+      })
+    : undefined;
 
   const destination: SelectedDestination = {
     placeName,
@@ -969,18 +904,32 @@ const reverseGeocodeWithNominatim = async (
     const precise =
       addressParts?.amenity ||
       addressParts?.building ||
-      [addressParts?.road].filter(Boolean).join(' ') ||
+      [addressParts?.house_number, addressParts?.road].filter(Boolean).join(' ') ||
       undefined;
-    const area =
+    // Prefer the tightest local area (sector / neighbourhood) over a broader suburb.
+    const sector =
       addressParts?.neighbourhood ||
+      addressParts?.quarter ||
+      addressParts?.residential ||
+      undefined;
+    const suburb =
       addressParts?.suburb ||
       addressParts?.city_district ||
       undefined;
+    const area = sector || suburb || undefined;
     const city =
       addressParts?.city || addressParts?.town || addressParts?.village || undefined;
-    const district = addressParts?.county || addressParts?.state || undefined;
+    const district = addressParts?.county || addressParts?.state_district || addressParts?.state || undefined;
+
     const placeName =
-      data.name || precise || area || city || data.display_name?.split(',')[0]?.trim() || 'Selected location';
+      sector && suburb && sector.toLowerCase() !== suburb.toLowerCase()
+        ? `${sector}, ${suburb}`
+        : data.name ||
+          precise ||
+          area ||
+          city ||
+          data.display_name?.split(',')[0]?.trim() ||
+          'Selected location';
 
     return {
       placeName,
@@ -991,8 +940,8 @@ const reverseGeocodeWithNominatim = async (
         ? nominatimBoundingBoxToBoundary(data.boundingbox)
         : undefined,
       addressLevels: {
-        precise: precise || undefined,
-        area: area || undefined,
+        precise: precise || sector || undefined,
+        area: suburb || sector || undefined,
         city: city || undefined,
         district: district || undefined,
       },
@@ -1000,6 +949,118 @@ const reverseGeocodeWithNominatim = async (
   } catch {
     return null;
   }
+};
+
+const GOOGLE_LOCATION_TYPE_RANK: Record<string, number> = {
+  ROOFTOP: 0,
+  RANGE_INTERPOLATED: 1,
+  GEOMETRIC_CENTER: 2,
+  APPROXIMATE: 3,
+};
+
+const GOOGLE_RESULT_TYPE_RANK = [
+  'street_address',
+  'premise',
+  'subpremise',
+  'route',
+  'neighborhood',
+  'sublocality_level_3',
+  'sublocality_level_2',
+  'sublocality_level_1',
+  'sublocality',
+  'locality',
+] as const;
+
+type GoogleGeocodeResult = NonNullable<GeocodeResponse['results']>[number];
+
+const pickBestGoogleGeocodeResult = (
+  results: NonNullable<GeocodeResponse['results']>,
+): GoogleGeocodeResult => {
+  const scored = results.map((result, index) => {
+    const locationType = result.geometry?.location_type ?? 'APPROXIMATE';
+    const types = result.types ?? [];
+    const typeRankIndex = GOOGLE_RESULT_TYPE_RANK.findIndex((type) => types.includes(type));
+    return {
+      result,
+      index,
+      locationRank: GOOGLE_LOCATION_TYPE_RANK[locationType] ?? 9,
+      typeRank: typeRankIndex === -1 ? 80 : typeRankIndex,
+    };
+  });
+
+  scored.sort(
+    (a, b) =>
+      a.locationRank - b.locationRank || a.typeRank - b.typeRank || a.index - b.index,
+  );
+
+  return scored[0]?.result ?? results[0];
+};
+
+const buildDestinationFromGoogleGeocode = (
+  result: GoogleGeocodeResult,
+  coordinate: MapCoordinate,
+): SelectedDestination => {
+  const components = result.address_components ?? [];
+  const findComponent = (...types: string[]) =>
+    components.find((component) => types.some((type) => component.types.includes(type)))
+      ?.long_name;
+
+  // Do not match bare `political` — it appears on almost every component and
+  // often pulls a neighbouring locality (e.g. Vasundhara instead of Indirapuram).
+  const premise = findComponent('street_address', 'premise', 'subpremise');
+  const route = findComponent('route');
+  const sector = findComponent(
+    'sublocality_level_3',
+    'sublocality_level_2',
+    'neighborhood',
+  );
+  const sublocality = findComponent('sublocality_level_1', 'sublocality');
+  const locality = findComponent('locality');
+  const district = findComponent(
+    'administrative_area_level_3',
+    'administrative_area_level_2',
+  );
+
+  const streetLine = [premise, route].filter(Boolean).join(', ') || undefined;
+  const precise = streetLine || sector || undefined;
+  // Keep sector in precise and sublocality in area so labels can show
+  // "Shakti Khand 1, Indirapuram" instead of a neighbouring locality.
+  const area = sublocality || sector || undefined;
+  const city = locality || district || undefined;
+
+  const placeName =
+    sector && sublocality && sector.toLowerCase() !== sublocality.toLowerCase()
+      ? `${sector}, ${sublocality}`
+      : precise ||
+        (sublocality && locality && sublocality.toLowerCase() !== locality.toLowerCase()
+          ? `${sublocality}, ${locality}`
+          : undefined) ||
+        area ||
+        city ||
+        result.formatted_address?.split(',')[0]?.trim() ||
+        'Selected location';
+
+  const viewport = result.geometry?.viewport ?? result.geometry?.bounds;
+  const boundary = viewport
+    ? viewportToBoundary({
+        northeast: { latitude: viewport.northeast.lat, longitude: viewport.northeast.lng },
+        southwest: { latitude: viewport.southwest.lat, longitude: viewport.southwest.lng },
+      })
+    : undefined;
+
+  return {
+    placeName,
+    address: result.formatted_address ?? placeName,
+    latitude: coordinate.latitude,
+    longitude: coordinate.longitude,
+    boundary,
+    addressLevels: {
+      precise: precise || undefined,
+      area: area || undefined,
+      city: city || undefined,
+      district: district || undefined,
+    },
+  };
 };
 
 export const reverseGeocodeCoordinate = async (
@@ -1017,51 +1078,11 @@ export const reverseGeocodeCoordinate = async (
       );
       const data = (await response.json()) as GeocodeResponse;
 
-      if (data.status === 'OK' && data.results?.[0]) {
-        const result = data.results[0];
-        const findComponent = (...types: string[]) =>
-          result.address_components?.find((component) =>
-            types.some((type) => component.types.includes(type)),
-          )?.long_name;
-
-        const premise = findComponent('premise', 'street_address', 'route');
-        const neighborhood = findComponent(
-          'sublocality_level_1',
-          'sublocality',
-          'neighborhood',
-          'political',
-        );
-        const locality = findComponent('locality');
-        const district = findComponent(
-          'administrative_area_level_3',
-          'administrative_area_level_2',
-        );
-        const viewport = result.geometry?.viewport ?? result.geometry?.bounds;
-        const boundary = viewport
-          ? viewportToBoundary({
-              northeast: { latitude: viewport.northeast.lat, longitude: viewport.northeast.lng },
-              southwest: { latitude: viewport.southwest.lat, longitude: viewport.southwest.lng },
-            })
-          : undefined;
-
-        const precise = premise || neighborhood;
-        const area = neighborhood || locality;
-        const city = locality || district;
-        const placeName = precise || area || city || 'Selected location';
-
-        return {
-          placeName,
-          address: result.formatted_address ?? 'Selected location',
-          latitude: coordinate.latitude,
-          longitude: coordinate.longitude,
-          boundary,
-          addressLevels: {
-            precise: precise || undefined,
-            area: area || undefined,
-            city: city || undefined,
-            district: district || undefined,
-          },
-        };
+      if (data.status === 'OK' && data.results?.length) {
+        const result = pickBestGoogleGeocodeResult(data.results);
+        if (result) {
+          return buildDestinationFromGoogleGeocode(result, coordinate);
+        }
       }
     } catch {
       // Fall through.

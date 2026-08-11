@@ -1,18 +1,15 @@
-import React, { useCallback } from 'react';
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { ActivityIndicator, Pressable, ScrollView, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppFooter, IconButton } from '@/shared/components';
-import { colors } from '@/shared/theme';
+import {
+  AppFooter,
+  IconButton,
+  AppText as Text,
+  AppTextInput as TextInput,
+} from '@/shared/components';
 import { getSearchParam, triggerLightHaptic } from '@/shared/utils';
 import { CANCEL_RIDE_SCREEN } from '@/features/ride-search/constants';
 import { useCancelRide } from '@/features/ride-search/hooks';
@@ -39,18 +36,21 @@ export const CancelRideScreen = () => {
     selectedReason,
     comments,
     isAssured,
+    subtitle,
+    showOtherNote,
     submitting,
     selectReason,
     setComments,
     confirmCancellation,
     goBack,
-    openNotifications,
   } = useCancelRide({
     rideId: getSearchParam(params.rideId) || 'ride-default',
     rideType,
     origin: getSearchParam(params.origin),
     destination: getSearchParam(params.destination),
   });
+
+  const [otherFocused, setOtherFocused] = useState(false);
 
   const handleConfirm = useCallback(() => {
     triggerLightHaptic();
@@ -65,21 +65,16 @@ export const CancelRideScreen = () => {
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
       <View style={styles.header}>
-        <View style={styles.headerLeft}>
+        <View style={styles.headerSide}>
           <IconButton
             icon="arrow-back"
             onPress={handleGoBack}
-            color={colors.primary}
+            color="#434655"
             accessibilityLabel="Go back"
           />
-          <Text style={styles.headerTitle}>{CANCEL_RIDE_SCREEN.title}</Text>
         </View>
-        <IconButton
-          icon="notifications-outline"
-          onPress={openNotifications}
-          color={colors.primary}
-          accessibilityLabel="Open notifications"
-        />
+        <Text style={styles.headerTitle}>{CANCEL_RIDE_SCREEN.title}</Text>
+        <View style={styles.headerSide} />
       </View>
 
       <ScrollView
@@ -90,31 +85,78 @@ export const CancelRideScreen = () => {
       >
         <View style={styles.hero}>
           <View style={styles.cancelIconWrap}>
-            <Ionicons name="close-circle" size={48} color={colors.error} />
+            <Ionicons name="close-circle" size={36} color="#BA1A1A" />
           </View>
           <Text style={styles.heading}>{CANCEL_RIDE_SCREEN.heading}</Text>
-          <Text style={styles.subtitle}>{CANCEL_RIDE_SCREEN.subtitle}</Text>
+          <Text style={styles.subtitle}>{subtitle}</Text>
         </View>
 
-        <View style={styles.summaryCard}>
-          <View style={styles.summaryTop}>
-            <View style={styles.summaryLeft}>
-              <Text style={styles.summaryLabel}>{CANCEL_RIDE_SCREEN.rideDetailsLabel}</Text>
-              <View style={styles.routeRow}>
-                <Ionicons name="navigate" size={16} color={colors.primary} />
-                <Text style={styles.routeLabel}>{summary.routeLabel}</Text>
+        <View style={styles.detailsCard}>
+          <View style={styles.detailsHeader}>
+            <Text style={styles.detailsLabel}>{CANCEL_RIDE_SCREEN.rideDetailsLabel}</Text>
+            {isAssured ? (
+              <View style={styles.assuredBadge}>
+                <Text style={styles.assuredBadgeText}>{CANCEL_RIDE_SCREEN.assuredBadge}</Text>
               </View>
+            ) : (
+              <View style={styles.regularBadge}>
+                <Text style={styles.regularBadgeText}>{CANCEL_RIDE_SCREEN.regularBadge}</Text>
+              </View>
+            )}
+          </View>
+
+          <View style={styles.routeRow}>
+            <View style={styles.routeTrack}>
+              <View style={styles.originDot} />
+              <View style={styles.routeLine} />
+              <View style={styles.dropDot} />
             </View>
-            <View style={styles.summaryRight}>
-              <Text style={styles.dateLabel}>{summary.dateLabel}</Text>
-              <Text style={styles.timeLabel}>{summary.timeLabel}</Text>
+            <View style={styles.stopMeta}>
+              <Text style={styles.stopValue}>{summary.pickupLabel}</Text>
+              <Text style={styles.stopValue}>{summary.dropoffLabel}</Text>
+            </View>
+          </View>
+
+          <View style={styles.scheduleRow}>
+            <Ionicons name="time-outline" size={22} color="#434655" />
+            <Text style={styles.scheduleText}>
+              {summary.dateLabel},{' '}
+              <Text style={styles.scheduleStrong}>{summary.timeLabel}</Text>
+            </Text>
+          </View>
+        </View>
+
+        <View style={isAssured ? styles.policyCardAssured : styles.policyCardRegular}>
+          <View style={styles.policyRow}>
+            <Ionicons
+              name={isAssured ? 'warning' : 'information-circle'}
+              size={22}
+              color={isAssured ? '#BA1A1A' : '#0342D1'}
+            />
+            <View style={styles.policyCopy}>
+              <Text style={isAssured ? styles.policyTitleAssured : styles.policyTitleRegular}>
+                {CANCEL_RIDE_SCREEN.policyTitle}
+              </Text>
+              {isAssured ? (
+                <Text style={styles.policyTextAssured}>
+                  {CANCEL_RIDE_SCREEN.policyAssuredPrefix}
+                  <Text style={styles.policyStrong}>
+                    {CANCEL_RIDE_SCREEN.policyAssuredHighlight}
+                  </Text>
+                  {CANCEL_RIDE_SCREEN.policyAssuredMid}
+                  <Text style={styles.policyStrong}>{CANCEL_RIDE_SCREEN.policyAssuredFee}</Text>
+                  {CANCEL_RIDE_SCREEN.policyAssuredSuffix}
+                </Text>
+              ) : (
+                <Text style={styles.policyTextRegular}>{CANCEL_RIDE_SCREEN.policyRegular}</Text>
+              )}
             </View>
           </View>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>{CANCEL_RIDE_SCREEN.reasonLabel}</Text>
-          <View style={styles.reasonGrid}>
+        <View style={styles.reasonSection}>
+          <Text style={styles.reasonTitle}>{CANCEL_RIDE_SCREEN.reasonTitle}</Text>
+          <View style={styles.reasonWrap}>
             {reasons.map((reason) => {
               const selected = selectedReason === reason.id;
               return (
@@ -123,79 +165,58 @@ export const CancelRideScreen = () => {
                   style={({ pressed }) => [
                     styles.reasonChip,
                     selected && styles.reasonChipSelected,
-                    pressed && { transform: [{ scale: 0.98 }] },
+                    pressed && { opacity: 0.9 },
                   ]}
                   onPress={() => selectReason(reason.id)}
                   accessibilityRole="button"
                   accessibilityState={{ selected }}
                   accessibilityLabel={reason.label}
                 >
-                  <Text style={[styles.reasonLabel, selected && styles.reasonLabelSelected]}>
+                  <Text
+                    style={[
+                      styles.reasonChipLabel,
+                      selected && styles.reasonChipLabelSelected,
+                    ]}
+                  >
                     {reason.label}
                   </Text>
                 </Pressable>
               );
             })}
           </View>
-        </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>{CANCEL_RIDE_SCREEN.commentsLabel}</Text>
-          <TextInput
-            style={styles.commentsInput}
-            value={comments}
-            onChangeText={setComments}
-            placeholder={CANCEL_RIDE_SCREEN.commentsPlaceholder}
-            placeholderTextColor="#747686"
-            multiline
-            textAlignVertical="top"
-            accessibilityLabel="Cancellation comments"
-          />
+          {showOtherNote ? (
+            <TextInput
+              style={[styles.otherInput, otherFocused && styles.otherInputFocused]}
+              value={comments}
+              onChangeText={setComments}
+              placeholder={CANCEL_RIDE_SCREEN.otherPlaceholder}
+              placeholderTextColor="#747686"
+              multiline
+              onFocus={() => setOtherFocused(true)}
+              onBlur={() => setOtherFocused(false)}
+              accessibilityLabel={CANCEL_RIDE_SCREEN.otherPlaceholder}
+            />
+          ) : null}
         </View>
-
-        {isAssured ? (
-          <View style={styles.warningCard}>
-            <Ionicons name="information-circle" size={22} color="#5C6276" />
-            <Text style={styles.warningText}>
-              <Text style={styles.warningBold}>{CANCEL_RIDE_SCREEN.assuredNotePrefix} </Text>
-              {CANCEL_RIDE_SCREEN.assuredNote}
-            </Text>
-          </View>
-        ) : null}
 
         <View style={styles.actions}>
           <Pressable
             style={({ pressed }) => [
               styles.confirmButton,
-              submitting && styles.confirmButtonBusy,
-              pressed && !submitting && { opacity: 0.92, transform: [{ scale: 0.98 }] },
+              pressed && { opacity: 0.92, transform: [{ scale: 0.98 }] },
+              submitting && styles.confirmButtonDisabled,
             ]}
             onPress={handleConfirm}
             disabled={submitting}
             accessibilityRole="button"
-            accessibilityLabel="Confirm cancellation"
+            accessibilityLabel={CANCEL_RIDE_SCREEN.confirmLabel}
           >
             {submitting ? (
-              <View style={styles.confirmBusyRow}>
-                <ActivityIndicator color={colors.white} />
-                <Text style={styles.confirmLabel}>{CANCEL_RIDE_SCREEN.confirmingLabel}</Text>
-              </View>
+              <ActivityIndicator color="#BA1A1A" />
             ) : (
               <Text style={styles.confirmLabel}>{CANCEL_RIDE_SCREEN.confirmLabel}</Text>
             )}
-          </Pressable>
-
-          <Pressable
-            style={({ pressed }) => [
-              styles.backButton,
-              pressed && { backgroundColor: '#F3F4F5', transform: [{ scale: 0.98 }] },
-            ]}
-            onPress={handleGoBack}
-            disabled={submitting}
-            accessibilityRole="button"
-            accessibilityLabel="Go back"
-          >
-            <Text style={styles.backLabel}>{CANCEL_RIDE_SCREEN.goBackLabel}</Text>
           </Pressable>
         </View>
       </ScrollView>

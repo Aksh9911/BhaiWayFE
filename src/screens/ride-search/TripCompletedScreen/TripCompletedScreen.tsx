@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { Platform, Pressable, ScrollView, Text, View } from 'react-native';
+import { Platform, Pressable, ScrollView, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MapView, { Marker, Polyline, type Region } from 'react-native-maps';
 
 import { APP_CONFIG } from '@/config';
-import { AppFooter, Avatar, IconButton } from '@/shared/components';
+import { AppFooter, Avatar, IconButton, AppText as Text } from '@/shared/components';
+import { isGoogleMapsBypassed, MapBypassSurface } from '@/shared/maps';
 import { colors, spacing } from '@/shared/theme';
 import { getSearchParam, triggerLightHaptic } from '@/shared/utils';
 import { TRIP_COMPLETED_SCREEN } from '@/features/ride-search/constants';
@@ -221,24 +222,35 @@ export const TripCompletedScreen = () => {
         </View>
 
         <View style={styles.mapCard}>
-          <MapView
-            ref={mapRef}
-            style={styles.map}
-            initialRegion={initialRegion}
-            onMapReady={fitRoute}
-            scrollEnabled={false}
-            zoomEnabled={false}
-            rotateEnabled={false}
-            pitchEnabled={false}
-            toolbarEnabled={false}
-            showsCompass={false}
-            liteMode={Platform.OS === 'android'}
-            pointerEvents="none"
-          >
-            <Marker coordinate={trip.pickup} pinColor={colors.primary} tracksViewChanges={false} />
-            <Marker coordinate={trip.dropoff} pinColor="#585E72" tracksViewChanges={false} />
-            <Polyline coordinates={polyline} strokeColor="#0342D1" strokeWidth={4} />
-          </MapView>
+          {isGoogleMapsBypassed() ? (
+            <MapBypassSurface
+              style={styles.map}
+              title="Trip route"
+              points={[
+                { ...trip.pickup, label: 'Pickup' },
+                { ...trip.dropoff, label: 'Drop-off' },
+              ]}
+            />
+          ) : (
+            <MapView
+              ref={mapRef}
+              style={styles.map}
+              initialRegion={initialRegion}
+              onMapReady={fitRoute}
+              scrollEnabled={false}
+              zoomEnabled={false}
+              rotateEnabled={false}
+              pitchEnabled={false}
+              toolbarEnabled={false}
+              showsCompass={false}
+              liteMode={Platform.OS === 'android'}
+              pointerEvents="none"
+            >
+              <Marker coordinate={trip.pickup} pinColor={colors.primary} tracksViewChanges={false} />
+              <Marker coordinate={trip.dropoff} pinColor="#585E72" tracksViewChanges={false} />
+              <Polyline coordinates={polyline} strokeColor="#0342D1" strokeWidth={4} />
+            </MapView>
+          )}
           <View style={styles.mapTint} pointerEvents="none" />
           <View style={styles.distanceBadge}>
             <Ionicons name="navigate-outline" size={18} color={colors.primary} />

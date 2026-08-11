@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert, Linking } from 'react-native';
+import { Linking } from 'react-native';
+
 import { useRouter } from 'expo-router';
 
 import { ROUTES } from '@/config';
@@ -11,7 +12,7 @@ import {
 } from '../constants';
 import { fetchDrivingRoute } from '../services';
 import type { MapCoordinate, OngoingTripData, RideType } from '../types';
-import { resetTo } from '@/shared/utils';
+import { resetTo, showAppAlert } from '@/shared/utils';
 
 export interface UseOngoingTripParams {
   rideId: string;
@@ -100,7 +101,7 @@ export const useOngoingTrip = (params: UseOngoingTripParams): UseOngoingTripResu
 
   const callDriver = useCallback(() => {
     Linking.openURL('tel:+919999999999').catch(() => {
-      Alert.alert('Call', 'Unable to start a call right now.');
+      showAppAlert('Call', 'Unable to start a call right now.');
     });
   }, []);
 

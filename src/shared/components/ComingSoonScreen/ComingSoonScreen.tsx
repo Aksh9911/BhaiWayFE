@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,6 +10,7 @@ import { Button } from '../Button/Button';
 import { Header } from '../Header/Header';
 import { styles } from './ComingSoonScreen.styles';
 import type { ComingSoonScreenProps } from './ComingSoonScreen.types';
+import { AppText as Text } from '../AppText';
 
 export const ComingSoonScreen = ({
   title,

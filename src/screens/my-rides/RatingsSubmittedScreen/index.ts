@@ -1,0 +1,1 @@
+export { RatingsSubmittedScreen } from './RatingsSubmittedScreen';

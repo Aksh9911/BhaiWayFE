@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { ROUTES } from '@/config';
@@ -11,7 +10,7 @@ import {
   VEHICLE_FEEDBACK_TAGS,
 } from '../constants';
 import type { RatingValue, TripReviewData } from '../types';
-import { resetTo } from '@/shared/utils';
+import { resetTo, showAppAlert } from '@/shared/utils';
 
 export interface UseTripReviewParams {
   rideId: string;
@@ -72,7 +71,7 @@ export const useTripReview = (params: UseTripReviewParams): UseTripReviewResult 
 
   const submitFeedback = useCallback(() => {
     if (driverRating < 1) {
-      Alert.alert(
+      showAppAlert(
         TRIP_REVIEW_SCREEN.ratingRequiredTitle,
         TRIP_REVIEW_SCREEN.ratingRequiredMessage,
       );

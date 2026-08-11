@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
-import { Image, Pressable, ScrollView, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, {
   useAnimatedStyle,
@@ -12,7 +13,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { AppFooter, IconButton } from '@/shared/components';
+import { ROUTES } from '@/config';
+import { AppFooter, IconButton, BhaiWayCoinIcon, AppText as Text } from '@/shared/components';
 import { triggerLightHaptic, triggerSuccessHaptic } from '@/shared/utils';
 import { PROFILE_SUCCESS_SCREEN } from '@/features/profile/constants';
 import { useProfileSuccess } from '@/features/profile/hooks';
@@ -26,6 +28,7 @@ interface ProfileSuccessScreenProps {
 export const ProfileSuccessScreen = ({
   defaultKind = 'bank-account-added',
 }: ProfileSuccessScreenProps) => {
+  const router = useRouter();
   const {
     kind,
     brandTitle,
@@ -97,32 +100,66 @@ export const ProfileSuccessScreen = ({
     goBack();
   }, [goBack]);
 
+  const handleMenu = useCallback(() => {
+    triggerLightHaptic();
+    router.replace(ROUTES.home);
+  }, [router]);
+
+  const handleNotifications = useCallback(() => {
+    triggerLightHaptic();
+    router.push(ROUTES.notifications);
+  }, [router]);
+
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
       <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <IconButton
-            icon="arrow-back"
-            onPress={handleBack}
-            color={successTokens.PRIMARY}
-            accessibilityLabel="Go back"
-          />
-          <Text style={styles.headerTitle} accessibilityRole="header" numberOfLines={1}>
-            {brandTitle}
-          </Text>
-        </View>
-        <Pressable
-          style={styles.avatarButton}
-          onPress={openProfile}
-          accessibilityRole="button"
-          accessibilityLabel="Open profile"
-        >
-          <Image
-            source={{ uri: avatarUri }}
-            style={styles.avatar}
-            accessibilityIgnoresInvertColors
-          />
-        </Pressable>
+        {isWithdrawal ? (
+          <>
+            <View style={styles.headerLeft}>
+              <IconButton
+                icon="arrow-back"
+                onPress={handleBack}
+                color={successTokens.PRIMARY}
+                accessibilityLabel="Go back"
+              />
+              <Text style={styles.headerTitle} accessibilityRole="header" numberOfLines={1}>
+                {brandTitle}
+              </Text>
+            </View>
+            <IconButton
+              icon="notifications-outline"
+              onPress={handleNotifications}
+              color={successTokens.PRIMARY}
+              accessibilityLabel="Notifications"
+            />
+          </>
+        ) : (
+          <>
+            <View style={styles.headerLeft}>
+              <IconButton
+                icon="menu"
+                onPress={handleMenu}
+                color={successTokens.PRIMARY}
+                accessibilityLabel="Open home"
+              />
+              <Text style={styles.headerTitle} accessibilityRole="header" numberOfLines={1}>
+                {brandTitle}
+              </Text>
+            </View>
+            <Pressable
+              style={styles.avatarButton}
+              onPress={openProfile}
+              accessibilityRole="button"
+              accessibilityLabel="Open profile"
+            >
+              <Image
+                source={{ uri: avatarUri }}
+                style={styles.avatar}
+                accessibilityIgnoresInvertColors
+              />
+            </Pressable>
+          </>
+        )}
       </View>
 
       <ScrollView
@@ -143,9 +180,7 @@ export const ProfileSuccessScreen = ({
                   <Ionicons name="cash-outline" size={28} color={successTokens.PRIMARY} />
                 </Animated.View>
                 <Animated.View style={[styles.moneyNodeSmall, floatBStyle]}>
-                  <Text style={{ fontSize: 20, fontWeight: '700', color: successTokens.PRIMARY }}>
-                    ₹
-                  </Text>
+                  <BhaiWayCoinIcon size={22} />
                 </Animated.View>
               </View>
             </View>
@@ -158,7 +193,7 @@ export const ProfileSuccessScreen = ({
             </View>
           )}
 
-          <Text style={styles.title}>{title}</Text>
+          <Text style={[styles.title, !isWithdrawal && styles.bankTitle]}>{title}</Text>
           {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
 
           {isWithdrawal && amountLabel ? (
@@ -184,10 +219,10 @@ export const ProfileSuccessScreen = ({
                     color={successTokens.ON_SECONDARY_CONTAINER}
                   />
                 </View>
-                <View>
+                <View style={styles.bankText}>
                   <Text style={styles.bankLabel}>{bankLabel}</Text>
-                  <Text style={styles.bankNumber}>
-                    {bankName} {maskedNumber}
+                  <Text style={styles.bankNumber} numberOfLines={1}>
+                    {maskedNumber}
                   </Text>
                 </View>
               </View>

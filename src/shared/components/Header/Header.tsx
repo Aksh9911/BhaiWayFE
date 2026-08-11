@@ -1,11 +1,12 @@
 import React from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { colors, spacing } from '@/shared/theme';
 import { styles } from './Header.styles';
 import type { HeaderProps } from './Header.types';
+import { AppText as Text } from '../AppText';
 
 export const Header = ({
   onBack,

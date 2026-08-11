@@ -58,12 +58,20 @@
       "googlePlacesApiKey": "",
       "googleMapsApiKey": "",
       "router": {},
+      "cloudinaryCloudName": "",
+      "cloudinaryUploadPreset": "",
+      "msg91WidgetId": "",
+      "msg91AuthToken": "",
+      "googleSheetId": "1W_2ZuTbhrlMKuArAov4E5hzH11LtGs_s6xtiI98nj6w",
+      "googleSheetWebhookUrl": "",
       "eas": {
-        "projectId": "8488cda3-eefc-4508-8a78-d41d7e1fe17c"
+        "projectId": "0b5df897-5c40-4adf-b956-550fd7c65877"
       }
     },
     "plugins": [
       "expo-router",
+      "expo-font",
+      "expo-notifications",
       [
         "expo-image-picker",
         {

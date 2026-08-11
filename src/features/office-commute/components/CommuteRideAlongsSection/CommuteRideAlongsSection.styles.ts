@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     lineHeight: 28,
     fontWeight: '600',
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   count: {
     fontSize: 14,
@@ -56,7 +56,7 @@ export const styles = StyleSheet.create({
     lineHeight: 20,
     fontWeight: '600',
     letterSpacing: 0.1,
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   ratingRow: {
     flexDirection: 'row',

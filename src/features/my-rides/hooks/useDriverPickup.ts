@@ -5,13 +5,19 @@ import { ROUTES } from '@/config';
 import {
   DEFAULT_DRIVER_PICKUP_STOPS,
   DRIVER_PICKUP_SCREEN,
+  getDriverActiveTripPath,
 } from '../constants';
+import { requiresPickupOtp } from '../utils';
 import type { DriverPickupStop } from '../types';
+import { tripStartedStore } from '@/features/ride-search/store';
+import { useDriverRideKind } from './useDriverRideKind';
 
 export interface UseDriverPickupResult {
   stop: DriverPickupStop;
   stopTitle: string;
   confirming: boolean;
+  /** Assured rides require OTP after swipe; regular rides skip OTP. */
+  requiresOtp: boolean;
   otpVisible: boolean;
   otpValue: string;
   otpError: string | null;
@@ -29,6 +35,9 @@ export interface UseDriverPickupResult {
 
 export const useDriverPickup = (): UseDriverPickupResult => {
   const router = useRouter();
+  const rideType = useDriverRideKind();
+  const requiresOtp = requiresPickupOtp(rideType);
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [confirming, setConfirming] = useState(false);
   const [otpVisible, setOtpVisible] = useState(false);
@@ -69,13 +78,21 @@ export const useDriverPickup = (): UseDriverPickupResult => {
   }, []);
 
   const confirmArrival = useCallback(() => {
-    if (confirming && otpVisible) {
+    if (confirming) {
       return;
     }
     setConfirming(true);
+
+    // Regular rides: swipe only — no OTP gate.
+    if (!requiresOtp) {
+      tripStartedStore.markStarted(stop.id);
+      setConfirmedVisible(true);
+      return;
+    }
+
     resetOtp();
     setOtpVisible(true);
-  }, [confirming, otpVisible, resetOtp]);
+  }, [confirming, requiresOtp, resetOtp, stop.id]);
 
   const closeOtp = useCallback(() => {
     setOtpVisible(false);
@@ -87,14 +104,14 @@ export const useDriverPickup = (): UseDriverPickupResult => {
     setConfirmedVisible(false);
 
     if (isLastStop) {
-      router.replace(ROUTES.myRidesActiveTrip);
+      router.replace(getDriverActiveTripPath(rideType));
       return;
     }
 
     setCurrentIndex((prev) => prev + 1);
     setConfirming(false);
     resetOtp();
-  }, [isLastStop, resetOtp, router]);
+  }, [isLastStop, resetOtp, rideType, router]);
 
   const verifyOtp = useCallback(() => {
     if (otpVerifying) {
@@ -116,16 +133,20 @@ export const useDriverPickup = (): UseDriverPickupResult => {
         return;
       }
 
+      // First successful start OTP → ride is in progress (unlocks rider live map).
+      tripStartedStore.markStarted(stop.id);
+
       setOtpVisible(false);
       setOtpVerifying(false);
       setConfirmedVisible(true);
     }, 400);
-  }, [otpValue, otpVerifying, stop.otp]);
+  }, [otpValue, otpVerifying, stop.id, stop.otp]);
 
   return {
     stop,
     stopTitle,
     confirming,
+    requiresOtp,
     otpVisible,
     otpValue,
     otpError,

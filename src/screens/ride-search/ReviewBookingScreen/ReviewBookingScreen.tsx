@@ -36,6 +36,8 @@ export const ReviewBookingScreen = () => {
     driverName?: string;
     carModel?: string;
     price?: string;
+    dateLabel?: string;
+    departureTime?: string;
     originLat?: string;
     originLng?: string;
     destinationLat?: string;
@@ -66,6 +68,8 @@ export const ReviewBookingScreen = () => {
     driverName: getSearchParam(params.driverName),
     carModel: getSearchParam(params.carModel),
     price: Number.isFinite(priceParam) ? priceParam : undefined,
+    dateLabel: getSearchParam(params.dateLabel),
+    departureTime: getSearchParam(params.departureTime),
     originLat: Number.isFinite(originLat) ? originLat : undefined,
     originLng: Number.isFinite(originLng) ? originLng : undefined,
     destinationLat: Number.isFinite(destinationLat) ? destinationLat : undefined,
@@ -136,7 +140,7 @@ export const ReviewBookingScreen = () => {
           <IconButton
             icon="notifications-outline"
             onPress={handleNotifications}
-            color={colors.textPrimary}
+            color={colors.primary}
             accessibilityLabel="Open notifications"
           />
         }

@@ -1,9 +1,9 @@
 import { StyleSheet } from 'react-native';
-import { colors } from '@/shared/theme';
+import { colors, spacing } from '@/shared/theme';
 import { createShadow } from '@/shared/utils/platform';
 
 const SURFACE = '#F8F9FF';
-const ON_SURFACE = '#0B1C30';
+const ON_SURFACE = '#191C1D';
 const ON_SURFACE_VARIANT = '#45464D';
 const OUTLINE_VARIANT = '#C6C6CD';
 const SURFACE_CONTAINER_HIGH = '#DCE9FF';
@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: spacing.listGap,
   },
   brandAvatar: {
     width: 32,
@@ -67,7 +67,7 @@ export const styles = StyleSheet.create({
   },
   hero: {
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: spacing.sectionGap,
   },
   checkWrap: {
     width: 64,
@@ -76,7 +76,7 @@ export const styles = StyleSheet.create({
     backgroundColor: SURFACE_CONTAINER_HIGH,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
+    marginBottom: spacing.cardGap,
     ...createShadow({
       color: colors.shadow,
       opacity: 0.08,
@@ -103,11 +103,11 @@ export const styles = StyleSheet.create({
   driverCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    gap: spacing.cardGap,
     backgroundColor: colors.white,
     borderRadius: RADIUS_XL,
     padding: 16,
-    marginBottom: 24,
+    marginBottom: spacing.sectionGap,
     borderWidth: 1,
     borderColor: 'rgba(198, 198, 205, 0.3)',
     ...createShadow({
@@ -178,7 +178,7 @@ export const styles = StyleSheet.create({
   contactRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    gap: spacing.cardGap,
   },
   contactBtn: {
     flexDirection: 'row',
@@ -196,7 +196,7 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: RADIUS_XL,
     padding: 16,
-    marginBottom: 24,
+    marginBottom: spacing.sectionGap,
     borderWidth: 1,
     borderColor: 'rgba(198, 198, 205, 0.3)',
     ...createShadow({
@@ -212,7 +212,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingBottom: 16,
-    marginBottom: 24,
+    marginBottom: spacing.sectionGap,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(198, 198, 205, 0.2)',
   },
@@ -229,7 +229,7 @@ export const styles = StyleSheet.create({
     color: ON_SURFACE,
   },
   routeList: {
-    gap: 32,
+    gap: spacing.sectionGap,
     paddingLeft: 4,
     position: 'relative',
   },
@@ -246,7 +246,7 @@ export const styles = StyleSheet.create({
   stopRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 16,
+    gap: spacing.cardGap,
   },
   stopDotOuter: {
     width: 16,
@@ -293,7 +293,7 @@ export const styles = StyleSheet.create({
     height: 192,
     borderRadius: RADIUS_XL,
     overflow: 'hidden',
-    marginBottom: 32,
+    marginBottom: spacing.sectionGap,
     backgroundColor: '#CBDBF5',
     ...createShadow({
       color: colors.shadow,
@@ -360,7 +360,7 @@ export const styles = StyleSheet.create({
     }),
   },
   actions: {
-    gap: 12,
+    gap: spacing.listGap,
   },
   trackButton: {
     width: '100%',

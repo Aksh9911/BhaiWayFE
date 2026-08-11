@@ -1,17 +1,15 @@
 import React, { useCallback, useState } from 'react';
-import {
-  ActivityIndicator,
-  Image,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Image, Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppFooter, IconButton } from '@/shared/components';
+import {
+  AppFooter,
+  IconButton,
+  KeyboardAwareScrollView,
+  AppText as Text,
+  AppTextInput as TextInput,
+} from '@/shared/components';
 import { triggerLightHaptic } from '@/shared/utils';
 import { ADD_BANK_ACCOUNT_SCREEN } from '@/features/profile/constants';
 import { useAddBankAccount } from '@/features/profile/hooks';
@@ -42,6 +40,15 @@ export const AddBankAccountScreen = () => {
     goBack();
   }, [goBack]);
 
+  const handleFind = useCallback(() => {
+    triggerLightHaptic();
+    findIfsc();
+  }, [findIfsc]);
+
+  const handleSubmit = useCallback(() => {
+    void submit();
+  }, [submit]);
+
   const submitLabel =
     submitState === 'submitting'
       ? ADD_BANK_ACCOUNT_SCREEN.submittingLabel
@@ -64,36 +71,24 @@ export const AddBankAccountScreen = () => {
           </Text>
         </View>
         <Pressable
-          style={styles.avatarButton}
+          style={({ pressed }) => [styles.avatarButton, pressed && { opacity: 0.88 }]}
           onPress={openProfile}
           accessibilityRole="button"
           accessibilityLabel="Open profile"
         >
-          <Image
-            source={{ uri: avatarUri }}
-            style={styles.avatar}
-            accessibilityIgnoresInvertColors
-          />
+          <Image source={{ uri: avatarUri }} style={styles.avatar} accessibilityIgnoresInvertColors />
         </Pressable>
       </View>
 
-      <ScrollView
+      <KeyboardAwareScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
+        bottomInset={40}
       >
         <View style={styles.intro}>
           <Text style={styles.title}>{ADD_BANK_ACCOUNT_SCREEN.title}</Text>
           <Text style={styles.subtitle}>{ADD_BANK_ACCOUNT_SCREEN.subtitle}</Text>
-        </View>
-
-        <View style={styles.privacyCard}>
-          <View style={styles.privacyIcon}>
-            <Ionicons name="business" size={24} color={addBankTokens.ON_PRIMARY} />
-          </View>
-          <Text style={styles.privacyTitle}>{ADD_BANK_ACCOUNT_SCREEN.privacyTitle}</Text>
-          <Text style={styles.privacyBody}>{ADD_BANK_ACCOUNT_SCREEN.privacyBody}</Text>
         </View>
 
         <View style={styles.formCard}>
@@ -179,7 +174,7 @@ export const AddBankAccountScreen = () => {
               />
               <Pressable
                 style={({ pressed }) => [styles.findButton, pressed && { opacity: 0.9 }]}
-                onPress={findIfsc}
+                onPress={handleFind}
                 disabled={isBusy}
                 accessibilityRole="button"
                 accessibilityLabel={ADD_BANK_ACCOUNT_SCREEN.findLabel}
@@ -190,7 +185,7 @@ export const AddBankAccountScreen = () => {
           </View>
 
           <View style={styles.infoChip}>
-            <Ionicons name="information-circle" size={18} color={addBankTokens.PRIMARY} />
+            <Ionicons name="information-circle" size={16} color={addBankTokens.PRIMARY} />
             <Text style={styles.infoText}>{ADD_BANK_ACCOUNT_SCREEN.infoNote}</Text>
           </View>
 
@@ -201,9 +196,7 @@ export const AddBankAccountScreen = () => {
               isBusy && styles.submitButtonDisabled,
               pressed && !isBusy && { transform: [{ scale: 0.98 }] },
             ]}
-            onPress={() => {
-              void submit();
-            }}
+            onPress={handleSubmit}
             disabled={isBusy}
             accessibilityRole="button"
             accessibilityLabel={submitLabel}
@@ -215,7 +208,7 @@ export const AddBankAccountScreen = () => {
             )}
           </Pressable>
         </View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
       <AppFooter activeTab="profile" />
     </SafeAreaView>

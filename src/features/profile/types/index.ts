@@ -47,6 +47,11 @@ export type {
   WithdrawQuickAmount,
 } from './withdraw.types';
 export type {
+  AddMoneyPaymentSourceType,
+  AddMoneyPaymentSource,
+  AddMoneyQuickAmount,
+} from './add-money.types';
+export type {
   AddBankAccountForm,
   AddBankAccountSubmitState,
 } from './add-bank-account.types';
@@ -60,3 +65,10 @@ export type {
   EditContactForm,
   EditContactSubmitState,
 } from './edit-contact.types';
+export type {
+  AadhaarVerifyStep,
+  AadhaarVerifySubmitState,
+  AadhaarCardSide,
+  AadhaarVerifyForm,
+  AadhaarVerificationRecord,
+} from './verify-aadhaar.types';

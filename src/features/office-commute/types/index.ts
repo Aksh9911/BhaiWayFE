@@ -15,6 +15,7 @@ export type {
 export type {
   CorporateVerificationForm,
   CorporateVerificationErrors,
+  CorporateVerificationStep,
   IdUploadSide,
   IdUploadStatus,
 } from './corporate-verification.types';

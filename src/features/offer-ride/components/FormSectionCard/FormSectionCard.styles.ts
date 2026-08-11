@@ -7,14 +7,14 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: layout.radiusXl,
     padding: spacing.lg,
-    marginBottom: spacing.lg,
+    marginBottom: spacing.cardGap,
     ...createShadow({ opacity: 0.04, radius: 10, offsetY: 4, elevation: 2 }),
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-    marginBottom: spacing.lg,
+    marginBottom: spacing.cardGap,
   },
   title: {
     ...typography.label,

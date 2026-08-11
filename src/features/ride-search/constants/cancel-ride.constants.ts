@@ -2,19 +2,24 @@ import type { CancelReasonOption, CancelRideSummary, RideType } from '../types';
 
 export const CANCEL_RIDE_SCREEN = {
   title: 'Cancel Ride',
-  heading: 'Why do you need to cancel?',
-  subtitle: 'Your feedback helps us improve the community experience.',
+  heading: 'Are you sure you want to cancel your ride?',
+  subtitleAssured: 'Your Assured ride is confirmed and the driver is on their way.',
+  subtitleRegular: 'Your Regular ride is confirmed. You can cancel before the trip starts.',
   rideDetailsLabel: 'Ride Details',
-  reasonLabel: 'Select a reason',
-  commentsLabel: 'Tell us more (optional)',
-  commentsPlaceholder: 'Share more details about your cancellation...',
+  assuredBadge: 'Assured',
+  regularBadge: 'Regular',
+  policyTitle: 'Cancellation Policy',
+  policyAssuredPrefix: 'Note: This is an ',
+  policyAssuredHighlight: 'Assured Ride',
+  policyAssuredMid: '. The booking fee of ',
+  policyAssuredFee: '50',
+  policyAssuredSuffix: ' is non-refundable upon cancellation.',
+  policyRegular:
+    'Note: This is a Regular Ride. No Assured booking fee applies. Refunds follow BhaiWay cancellation policy based on timing.',
+  reasonTitle: 'Reason for Cancellation',
+  otherPlaceholder: 'Please tell us more (optional)',
   confirmLabel: 'Confirm Cancellation',
   confirmingLabel: 'Processing...',
-  confirmedLabel: 'Cancellation Confirmed',
-  goBackLabel: 'Go Back',
-  assuredNotePrefix: 'Note:',
-  assuredNote:
-    'You have booked an assured ride. If you cancel this ride, the booking amount will not be refunded!',
   reasonRequiredTitle: 'Reason required',
   reasonRequiredMessage: 'Please select a reason for cancellation.',
 } as const;
@@ -40,6 +45,8 @@ export const getCancelRideSummary = (params: {
     rideId: params.rideId,
     rideType: params.rideType,
     routeLabel: `${pickup} to ${dropoff}`,
+    pickupLabel: pickup,
+    dropoffLabel: dropoff,
     dateLabel: 'Oct 24, 2023',
     timeLabel: '08:45 AM',
   };

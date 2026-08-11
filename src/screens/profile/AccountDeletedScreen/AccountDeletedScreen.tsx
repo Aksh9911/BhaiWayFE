@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, {
@@ -13,6 +13,7 @@ import Animated, {
 import { ACCOUNT_DELETED_SCREEN } from '@/features/profile/constants';
 import { useAccountDeleted } from '@/features/profile/hooks';
 import { accountDeletedTokens, styles } from './AccountDeletedScreen.styles';
+import { AppText as Text } from '@/shared/components';
 
 export const AccountDeletedScreen = () => {
   const { goHome } = useAccountDeleted();

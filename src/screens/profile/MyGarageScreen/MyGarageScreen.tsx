@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
-import { Image, Pressable, ScrollView, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppFooter, IconButton } from '@/shared/components';
+import { AppFooter, IconButton, AppText as Text } from '@/shared/components';
 import { triggerLightHaptic } from '@/shared/utils';
 import {
   GARAGE_WHY_IMAGE,
@@ -32,7 +32,7 @@ const rcStatusUi = (status: VehicleRcStatus) => {
 };
 
 export const MyGarageScreen = () => {
-  const { vehicles, goBack, openVehicleMenu, addVehicle } = useMyGarage();
+  const { vehicles, goBack, deleteVehicle, addVehicle } = useMyGarage();
 
   const handleBack = useCallback(() => {
     triggerLightHaptic();
@@ -60,28 +60,30 @@ export const MyGarageScreen = () => {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.hero}>
-            <Text style={styles.heroEyebrow}>{MY_GARAGE_SCREEN.heroEyebrow}</Text>
-            <Text style={styles.heroTitle}>{MY_GARAGE_SCREEN.heroTitle}</Text>
-            <Text style={styles.heroSubtitle}>{MY_GARAGE_SCREEN.heroSubtitle}</Text>
+            <View style={styles.heroText}>
+              <Text style={styles.heroEyebrow}>{MY_GARAGE_SCREEN.heroEyebrow}</Text>
+              <Text style={styles.heroTitle}>{MY_GARAGE_SCREEN.heroTitle}</Text>
+              <Text style={styles.heroSubtitle}>{MY_GARAGE_SCREEN.heroSubtitle}</Text>
+            </View>
             <View style={styles.heroIcon} pointerEvents="none">
-              <Ionicons name="car" size={180} color="#FFFFFF" />
+              <Ionicons name="car" size={120} color="#FFFFFF" />
             </View>
           </View>
 
           <View style={styles.vehicleList}>
+            {vehicles.length === 0 ? (
+              <View style={styles.vehicleCard}>
+                <View style={styles.vehicleMeta}>
+                  <Text style={styles.vehicleName}>{MY_GARAGE_SCREEN.emptyTitle}</Text>
+                  <Text style={styles.vehiclePlate}>{MY_GARAGE_SCREEN.emptySubtitle}</Text>
+                </View>
+              </View>
+            ) : null}
+
             {vehicles.map((vehicle) => {
               const status = rcStatusUi(vehicle.rcStatus);
               return (
-                <Pressable
-                  key={vehicle.id}
-                  style={({ pressed }) => [
-                    styles.vehicleCard,
-                    pressed && { transform: [{ scale: 0.98 }] },
-                  ]}
-                  onPress={() => openVehicleMenu(vehicle)}
-                  accessibilityRole="button"
-                  accessibilityLabel={`${vehicle.name}. ${vehicle.plateNumber}. ${VEHICLE_RC_STATUS_LABEL[vehicle.rcStatus]}`}
-                >
+                <View key={vehicle.id} style={styles.vehicleCard}>
                   <View style={styles.vehicleLeft}>
                     <View style={styles.vehicleIcon}>
                       <Ionicons name="car" size={28} color={garageTokens.PRIMARY} />
@@ -100,16 +102,16 @@ export const MyGarageScreen = () => {
                   <Pressable
                     style={({ pressed }) => [
                       styles.moreButton,
-                      pressed && { backgroundColor: garageTokens.SURFACE_CONTAINER },
+                      pressed && { backgroundColor: 'rgba(220, 38, 38, 0.08)' },
                     ]}
-                    onPress={() => openVehicleMenu(vehicle)}
+                    onPress={() => deleteVehicle(vehicle)}
                     accessibilityRole="button"
-                    accessibilityLabel={`More options for ${vehicle.name}`}
+                    accessibilityLabel={`Delete ${vehicle.name}`}
                     hitSlop={8}
                   >
-                    <Ionicons name="ellipsis-vertical" size={20} color={garageTokens.SECONDARY} />
+                    <Ionicons name="trash-outline" size={22} color="#DC2626" />
                   </Pressable>
-                </Pressable>
+                </View>
               );
             })}
 

@@ -1,17 +1,9 @@
 import React, { useCallback, useState } from 'react';
-import {
-  ActivityIndicator,
-  Image,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Image, Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppFooter, IconButton, UploadDocumentSheet } from '@/shared/components';
+import { AppFooter, IconButton, KeyboardAwareScrollView, UploadDocumentSheet, AppText as Text, AppTextInput as TextInput } from '@/shared/components';
 import { triggerLightHaptic } from '@/shared/utils';
 import { EDIT_CONTACT_SCREEN } from '@/features/profile/constants';
 import { useEditContact } from '@/features/profile/hooks';
@@ -76,11 +68,11 @@ export const EditContactScreen = () => {
         </Text>
       </View>
 
-      <ScrollView
+      <KeyboardAwareScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
+        bottomInset={40}
       >
         <View style={styles.avatarSection}>
           <View style={styles.avatarWrap}>
@@ -226,7 +218,7 @@ export const EditContactScreen = () => {
             </Pressable>
           ) : null}
         </View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
       <UploadDocumentSheet
         visible={uploadSheetVisible}

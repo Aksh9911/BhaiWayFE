@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { LayoutChangeEvent, Text, View } from 'react-native';
+import { LayoutChangeEvent, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
@@ -11,6 +11,7 @@ import Animated, {
 
 import { styles } from './SwipeToComplete.styles';
 import type { SwipeToCompleteProps } from './SwipeToComplete.types';
+import { AppText as Text } from '@/shared/components';
 
 const HANDLE_SIZE = 56;
 const TRACK_PADDING = 4;

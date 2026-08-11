@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors } from '@/shared/theme';
+import { colors, spacing } from '@/shared/theme';
 import { createShadow } from '@/shared/utils/platform';
 
 export const styles = StyleSheet.create({
@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 32,
     paddingBottom: 32,
-    gap: 24,
+    gap: spacing.cardGap,
   },
   hero: {
     gap: 8,

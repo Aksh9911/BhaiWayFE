@@ -1,0 +1,1 @@
+export { RatePassengersScreen } from './RatePassengersScreen';

@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Pressable, Text } from 'react-native';
+import { Pressable } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -9,6 +9,7 @@ import Animated, {
 import { triggerSelectionHaptic } from '@/shared/utils';
 import { styles } from './GenderCard.styles';
 import type { GenderCardProps } from './GenderCard.types';
+import { AppText as Text } from '@/shared/components';
 
 export const GenderCard = ({
   label,

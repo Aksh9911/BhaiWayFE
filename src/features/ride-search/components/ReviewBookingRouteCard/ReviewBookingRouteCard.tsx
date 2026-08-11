@@ -1,11 +1,12 @@
 import React from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { colors } from '@/shared/theme';
 import { REVIEW_BOOKING_SCREEN } from '../../constants';
 import type { BookingLocation } from '../../types';
 import { styles } from './ReviewBookingRouteCard.styles';
+import { AppText as Text } from '@/shared/components';
 
 export interface ReviewBookingRouteCardProps {
   pickup: BookingLocation;

@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Alert } from 'react-native';
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
+import { showAppAlert } from '@/store';
 
 import { ROUTES } from '@/config';
+import type { MissingLocationKind } from '@/shared/components';
+import { corporateVerificationStore } from '@/features/office-commute/store';
 import {
   DEFAULT_PASSENGER_COUNT,
   getRideResultPath,
@@ -32,7 +34,9 @@ import {
 } from '../utils';
 
 const isPassengerCount = (value: number): value is PassengerCount =>
-  value === 1 || value === 2 || value === 3;
+  Number.isInteger(value) &&
+  value >= RIDE_SEARCH_PASSENGER_LIMITS.min &&
+  value <= RIDE_SEARCH_PASSENGER_LIMITS.max;
 
 const getDefaultJourneyTime = (mode: RideSearchMode): Date => {
   const date = new Date();
@@ -53,6 +57,7 @@ export interface UseFindRideResult {
   passengerLimits: typeof RIDE_SEARCH_PASSENGER_LIMITS;
   routeInfo: RouteInfo | null;
   searching: boolean;
+  toggleSameOrganizationOnly: () => void;
   setPassengers: (value: number) => void;
   setJourneyDate: (date: Date) => void;
   setJourneyTime: (time: Date) => void;
@@ -67,6 +72,9 @@ export interface UseFindRideResult {
   minimumJourneyDate: Date;
   search: () => void;
   verifyIdentity: () => void;
+  missingLocationKind: MissingLocationKind | null;
+  closeMissingLocation: () => void;
+  resolveMissingLocation: () => void;
 }
 
 export const useFindRide = (mode: RideSearchMode): UseFindRideResult => {
@@ -80,8 +88,12 @@ export const useFindRide = (mode: RideSearchMode): UseFindRideResult => {
     journeyDate: minimumJourneyDate,
     journeyTime: getDefaultJourneyTime(mode),
     destination: null,
+    sameOrganizationOnly: false,
   }));
   const [searching, setSearching] = useState(false);
+  const [missingLocationKind, setMissingLocationKind] = useState<MissingLocationKind | null>(
+    null,
+  );
   const [recentSearches, setRecentSearches] = useState<RecentSearchItem[]>(() =>
     recentSearchesStore.get(),
   );
@@ -176,6 +188,10 @@ export const useFindRide = (mode: RideSearchMode): UseFindRideResult => {
     setForm((prev) => ({ ...prev, journeyTime }));
   }, []);
 
+  const toggleSameOrganizationOnly = useCallback(() => {
+    setForm((prev) => ({ ...prev, sameOrganizationOnly: !prev.sameOrganizationOnly }));
+  }, []);
+
   const openLocationPicker = useCallback(
     (field: LocationFieldType) => {
       router.push(getSelectLocationPath(field));
@@ -229,32 +245,64 @@ export const useFindRide = (mode: RideSearchMode): UseFindRideResult => {
     [form.origin, form.destination],
   );
 
+  const closeMissingLocation = useCallback(() => {
+    setMissingLocationKind(null);
+  }, []);
+
+  const resolveMissingLocation = useCallback(() => {
+    const kind = missingLocationKind;
+    setMissingLocationKind(null);
+    if (kind === 'destination') {
+      openLocationPicker('destination');
+      return;
+    }
+    openLocationPicker('origin');
+  }, [missingLocationKind, openLocationPicker]);
+
   const search = useCallback(() => {
     if (searching) {
       return;
     }
 
+    if (!form.origin && !form.destination) {
+      setMissingLocationKind('both');
+      return;
+    }
+
     if (!form.origin) {
-      Alert.alert('Starting point required', 'Please select a starting point.');
-      return;
-    }
-
-    if (config.showPassengers !== false && !isPassengerCount(form.passengers)) {
-      Alert.alert('Passengers required', 'Please select the number of passengers.');
-      return;
-    }
-
-    if (!form.journeyDate) {
-      Alert.alert('Journey date required', 'Please select a journey date.');
+      setMissingLocationKind('origin');
       return;
     }
 
     if (!form.destination) {
-      Alert.alert('Destination required', 'Please select a destination.');
+      setMissingLocationKind('destination');
+      return;
+    }
+
+    if (config.showPassengers !== false && !isPassengerCount(form.passengers)) {
+      showAppAlert('Passengers required', 'Please select the number of passengers.');
+      return;
+    }
+
+    if (!form.journeyDate) {
+      showAppAlert('Journey date required', 'Please select a journey date.');
       return;
     }
 
     const { origin, destination, journeyDate, journeyTime, passengers } = form;
+
+    if (
+      mode === 'office' &&
+      form.sameOrganizationOnly &&
+      !corporateVerificationStore.get()?.companyName.trim()
+    ) {
+      showAppAlert(
+        'Corporate verification needed',
+        'Verify your corporate identity to search rides from the same organization.',
+      );
+      return;
+    }
+
     const dateLabel = formatDisplayDate(journeyDate);
     const timeLabel = journeyTime ? formatTimeLabel(journeyTime) : 'Now';
 
@@ -279,6 +327,7 @@ export const useFindRide = (mode: RideSearchMode): UseFindRideResult => {
             originLng: String(origin.longitude),
             destinationLat: String(destination.latitude),
             destinationLng: String(destination.longitude),
+            sameOrganizationOnly: form.sameOrganizationOnly ? 'true' : 'false',
           },
         });
         return;
@@ -309,6 +358,7 @@ export const useFindRide = (mode: RideSearchMode): UseFindRideResult => {
     passengerLimits: RIDE_SEARCH_PASSENGER_LIMITS,
     routeInfo,
     searching,
+    toggleSameOrganizationOnly,
     setPassengers,
     setJourneyDate,
     setJourneyTime,
@@ -323,5 +373,8 @@ export const useFindRide = (mode: RideSearchMode): UseFindRideResult => {
     minimumJourneyDate,
     search,
     verifyIdentity,
+    missingLocationKind,
+    closeMissingLocation,
+    resolveMissingLocation,
   };
 };

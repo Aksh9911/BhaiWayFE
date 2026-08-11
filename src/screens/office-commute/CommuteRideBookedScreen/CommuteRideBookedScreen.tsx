@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
-import { Image, Pressable, ScrollView, Text, View } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Image, Pressable, ScrollView, View } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, {
@@ -12,15 +12,14 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { APP_CONFIG, ROUTES } from '@/config';
-import { AppFooter } from '@/shared/components';
+import { APP_CONFIG } from '@/config';
+import { AppFooter, AppText as Text } from '@/shared/components';
 import { getSearchParam, triggerLightHaptic } from '@/shared/utils';
 import { COMMUTE_RIDE_BOOKED_SCREEN } from '@/features/office-commute/constants';
 import { useCommuteRideBooked } from '@/features/office-commute/hooks';
 import { styles } from './CommuteRideBookedScreen.styles';
 
 export const CommuteRideBookedScreen = () => {
-  const router = useRouter();
   const params = useLocalSearchParams<{
     rideId?: string;
     origin?: string;
@@ -86,34 +85,21 @@ export const CommuteRideBookedScreen = () => {
     opacity: etaPulse.value,
   }));
 
-  const handleProfile = useCallback(() => {
-    triggerLightHaptic();
-    router.push(ROUTES.profile);
-  }, [router]);
-
   const firstName = details.driverName.split(' ')[0] || details.driverName;
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
       <View style={styles.header}>
-        <Pressable
-          style={styles.headerLeft}
-          onPress={handleProfile}
-          accessibilityRole="button"
-          accessibilityLabel="Open profile"
-        >
-          <View style={styles.brandAvatar}>
-            <Ionicons name="person" size={16} color="#7C839B" />
-          </View>
+        <View style={styles.headerLeft}>
           <Text style={styles.brandName}>{APP_CONFIG.name}</Text>
-        </Pressable>
+        </View>
         <Pressable
           style={({ pressed }) => [styles.notifyBtn, pressed && { opacity: 0.7 }]}
           onPress={openNotifications}
           accessibilityRole="button"
           accessibilityLabel="Notifications"
         >
-          <Ionicons name="notifications-outline" size={22} color="#45464D" />
+          <Ionicons name="notifications-outline" size={22} color="#0342D1" />
         </Pressable>
       </View>
 
@@ -228,7 +214,7 @@ export const CommuteRideBookedScreen = () => {
             accessibilityRole="button"
             accessibilityLabel="Center map on my location"
           >
-            <Ionicons name="locate-outline" size={20} color="#0B1C30" />
+            <Ionicons name="locate-outline" size={20} color="#191C1D" />
           </Pressable>
         </View>
 

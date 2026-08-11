@@ -1,10 +1,11 @@
 import React from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { RIDE_RESULT_FILTERS } from '../../constants';
 import type { RideTypeTabId } from './ResultFilterChips.types';
 import { styles } from './ResultFilterChips.styles';
 import type { ResultFilterChipsProps } from './ResultFilterChips.types';
+import { AppText as Text } from '@/shared/components';
 
 export const ResultFilterChips = React.memo(
   ({ selectedId, onSelect }: ResultFilterChipsProps) => (

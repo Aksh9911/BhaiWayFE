@@ -1,9 +1,9 @@
-import React, { useCallback } from 'react';
-import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Keyboard, Platform, Pressable, View, type ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppFooter, BrandTopBar, IconButton, NativeDatePicker } from '@/shared/components';
+import { AppFooter, BrandTopBar, IconButton, KeyboardAwareScrollView, APP_FOOTER_KEYBOARD_OFFSET, MissingLocationModal, NativeDatePicker, BhaiWayCoinIcon, AppText as Text, AppTextInput as TextInput } from '@/shared/components';
 import { colors } from '@/shared/theme';
 import { triggerLightHaptic } from '@/shared/utils';
 import { PUBLISH_COMMUTE_SCREEN } from '@/features/office-commute/constants';
@@ -28,12 +28,62 @@ export const PublishCommuteScreen = () => {
     submit,
     goBack,
     openNotifications,
+    missingLocationKind,
+    closeMissingLocation,
+    resolveMissingLocation,
   } = usePublishCommute();
+
+  const scrollRef = useRef<ScrollView>(null);
+  const priceFocusedRef = useRef(false);
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+
+  const scrollPriceIntoView = useCallback(() => {
+    // Price is the last field — scroll to end so it sits above the keyboard.
+    scrollRef.current?.scrollToEnd({ animated: true });
+  }, []);
+
+  useEffect(() => {
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+
+    const onShow = () => {
+      setKeyboardOpen(true);
+      if (!priceFocusedRef.current) {
+        return;
+      }
+      requestAnimationFrame(() => {
+        setTimeout(scrollPriceIntoView, Platform.OS === 'ios' ? 60 : 120);
+      });
+    };
+
+    const onHide = () => {
+      setKeyboardOpen(false);
+    };
+
+    const showSub = Keyboard.addListener(showEvent, onShow);
+    const hideSub = Keyboard.addListener(hideEvent, onHide);
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, [scrollPriceIntoView]);
 
   const handleNext = useCallback(() => {
     triggerLightHaptic();
     submit();
   }, [submit]);
+
+  const handlePriceFocus = useCallback(() => {
+    priceFocusedRef.current = true;
+    requestAnimationFrame(() => {
+      setTimeout(scrollPriceIntoView, 50);
+      setTimeout(scrollPriceIntoView, 280);
+    });
+  }, [scrollPriceIntoView]);
+
+  const handlePriceBlur = useCallback(() => {
+    priceFocusedRef.current = false;
+  }, []);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
@@ -48,10 +98,11 @@ export const PublishCommuteScreen = () => {
         }
       />
 
-      <ScrollView
+      <KeyboardAwareScrollView
+        scrollViewRef={scrollRef}
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
+        bottomInset={APP_FOOTER_KEYBOARD_OFFSET}
       >
         <View style={styles.hero}>
           <Text style={styles.heading}>{PUBLISH_COMMUTE_SCREEN.title}</Text>
@@ -60,7 +111,7 @@ export const PublishCommuteScreen = () => {
 
         <View style={styles.card}>
           <View style={styles.cardHeader}>
-            <Ionicons name="git-branch-outline" size={20} color="#D95F00" />
+            <Ionicons name="git-branch-outline" size={20} color="#0342D1" />
             <Text style={styles.cardHeaderLabel}>{PUBLISH_COMMUTE_SCREEN.routeLabel}</Text>
           </View>
           <View style={styles.routeBlock}>
@@ -131,7 +182,7 @@ export const PublishCommuteScreen = () => {
                 accessibilityRole="button"
                 accessibilityLabel="Decrease seats"
               >
-                <Ionicons name="remove" size={18} color="#0B1C30" />
+                <Ionicons name="remove" size={18} color="#191C1D" />
               </Pressable>
               <Text style={styles.seatValue}>{draft.seats}</Text>
               <Pressable
@@ -140,7 +191,7 @@ export const PublishCommuteScreen = () => {
                 accessibilityRole="button"
                 accessibilityLabel="Increase seats"
               >
-                <Ionicons name="add" size={18} color="#0B1C30" />
+                <Ionicons name="add" size={18} color="#191C1D" />
               </Pressable>
             </View>
           </View>
@@ -199,13 +250,15 @@ export const PublishCommuteScreen = () => {
             <View>
               <Text style={styles.fieldLabel}>{PUBLISH_COMMUTE_SCREEN.priceLabel}</Text>
               <View style={styles.priceRow}>
-                <Text style={styles.currency}>₹</Text>
+                <BhaiWayCoinIcon size={18} />
                 <TextInput
                   style={styles.priceInput}
                   value={draft.pricePerSeat}
                   onChangeText={(value) =>
                     updateDraft({ pricePerSeat: value.replace(/[^0-9]/g, '') })
                   }
+                  onFocus={handlePriceFocus}
+                  onBlur={handlePriceBlur}
                   placeholder={PUBLISH_COMMUTE_SCREEN.pricePlaceholder}
                   placeholderTextColor="#76777D"
                   keyboardType="number-pad"
@@ -214,7 +267,7 @@ export const PublishCommuteScreen = () => {
               </View>
             </View>
             <View style={styles.recommendedBadge}>
-              <Ionicons name="flash" size={14} color="#341100" />
+              <Ionicons name="flash" size={14} color="#0342D1" />
               <Text style={styles.recommendedText}>
                 {PUBLISH_COMMUTE_SCREEN.recommendedBadge}
               </Text>
@@ -240,7 +293,7 @@ export const PublishCommuteScreen = () => {
           <Text style={styles.nextLabel}>{PUBLISH_COMMUTE_SCREEN.nextLabel}</Text>
           <Ionicons name="arrow-forward" size={22} color={colors.white} />
         </Pressable>
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
       <NativeDatePicker
         visible={timePickerOpen}
@@ -251,7 +304,15 @@ export const PublishCommuteScreen = () => {
         onClose={closeTimePicker}
       />
 
-      <AppFooter />
+      <MissingLocationModal
+        visible={missingLocationKind != null}
+        kind={missingLocationKind}
+        context="commute"
+        onClose={closeMissingLocation}
+        onSelect={resolveMissingLocation}
+      />
+
+      {keyboardOpen ? null : <AppFooter />}
     </SafeAreaView>
   );
 };

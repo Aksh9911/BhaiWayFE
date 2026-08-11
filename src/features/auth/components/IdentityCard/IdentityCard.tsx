@@ -1,13 +1,18 @@
 import React, { useCallback } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 
 import { colors } from '@/shared/theme';
 import { styles } from './IdentityCard.styles';
 import type { IdentityCardProps } from './IdentityCard.types';
+import { AppText as Text } from '@/shared/components';
 
-export const IdentityCard = ({ onVerifyPress }: IdentityCardProps) => {
+export const IdentityCard = ({
+  onVerifyPress,
+  verified = false,
+  optional = true,
+}: IdentityCardProps) => {
   const handleVerify = useCallback(() => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     onVerifyPress?.();
@@ -26,20 +31,34 @@ export const IdentityCard = ({ onVerifyPress }: IdentityCardProps) => {
         </View>
 
         <View style={styles.textBlock}>
-          <Text style={styles.title}>Verify Your Identity</Text>
+          <View style={styles.titleRow}>
+            <Text style={styles.title}>
+              {verified ? 'Identity Verified' : 'Verify Your Identity'}
+            </Text>
+            {optional && !verified ? <Text style={styles.optionalBadge}>Optional</Text> : null}
+          </View>
           <Text style={styles.subtitle}>
-            Stand out to others and unlock all BhaiWay features by verifying your ID.
+            {verified
+              ? 'Your Aadhaar identity is verified. You can continue once required profile details are filled.'
+              : 'Verify with your Aadhaar number. We’ll send an OTP to your linked mobile. You can skip this and do it later.'}
           </Text>
 
-          <Pressable
-            onPress={handleVerify}
-            style={styles.verifyButton}
-            accessibilityRole="button"
-            accessibilityLabel="Verify your identity now"
-          >
-            <Ionicons name="shield-checkmark" size={16} color={colors.white} />
-            <Text style={styles.verifyLabel}>Verify Now</Text>
-          </Pressable>
+          {verified ? (
+            <View style={styles.verifiedPill} accessibilityRole="text">
+              <Ionicons name="checkmark-circle" size={16} color={colors.primary} />
+              <Text style={styles.verifiedLabel}>Verified</Text>
+            </View>
+          ) : (
+            <Pressable
+              onPress={handleVerify}
+              style={styles.verifyButton}
+              accessibilityRole="button"
+              accessibilityLabel="Verify Aadhaar now (optional)"
+            >
+              <Ionicons name="shield-checkmark" size={16} color={colors.white} />
+              <Text style={styles.verifyLabel}>Verify Now</Text>
+            </Pressable>
+          )}
         </View>
       </View>
     </View>

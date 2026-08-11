@@ -1,0 +1,148 @@
+import { StyleSheet } from 'react-native';
+
+import { colors, layout, spacing, typography } from '@/shared/theme';
+import { createShadow } from '@/shared/utils/platform';
+
+export const styles = StyleSheet.create({
+  card: {
+    backgroundColor: colors.white,
+    borderRadius: layout.radiusLg,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: spacing.md + 4,
+    gap: spacing.md,
+    ...createShadow({
+      color: colors.shadow,
+      opacity: 0.04,
+      radius: 12,
+      offsetY: 2,
+      elevation: 2,
+    }),
+  },
+  top: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.md,
+  },
+  avatar: {
+    borderRadius: layout.radiusXl,
+  },
+  meta: {
+    flex: 1,
+    gap: spacing.sm,
+  },
+  metaTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    gap: spacing.sm,
+  },
+  metaText: {
+    flex: 1,
+    gap: 2,
+  },
+  name: {
+    ...typography.title,
+    fontSize: 18,
+    lineHeight: 24,
+    fontWeight: '700',
+    color: colors.textPrimary,
+  },
+  subtitle: {
+    ...typography.caption,
+    fontSize: 14,
+    lineHeight: 20,
+    color: colors.textSecondary,
+  },
+  ratingBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: colors.surfaceMuted,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+    borderRadius: layout.radiusMd,
+  },
+  ratingText: {
+    ...typography.caption,
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '700',
+    letterSpacing: 0.6,
+    color: colors.textPrimary,
+  },
+  badges: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.md,
+  },
+  badge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  badgeMuted: {
+    ...typography.caption,
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: '700',
+    letterSpacing: 0.4,
+    color: colors.textSecondary,
+  },
+  badgePrimary: {
+    ...typography.caption,
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: '700',
+    letterSpacing: 0.4,
+    color: colors.primary,
+  },
+  actions: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  declineBtn: {
+    flex: 1,
+    minHeight: 48,
+    borderRadius: layout.radiusLg,
+    borderWidth: 1,
+    borderColor: colors.textMuted,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.sm,
+  },
+  declineLabel: {
+    ...typography.caption,
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '700',
+    letterSpacing: 1.2,
+    textTransform: 'uppercase',
+    color: colors.textSecondary,
+  },
+  acceptBtn: {
+    flex: 1,
+    minHeight: 48,
+    borderRadius: layout.radiusLg,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.sm,
+    ...createShadow({
+      color: colors.primary,
+      opacity: 0.2,
+      radius: 8,
+      offsetY: 2,
+      elevation: 3,
+    }),
+  },
+  acceptLabel: {
+    ...typography.caption,
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '700',
+    letterSpacing: 1.2,
+    textTransform: 'uppercase',
+    color: colors.textInverse,
+  },
+});

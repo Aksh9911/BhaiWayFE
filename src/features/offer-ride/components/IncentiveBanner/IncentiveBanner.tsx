@@ -1,10 +1,11 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { colors } from '@/shared/theme';
 import { styles } from './IncentiveBanner.styles';
 import type { IncentiveBannerProps } from './IncentiveBanner.types';
+import { AppText as Text } from '@/shared/components';
 
 export const IncentiveBanner = React.memo(({ message }: IncentiveBannerProps) => (
   <View style={styles.banner}>

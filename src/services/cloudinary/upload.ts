@@ -3,18 +3,44 @@ import { getCloudinaryFolder } from '@/shared/constants/uploadFolders';
 import { logger } from '@/shared/utils/logger';
 import {
   CloudinaryUploadError,
+  type CloudinaryResourceType,
   type CloudinaryUploadResponse,
   type UploadFileRequest,
 } from '@/types/cloudinary';
 
 const guessMimeType = (fileName?: string, mimeType?: string): string => {
-  if (mimeType) {
-    return mimeType;
+  if (mimeType?.trim()) {
+    return mimeType.trim().toLowerCase();
   }
   const lower = (fileName ?? '').toLowerCase();
   if (lower.endsWith('.png')) return 'image/png';
   if (lower.endsWith('.pdf')) return 'application/pdf';
+  if (lower.endsWith('.jpg') || lower.endsWith('.jpeg')) return 'image/jpeg';
   return 'image/jpeg';
+};
+
+const ensureFileName = (fileName: string | undefined, mimeType: string): string => {
+  const base = fileName?.trim() || `bhaiway_${Date.now()}`;
+  if (/\.[a-z0-9]+$/i.test(base)) {
+    return base;
+  }
+  if (mimeType === 'image/png') return `${base}.png`;
+  if (mimeType === 'application/pdf') return `${base}.pdf`;
+  return `${base}.jpg`;
+};
+
+const resolveResourceType = (
+  mimeType: string,
+  requested?: CloudinaryResourceType,
+): CloudinaryResourceType => {
+  if (mimeType === 'application/pdf') {
+    return 'raw';
+  }
+  if (requested === 'raw' || requested === 'image') {
+    return requested;
+  }
+  // Prefer image over auto — unsigned presets are usually Image-scoped.
+  return 'image';
 };
 
 const mapCloudinaryPayload = (payload: Record<string, unknown>): CloudinaryUploadResponse => {
@@ -46,7 +72,11 @@ const mapCloudinaryPayload = (payload: Record<string, unknown>): CloudinaryUploa
 const resolveUploadFolder = ({
   kind,
   folder,
-}: Pick<UploadFileRequest, 'kind' | 'folder'>): string => {
+  skipFolder,
+}: Pick<UploadFileRequest, 'kind' | 'folder' | 'skipFolder'>): string | null => {
+  if (skipFolder) {
+    return null;
+  }
   if (kind) {
     return getCloudinaryFolder(kind);
   }
@@ -55,28 +85,19 @@ const resolveUploadFolder = ({
   }
   throw new CloudinaryUploadError(
     'UNKNOWN',
-    'Upload requires a kind (profile | dl | rc) or an explicit folder path.',
+    'Upload requires a kind (profile | dl | rc | corporateId | issueReport), an explicit folder path, or skipFolder.',
   );
 };
 
 /**
- * Single reusable Cloudinary upload for profile photos, DL, RC, and future types.
+ * Single reusable Cloudinary upload for profile photos, DL, RC, Corporate ID, issue reports, and future types.
  * Uses an unsigned upload preset — never sends the API secret from the app.
- *
- * Folders (created automatically by Cloudinary on first upload):
- * - profile → bhaiway/profile
- * - dl → bhaiway/documents/dl
- * - rc → bhaiway/documents/rc
- *
- * @example
- * await uploadFile({ uri, kind: 'profile' });
- * await uploadFile({ uri, kind: 'dl' });
- * await uploadFile({ uri, kind: 'rc' });
  */
 export const uploadFile = async ({
   uri,
   kind,
   folder,
+  skipFolder,
   fileName,
   mimeType,
   resourceType = 'image',
@@ -84,6 +105,10 @@ export const uploadFile = async ({
   onProgress,
   signal,
 }: UploadFileRequest): Promise<CloudinaryUploadResponse> => {
+  if (!uri?.trim()) {
+    throw new CloudinaryUploadError('UNKNOWN', 'File URI is missing.');
+  }
+
   if (!cloudinaryConfig.isConfigured) {
     throw new CloudinaryUploadError(
       'NOT_CONFIGURED',
@@ -91,9 +116,10 @@ export const uploadFile = async ({
     );
   }
 
-  const targetFolder = resolveUploadFolder({ kind, folder });
-  const name = fileName ?? `bhaiway_${Date.now()}.jpg`;
-  const type = guessMimeType(name, mimeType);
+  const targetFolder = resolveUploadFolder({ kind, folder, skipFolder });
+  const type = guessMimeType(fileName, mimeType);
+  const name = ensureFileName(fileName, type);
+  const resolvedResourceType = resolveResourceType(type, resourceType);
   const formData = new FormData();
 
   formData.append('file', {
@@ -102,12 +128,14 @@ export const uploadFile = async ({
     type,
   } as unknown as Blob);
   formData.append('upload_preset', cloudinaryConfig.uploadPreset);
-  formData.append('folder', targetFolder);
-  if (publicId) {
-    formData.append('public_id', publicId);
+  if (targetFolder) {
+    formData.append('folder', targetFolder);
+  }
+  if (publicId?.trim()) {
+    formData.append('public_id', publicId.trim());
   }
 
-  const uploadUrl = getCloudinaryUploadUrl(resourceType);
+  const uploadUrl = getCloudinaryUploadUrl(resolvedResourceType);
 
   return new Promise<CloudinaryUploadResponse>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
@@ -137,13 +165,14 @@ export const uploadFile = async ({
 
     xhr.onload = () => {
       try {
-        const payload = JSON.parse(xhr.responseText) as Record<string, unknown>;
+        const payload = JSON.parse(xhr.responseText || '{}') as Record<string, unknown>;
         if (xhr.status >= 200 && xhr.status < 300) {
           onProgress?.(100);
           logger.info('Cloudinary upload success', {
             kind,
             folder: targetFolder,
             publicId: payload.public_id,
+            resourceType: resolvedResourceType,
           });
           resolve(mapCloudinaryPayload(payload));
           return;
@@ -161,6 +190,7 @@ export const uploadFile = async ({
           message,
           folder: targetFolder,
           kind,
+          resourceType: resolvedResourceType,
         });
 
         reject(
@@ -201,7 +231,12 @@ export const uploadFile = async ({
       reject(new CloudinaryUploadError('CANCELLED', 'Upload was cancelled.'));
     };
 
-    logger.debug('Cloudinary upload start', { kind, folder: targetFolder, name, resourceType });
+    logger.debug('Cloudinary upload start', {
+      kind,
+      folder: targetFolder,
+      name,
+      resourceType: resolvedResourceType,
+    });
     xhr.send(formData);
   });
 };

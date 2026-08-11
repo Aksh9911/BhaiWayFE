@@ -1,11 +1,12 @@
 import React, { useMemo } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { colors } from '@/shared/theme';
 import { RIDE_DETAILS_SCREEN } from '../../constants';
 import type { CoPassenger } from '../../types';
 import { styles } from './RideDetailsCoPassengers.styles';
+import { AppText as Text } from '@/shared/components';
 
 export interface RideDetailsCoPassengersProps {
   passengers: CoPassenger[];

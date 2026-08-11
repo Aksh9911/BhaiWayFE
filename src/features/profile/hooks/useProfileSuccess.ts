@@ -1,14 +1,11 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Alert, Share } from 'react-native';
+import { Share } from 'react-native';
+
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { ROUTES } from '@/config';
 import { useSessionUser } from '@/shared/hooks';
-import {
-  getSearchParam,
-  triggerLightHaptic,
-  triggerSuccessHaptic,
-} from '@/shared/utils';
+import { getSearchParam, triggerLightHaptic, triggerSuccessHaptic, showAppAlert } from '@/shared/utils';
 import { DEFAULT_PROFILE_AVATAR } from '../constants/profile.constants';
 import { PROFILE_SUCCESS_SCREEN } from '../constants/profile-success.constants';
 import type { ProfileSuccessKind } from '../types';
@@ -124,7 +121,7 @@ export const useProfileSuccess = (
         }
       })
       .catch(() => {
-        Alert.alert('Reference Number', referenceNumber);
+        showAppAlert('Reference Number', referenceNumber);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
       });
@@ -168,7 +165,7 @@ export const useProfileSuccess = (
     avatarUri,
     copied,
     onPrimary: goToWithdraw,
-    onSecondary: goToWallet,
+    onSecondary: goToWithdraw,
     copyReference: null,
     openProfile,
     goBack,

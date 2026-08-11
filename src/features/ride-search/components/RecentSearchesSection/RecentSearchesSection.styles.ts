@@ -27,7 +27,7 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     lineHeight: 28,
     fontWeight: '600',
-    color: '#0B1C30',
+    color: '#191C1D',
     textTransform: 'none',
     letterSpacing: 0,
     marginBottom: 0,
@@ -40,7 +40,7 @@ export const styles = StyleSheet.create({
     color: '#7C839B',
   },
   list: {
-    gap: 12,
+    gap: spacing.listGap,
   },
   item: {
     borderWidth: 1,
@@ -56,7 +56,7 @@ export const styles = StyleSheet.create({
   itemCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    gap: spacing.cardGap,
     backgroundColor: '#EFF4FF',
     borderRadius: 8,
     padding: 16,
@@ -86,7 +86,7 @@ export const styles = StyleSheet.create({
     lineHeight: 20,
     fontWeight: '600',
     letterSpacing: 0.1,
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   route: {
     ...typography.input,

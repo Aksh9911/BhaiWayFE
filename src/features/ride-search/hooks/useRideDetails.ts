@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import { showAppAlert } from '@/store';
 
 import { ROUTES } from '@/config';
 import {
@@ -28,6 +28,8 @@ export interface UseRideDetailsParams {
   price?: number;
   distanceLabel?: string;
   durationLabel?: string;
+  dateLabel?: string;
+  departureTime?: string;
   originLat?: number;
   originLng?: number;
   destinationLat?: number;
@@ -110,6 +112,8 @@ export const useRideDetails = (params: UseRideDetailsParams): UseRideDetailsResu
         driverName: details.driver.name,
         carModel: details.driver.vehicleModel,
         price: details.fare.total,
+        dateLabel: params.dateLabel,
+        departureTime: params.departureTime,
         originLat: params.originLat ?? details.pickup.latitude,
         originLng: params.originLng ?? details.pickup.longitude,
         destinationLat: params.destinationLat ?? details.dropoff.latitude,
@@ -139,7 +143,7 @@ export const useRideDetails = (params: UseRideDetailsParams): UseRideDetailsResu
   }, [details, router]);
 
   const chatPassenger = useCallback((name: string) => {
-    Alert.alert('Chat', `Chat with ${name} will be available soon.`);
+    showAppAlert('Chat', `Chat with ${name} will be available soon.`);
   }, []);
 
   const goHome = useCallback(() => {
@@ -147,7 +151,7 @@ export const useRideDetails = (params: UseRideDetailsParams): UseRideDetailsResu
   }, [router]);
 
   const openMore = useCallback(() => {
-    Alert.alert('More', 'More ride actions will be available soon.');
+    showAppAlert('More', 'More ride actions will be available soon.');
   }, []);
 
   return {

@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, Keyboard } from 'react-native';
+import { Keyboard } from 'react-native';
+
 import * as Location from 'expo-location';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
-import { getSearchParam } from '@/shared/utils';
+import { getSearchParam, showAppAlert } from '@/shared/utils';
 import {
   CURRENT_LOCATION_MAP_DELTA,
   DEFAULT_MAP_COORDINATE,
@@ -23,7 +24,12 @@ import type {
   PlacesAutocompletePrediction,
   SelectedDestination,
 } from '@/features/ride-search/types';
-import { regionForPrecisePlace } from '@/features/ride-search/utils';
+import { getRouteTooCloseMessage, regionForPrecisePlace } from '@/features/ride-search/utils';
+import {
+  panKeepZoom,
+  useSearchIdleZoom,
+  zoomToPointerRegion,
+} from '@/features/ride-search/hooks/useSearchIdleZoom';
 import { SELECT_LOCATION_SCREEN } from '../constants';
 import { publishRideDraft } from '../store';
 import type { LocationFieldType, PublishRideDraft, SelectedLocation } from '../types';
@@ -40,9 +46,6 @@ const toRegion = (
 
 const isLocationField = (value: string): value is LocationFieldType =>
   value === 'origin' || value === 'destination';
-
-const otherField = (field: LocationFieldType): LocationFieldType =>
-  field === 'origin' ? 'destination' : 'origin';
 
 /** Nothing pre-selected — map opens at the default coordinate with a blank search. */
 const emptySelection = (): SelectedDestination => ({
@@ -67,9 +70,6 @@ const resolveInitialSelection = (
   const existing = field === 'origin' ? draft.originLocation : draft.destinationLocation;
   return existing ? toDestination(existing) : emptySelection();
 };
-
-const isFieldFilled = (field: LocationFieldType, draft: PublishRideDraft): boolean =>
-  field === 'origin' ? Boolean(draft.origin.trim()) : Boolean(draft.destination.trim());
 
 export const useSelectLocation = () => {
   const router = useRouter();
@@ -109,12 +109,20 @@ export const useSelectLocation = () => {
   const requestIdRef = useRef(0);
   const geocodeIdRef = useRef(0);
   const skipNextRegionGeocode = useRef(true);
+  const preserveListSelectionRef = useRef(false);
   const abortRef = useRef<AbortController | null>(null);
   const sessionTokenRef = useRef(createPlacesSessionToken());
   const regionRef = useRef(region);
   regionRef.current = region;
   const fieldRef = useRef(field);
   fieldRef.current = field;
+  const selectedRef = useRef(selected);
+  selectedRef.current = selected;
+  const searchModeRef = useRef(searchMode);
+  searchModeRef.current = searchMode;
+
+  const { scheduleIdleZoom, bumpSearchActivity, flushZoomNow, clearIdleZoom } =
+    useSearchIdleZoom(setRegion);
 
   useEffect(() => publishRideDraft.subscribe(setDraft), []);
   useEffect(() => recentPlacesStore.subscribe(setRecentPlaces), []);
@@ -198,7 +206,7 @@ export const useSelectLocation = () => {
     setGeocoding(true);
     try {
       const destination = await reverseGeocodeCoordinate({ latitude, longitude });
-      if (geocodeIdRef.current === geocodeId) {
+      if (geocodeIdRef.current === geocodeId && !preserveListSelectionRef.current) {
         setSelected(destination);
       }
     } finally {
@@ -252,7 +260,7 @@ export const useSelectLocation = () => {
             return;
           }
           setPredictions([]);
-          Alert.alert('Search failed', placesErrorMessage(error));
+          showAppAlert('Search failed', placesErrorMessage(error));
         } finally {
           if (requestIdRef.current === requestId) {
             setLoading(false);
@@ -286,22 +294,58 @@ export const useSelectLocation = () => {
         return;
       }
 
+      if (preserveListSelectionRef.current) {
+        return;
+      }
+
       if (moved) {
         setSelected((prev) => ({ ...prev, boundary: undefined }));
         void applyCoordinate(next.latitude, next.longitude);
+        if (searchModeRef.current) {
+          bumpSearchActivity(
+            { latitude: next.latitude, longitude: next.longitude },
+            zoomToPointerRegion(next.latitude, next.longitude),
+          );
+        }
       }
     },
-    [applyCoordinate],
+    [applyCoordinate, bumpSearchActivity],
   );
 
+  const markUserMapGesture = useCallback(() => {
+    preserveListSelectionRef.current = false;
+  }, []);
+
   /**
-   * Save the chosen place into the active field only, then:
-   * - open the other field's search if it is still empty
-   * - otherwise close search (both filled)
+   * Save the chosen place into the active field only, then return to the form.
+   * Pickup and destination are selected in separate visits — not chained here.
    */
   const commitFieldSelection = useCallback(
     (destination: SelectedDestination, forField: LocationFieldType) => {
+      const currentDraft = publishRideDraft.get();
+      const other = forField === 'origin'
+        ? currentDraft.destinationLocation
+        : currentDraft.originLocation;
+      if (
+        other &&
+        Number.isFinite(other.latitude) &&
+        Number.isFinite(other.longitude)
+      ) {
+        const tooCloseMessage = getRouteTooCloseMessage(
+          { latitude: destination.latitude, longitude: destination.longitude },
+          { latitude: other.latitude!, longitude: other.longitude! },
+          'outstation',
+        );
+        if (tooCloseMessage) {
+          showAppAlert('Locations too close', tooCloseMessage);
+          return false;
+        }
+      }
+
       Keyboard.dismiss();
+      geocodeIdRef.current += 1;
+      setGeocoding(false);
+      preserveListSelectionRef.current = true;
       recentPlacesStore.add(destination);
       publishRideDraft.setLocation(forField, {
         name: destination.placeName,
@@ -310,25 +354,17 @@ export const useSelectLocation = () => {
         longitude: destination.longitude,
       });
 
-      const nextDraft = publishRideDraft.get();
-      const next = otherField(forField);
-
       setQuery('');
       setPredictions([]);
       setSelected(destination);
-      skipNextRegionGeocode.current = true;
-      setRegion(regionForPrecisePlace(destination));
-
-      if (!isFieldFilled(next, nextDraft)) {
-        activateField(next, { openSearch: true });
-        return;
-      }
-
       setSearchMode(false);
-      setField(forField);
-      fieldRef.current = forField;
+      skipNextRegionGeocode.current = true;
+      setRegion(panKeepZoom(destination.latitude, destination.longitude, regionRef.current));
+      scheduleIdleZoom(regionForPrecisePlace(destination));
+      router.back();
+      return true;
     },
-    [activateField],
+    [router, scheduleIdleZoom],
   );
 
   const selectPrediction = useCallback(
@@ -352,7 +388,7 @@ export const useSelectLocation = () => {
         commitFieldSelection(destination, activeField);
         sessionTokenRef.current = createPlacesSessionToken();
       } catch (error) {
-        Alert.alert('Location unavailable', placesErrorMessage(error));
+        showAppAlert('Location unavailable', placesErrorMessage(error));
       } finally {
         setSelecting(false);
       }
@@ -371,7 +407,7 @@ export const useSelectLocation = () => {
       }
 
       if (status !== Location.PermissionStatus.GRANTED) {
-        Alert.alert(
+        showAppAlert(
           'Location permission needed',
           'Please allow location access to center the map on your position.',
         );
@@ -389,19 +425,35 @@ export const useSelectLocation = () => {
       };
       setUserLocation(next);
       skipNextRegionGeocode.current = true;
-      setRegion(toRegion(next.latitude, next.longitude, CURRENT_LOCATION_MAP_DELTA));
+      clearIdleZoom();
+      flushZoomNow(toRegion(next.latitude, next.longitude, CURRENT_LOCATION_MAP_DELTA));
 
       const destination = await reverseGeocodeCoordinate(next);
       const precise = { ...destination, boundary: undefined };
       setSelected(precise);
       return precise;
     } catch {
-      Alert.alert('Location unavailable', 'Unable to fetch your current location.');
+      showAppAlert('Location unavailable', 'Unable to fetch your current location.');
       return null;
     } finally {
       setGeocoding(false);
     }
-  }, []);
+  }, [clearIdleZoom, flushZoomNow]);
+
+  const handleQueryChange = useCallback(
+    (value: string) => {
+      setQuery(value);
+      if (!searchModeRef.current) {
+        return;
+      }
+      const pointer = selectedRef.current;
+      bumpSearchActivity({
+        latitude: pointer.latitude,
+        longitude: pointer.longitude,
+      });
+    },
+    [bumpSearchActivity],
+  );
 
   const openSearch = useCallback(() => {
     setQuery('');
@@ -409,14 +461,20 @@ export const useSelectLocation = () => {
     sessionTokenRef.current = createPlacesSessionToken();
     setSearchMode(true);
     void loadNearbySuggestions();
-  }, [loadNearbySuggestions]);
+    const pointer = selectedRef.current;
+    bumpSearchActivity({
+      latitude: pointer.latitude,
+      longitude: pointer.longitude,
+    });
+  }, [bumpSearchActivity, loadNearbySuggestions]);
 
   const closeSearch = useCallback(() => {
     Keyboard.dismiss();
     setSearchMode(false);
     setQuery('');
     setPredictions([]);
-  }, []);
+    clearIdleZoom();
+  }, [clearIdleZoom]);
 
   const pickCurrentLocation = useCallback(async () => {
     const destination = await locateMe();
@@ -438,7 +496,7 @@ export const useSelectLocation = () => {
 
   const confirm = useCallback(() => {
     if (!selected.placeName.trim()) {
-      Alert.alert(
+      showAppAlert(
         'Select a location',
         field === 'origin'
           ? 'Please choose a starting point on the map.'
@@ -447,14 +505,8 @@ export const useSelectLocation = () => {
       return;
     }
 
-    const otherAlreadyFilled = isFieldFilled(otherField(field), publishRideDraft.get());
     commitFieldSelection(selected, field);
-
-    // Other field already set → both done. Otherwise search opens for the empty field.
-    if (otherAlreadyFilled) {
-      router.back();
-    }
-  }, [commitFieldSelection, field, router, selected]);
+  }, [commitFieldSelection, field, selected]);
 
   const goBack = useCallback(() => {
     if (searchMode) {
@@ -514,7 +566,7 @@ export const useSelectLocation = () => {
     copy,
     draft,
     query,
-    setQuery,
+    setQuery: handleQueryChange,
     searchMode,
     openSearch,
     closeSearch,
@@ -530,6 +582,7 @@ export const useSelectLocation = () => {
     region,
     selected,
     handleRegionChangeComplete,
+    markUserMapGesture,
     selectPrediction,
     locateMe,
     confirm,

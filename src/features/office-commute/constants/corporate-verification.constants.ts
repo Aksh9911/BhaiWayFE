@@ -16,11 +16,19 @@ export const CORPORATE_VERIFICATION_SCREEN = {
   backOptionalLabel: 'Back View (Optional)',
   securityTitle: 'Data Security Commitment',
   securityBody: 'Your ID is only used for verification and is never shared.',
-  submitLabel: 'Submit for Verification',
-  submittingLabel: 'Submitting...',
-  successTitle: 'Submitted',
-  successMessage:
-    'Your corporate ID has been submitted for verification. We’ll notify you once it’s reviewed.',
+  submitLabel: 'Send Workspace OTP',
+  submittingLabel: 'Sending OTP...',
+  otpTitle: 'Verify Workspace Email',
+  otpSubtitle: (maskedEmail: string) =>
+    `Enter the 6-digit OTP sent to your workspace email\n${maskedEmail}`,
+  otpHint: 'Demo OTP',
+  otpConfirmLabel: 'Verify Email',
+  otpResendLabel: 'Resend OTP',
+  otpBackLabel: 'Change work email',
+  otpInvalidMessage: 'Incorrect OTP. Please try again.',
+  otpLength: 6,
+  demoOtp: '482916',
+  verifyingLabel: 'Verifying...',
 } as const;
 
 export const WORK_EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

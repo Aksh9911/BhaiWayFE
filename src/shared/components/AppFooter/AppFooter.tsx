@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -8,6 +8,7 @@ import { colors } from '@/theme';
 import { triggerLightHaptic } from '@/shared/utils';
 import { styles } from './AppFooter.styles';
 import type { AppFooterItem, AppFooterProps, AppFooterTabId } from './AppFooter.types';
+import { AppText as Text } from '../AppText';
 
 export const APP_FOOTER_ITEMS: readonly AppFooterItem[] = [
   { id: 'home', label: 'Home', icon: 'home-outline', activeIcon: 'home' },

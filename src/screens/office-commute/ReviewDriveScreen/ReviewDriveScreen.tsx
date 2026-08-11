@@ -1,15 +1,9 @@
 import React, { useCallback } from 'react';
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppFooter, IconButton } from '@/shared/components';
+import { AppFooter, IconButton, BhaiWayCoinIcon, AppText as Text } from '@/shared/components';
 import { colors } from '@/shared/theme';
 import { triggerLightHaptic } from '@/shared/utils';
 import { CommuteReviewMapPreview } from '@/features/office-commute/components';
@@ -35,6 +29,7 @@ export const ReviewDriveScreen = () => {
     goBack,
     verifyIdentity,
     publishRide,
+    isCorporateVerified,
   } = useReviewDrive();
 
   const hasRecurringDays = draft.recurringDays.length > 0;
@@ -54,7 +49,7 @@ export const ReviewDriveScreen = () => {
           <IconButton
             icon="arrow-back"
             onPress={goBack}
-            color={colors.textPrimary}
+            color={colors.primary}
             accessibilityLabel="Go back"
           />
           <Text style={styles.title}>{REVIEW_DRIVE_SCREEN.title}</Text>
@@ -62,7 +57,7 @@ export const ReviewDriveScreen = () => {
         <IconButton
           icon="ellipsis-vertical"
           onPress={() => undefined}
-          color={colors.textPrimary}
+          color={colors.primary}
           accessibilityLabel="More options"
         />
       </View>
@@ -150,7 +145,7 @@ export const ReviewDriveScreen = () => {
             <View style={[styles.card, styles.halfCard]}>
               <Text style={styles.fieldCaption}>{REVIEW_DRIVE_SCREEN.priceLabel}</Text>
               <View style={styles.metricRow}>
-                <Text style={styles.priceCurrency}>₹</Text>
+                <BhaiWayCoinIcon size={18} />
                 <Text style={styles.metricValue}>{draft.pricePerSeat || '0'}</Text>
               </View>
             </View>
@@ -168,26 +163,35 @@ export const ReviewDriveScreen = () => {
           </View>
 
           <View>
-            <View style={styles.warningCard}>
-              <Ionicons name="warning" size={22} color="#D95F00" />
-              <Text style={styles.warningText}>
-                <Text style={styles.warningBold}>Note: </Text>
-                {REVIEW_DRIVE_SCREEN.verifyWarning}
-              </Text>
-            </View>
-            <Pressable
-              style={({ pressed }) => [
-                styles.verifyButton,
-                { marginTop: 16 },
-                pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] },
-              ]}
-              onPress={verifyIdentity}
-              accessibilityRole="button"
-              accessibilityLabel={REVIEW_DRIVE_SCREEN.verifyLabel}
-            >
-              <Ionicons name="shield-checkmark-outline" size={20} color="#335EEA" />
-              <Text style={styles.verifyLabel}>{REVIEW_DRIVE_SCREEN.verifyLabel}</Text>
-            </Pressable>
+            {isCorporateVerified ? (
+              <View style={styles.verifiedCard}>
+                <Ionicons name="shield-checkmark" size={22} color="#0342D1" />
+                <Text style={styles.verifiedText}>{REVIEW_DRIVE_SCREEN.verifiedLabel}</Text>
+              </View>
+            ) : (
+              <>
+                <View style={styles.warningCard}>
+                  <Ionicons name="warning" size={22} color="#D97706" />
+                  <Text style={styles.warningText}>
+                    <Text style={styles.warningBold}>Note: </Text>
+                    {REVIEW_DRIVE_SCREEN.verifyWarning}
+                  </Text>
+                </View>
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.verifyButton,
+                    { marginTop: 16 },
+                    pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] },
+                  ]}
+                  onPress={verifyIdentity}
+                  accessibilityRole="button"
+                  accessibilityLabel={REVIEW_DRIVE_SCREEN.verifyLabel}
+                >
+                  <Ionicons name="shield-checkmark-outline" size={20} color="#335EEA" />
+                  <Text style={styles.verifyLabel}>{REVIEW_DRIVE_SCREEN.verifyLabel}</Text>
+                </Pressable>
+              </>
+            )}
           </View>
         </View>
       </ScrollView>

@@ -28,7 +28,7 @@ export const HOME_SERVICE_CARDS: readonly ServiceCardData[] = [
     badgeIcon: 'briefcase-outline',
     title: 'Daily Office Commute',
     subtitle: 'Find trusted companions for your daily office routes. Build connections while saving on travel.',
-    actionLabel: 'Book Now!',
+    actionLabel: 'Book Now',
     enabled: true,
   },
   {

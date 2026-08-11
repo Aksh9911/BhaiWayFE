@@ -1,7 +1,8 @@
 import type { WeekdayOption } from '../types';
+import { formatBhaiWayCoins } from '@/shared/utils';
 
 export const PUBLISH_COMMUTE_SCREEN = {
-  title: 'Schedule Your Drive',
+  title: 'Schedule Your Ride',
   subtitle: 'Plan your commute and share the journey.',
   routeLabel: 'Route Details',
   startLabel: 'Start Location',
@@ -16,7 +17,7 @@ export const PUBLISH_COMMUTE_SCREEN = {
   returningLabel: 'Returning Back',
   returningHint:
     'Automatically schedule the return journey (Office to Home) for the same days.',
-  priceLabel: 'Price per seat (₹)',
+  priceLabel: 'Price per seat (BhaiWay Coins)',
   pricePlaceholder: 'e.g. 150',
   recommendedBadge: 'Recommended',
   earningsPrefix: 'Estimated earnings for full ride:',
@@ -44,9 +45,9 @@ export const getPublishCommutePath = () => ({
 export const formatEstimatedEarnings = (pricePerSeat: string, seats: number): string => {
   const price = Number(pricePerSeat);
   if (!Number.isFinite(price) || price <= 0) {
-    return '₹0';
+    return formatBhaiWayCoins(0, { spaced: false });
   }
-  return `₹${Math.round(price * seats)}`;
+  return formatBhaiWayCoins(Math.round(price * seats), { spaced: false });
 };
 
 export const formatTimeLabel = (date: Date): string => {

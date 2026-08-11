@@ -1,16 +1,9 @@
 import React, { useCallback } from 'react';
-import {
-  ActivityIndicator,
-  Pressable,
-  SectionList,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Pressable, SectionList, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppFooter, IconButton } from '@/shared/components';
+import { AppFooter, IconButton, AppText as Text, AppTextInput as TextInput } from '@/shared/components';
 import { colors, spacing } from '@/shared/theme';
 import {
   DestinationConfirmPanel,
@@ -41,6 +34,7 @@ export const SelectLocationScreen = () => {
     region,
     selected,
     handleRegionChangeComplete,
+    markUserMapGesture,
     selectPrediction,
     locateMe,
     confirm,
@@ -103,7 +97,7 @@ export const SelectLocationScreen = () => {
           <IconButton
             icon="arrow-back"
             onPress={closeSearch}
-            color={colors.textPrimary}
+            color={colors.primary}
             accessibilityLabel="Close search"
           />
           <View style={styles.searchField}>
@@ -190,7 +184,7 @@ export const SelectLocationScreen = () => {
         <IconButton
           icon="arrow-back"
           onPress={goBack}
-          color={colors.textPrimary}
+          color={colors.primary}
           accessibilityLabel="Go back"
         />
         <Text style={styles.title}>{copy.mapLabel}</Text>
@@ -201,6 +195,7 @@ export const SelectLocationScreen = () => {
           region={region}
           boundary={selected.boundary}
           onRegionChangeComplete={handleRegionChangeComplete}
+          onUserGesture={markUserMapGesture}
           onLocatePress={() => {
             void locateMe();
           }}

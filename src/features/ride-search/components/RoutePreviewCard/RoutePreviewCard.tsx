@@ -1,8 +1,10 @@
 import React, { useCallback, useMemo, useRef } from 'react';
-import { Platform, Text, View } from 'react-native';
+import { Platform, View } from 'react-native';
 import MapView, { Marker, Polyline, type Region } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 
+import { AppText as Text } from '@/shared/components';
+import { isGoogleMapsBypassed, MapBypassSurface } from '@/shared/maps';
 import { colors, spacing } from '@/shared/theme';
 import { styles } from './RoutePreviewCard.styles';
 import type { RoutePreviewCardProps } from './RoutePreviewCard.types';
@@ -57,6 +59,41 @@ export const RoutePreviewCard = React.memo(
         animated: false,
       });
     }, [coordinates]);
+
+    if (isGoogleMapsBypassed()) {
+      return (
+        <View
+          style={styles.card}
+          accessibilityLabel={`Route preview: ${routeInfo.distanceLabel}, about ${routeInfo.durationLabel}`}
+        >
+          <MapBypassSurface
+            style={styles.map}
+            title="Route preview"
+            points={[
+              { ...coordinates[0], label: 'Pickup' },
+              { ...coordinates[1], label: 'Drop-off' },
+            ]}
+          />
+          <View style={styles.statsRow}>
+            <View style={styles.stat}>
+              <Ionicons name="navigate-outline" size={18} color={colors.primary} />
+              <View style={styles.statTextCol}>
+                <Text style={styles.statText}>{routeInfo.distanceLabel}</Text>
+                <Text style={styles.statCaption}>Distance</Text>
+              </View>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.stat}>
+              <Ionicons name="time-outline" size={18} color={colors.primary} />
+              <View style={styles.statTextCol}>
+                <Text style={styles.statText}>~ {routeInfo.durationLabel}</Text>
+                <Text style={styles.statCaption}>Est. travel time</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      );
+    }
 
     return (
       <View

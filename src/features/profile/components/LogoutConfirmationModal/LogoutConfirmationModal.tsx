@@ -1,9 +1,10 @@
 import React from 'react';
-import { Image, Modal, Pressable, Text, View } from 'react-native';
+import { Image, Modal, Pressable, View } from 'react-native';
 
 import { PROFILE_SCREEN } from '../../constants';
 import { styles } from './LogoutConfirmationModal.styles';
 import type { LogoutConfirmationModalProps } from './LogoutConfirmationModal.types';
+import { AppText as Text } from '@/shared/components';
 
 const logoSource = require('../../../auth/assets/logo.png');
 

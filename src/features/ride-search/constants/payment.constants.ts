@@ -7,7 +7,8 @@ import type {
 
 export const PAYMENT_SCREEN = {
   title: 'Payment Options',
-  walletTitle: 'Wallet',
+  walletTitle: 'BhaiWay Coins',
+  addCoinsLabel: 'Add BhaiWay Coins',
   upiTitle: 'UPI Payments',
   cardsTitle: 'Saved Cards',
   bankingTitle: 'Net Banking',
@@ -17,6 +18,12 @@ export const PAYMENT_SCREEN = {
   seeAllBanksLabel: 'See All Banks',
   secureLabel: 'PCI-DSS SECURE PAYMENT',
   continueLabel: 'Continue',
+  continueAssuredFeeLabel: 'Pay Assured Fee & Book',
+  assuredFeeNoticeTitle: 'Assured fee due now',
+  assuredFeeNoticeBody:
+    'Assured booking fee is charged before the ride. You can still pay the ride fare after the trip.',
+  payAfterAssuredSubtitle:
+    'Pay ride fare after the trip. Assured fee is charged now from your BhaiWay Coins wallet.',
 } as const;
 
 export const BOOKED_SCREEN = {
@@ -41,7 +48,7 @@ export const PAYMENT_METHODS: readonly PaymentMethodOption[] = [
   {
     id: 'wallet',
     kind: 'wallet',
-    label: 'BhaiWay Wallet',
+    label: 'BhaiWay Coins Wallet',
     icon: 'wallet',
   },
   {
@@ -67,7 +74,7 @@ export const PAYMENT_METHODS: readonly PaymentMethodOption[] = [
     id: 'pay-after-ride',
     kind: 'pay-after',
     label: 'Pay After Ride',
-    subtitle: 'Pay directly to the driver after trip completion',
+    subtitle: 'Pay the driver in BhaiWay Coins after trip completion',
     icon: 'repeat-outline',
   },
 ] as const;
@@ -86,6 +93,13 @@ export const getPaymentPath = (params: {
   driverName?: string;
   carModel?: string;
   price?: number;
+  assuredFee?: number;
+  dateLabel?: string;
+  departureTime?: string;
+  originLat?: number;
+  originLng?: number;
+  destinationLat?: number;
+  destinationLng?: number;
 }) => ({
   pathname: '/ride-search/payment' as const,
   params: {
@@ -96,6 +110,13 @@ export const getPaymentPath = (params: {
     driverName: params.driverName ?? '',
     carModel: params.carModel ?? '',
     price: params.price != null ? String(params.price) : '',
+    assuredFee: params.assuredFee != null ? String(params.assuredFee) : '',
+    dateLabel: params.dateLabel ?? '',
+    departureTime: params.departureTime ?? '',
+    originLat: params.originLat != null ? String(params.originLat) : '',
+    originLng: params.originLng != null ? String(params.originLng) : '',
+    destinationLat: params.destinationLat != null ? String(params.destinationLat) : '',
+    destinationLng: params.destinationLng != null ? String(params.destinationLng) : '',
   },
 });
 

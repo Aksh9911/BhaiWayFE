@@ -1,9 +1,9 @@
 import React from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppFooter } from '@/shared/components';
+import { AppFooter, AppText as Text } from '@/shared/components';
 import { LEGAL_SCREEN } from '@/features/profile/constants';
 import { useLegalPolicies } from '@/features/profile/hooks';
 import { legalTokens, styles } from './LegalPoliciesScreen.styles';

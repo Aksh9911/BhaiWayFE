@@ -1,9 +1,9 @@
 import React, { Fragment } from 'react';
-import { ActivityIndicator, Image, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Image, Pressable, ScrollView, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppFooter, UploadDocumentSheet } from '@/shared/components';
+import { AppFooter, UploadDocumentSheet, BhaiWayCoinIcon, AppText as Text } from '@/shared/components';
 import { LogoutConfirmationModal } from '@/features/profile/components';
 import { PROFILE_SCREEN } from '@/features/profile/constants';
 import { useMasterProfile } from '@/features/profile/hooks';
@@ -20,6 +20,9 @@ const badgeIconName = (icon: ProfileBadge['icon']): keyof typeof Ionicons.glyphM
   if (icon === 'verified') {
     return 'checkmark-circle';
   }
+  if (icon === 'close-circle') {
+    return 'close-circle';
+  }
   if (icon === 'star') {
     return 'star';
   }
@@ -29,6 +32,9 @@ const badgeIconName = (icon: ProfileBadge['icon']): keyof typeof Ionicons.glyphM
 const badgeColor = (tone: ProfileBadge['tone']): string => {
   if (tone === 'success') {
     return profileTokens.SUCCESS;
+  }
+  if (tone === 'danger') {
+    return profileTokens.DANGER;
   }
   if (tone === 'primary') {
     return profileTokens.PRIMARY;
@@ -40,6 +46,9 @@ const badgeLabelStyle = (tone: ProfileBadge['tone']) => {
   if (tone === 'success') {
     return styles.badgeSuccess;
   }
+  if (tone === 'danger') {
+    return styles.badgeDanger;
+  }
   if (tone === 'primary') {
     return styles.badgePrimary;
   }
@@ -50,6 +59,7 @@ export const MasterProfileScreen = () => {
   const {
     profile,
     menuItems,
+    showDemoDataSettings,
     uploadSheetVisible,
     avatarUploading,
     logoutVisible,
@@ -80,14 +90,18 @@ export const MasterProfileScreen = () => {
         <Text style={styles.headerTitle} accessibilityRole="header">
           {PROFILE_SCREEN.title}
         </Text>
-        <Pressable
-          style={({ pressed }) => [styles.iconButton, pressed && { opacity: 0.7 }]}
-          onPress={openSettings}
-          accessibilityRole="button"
-          accessibilityLabel="Open settings"
-        >
-          <Ionicons name="settings-outline" size={24} color={profileTokens.PRIMARY} />
-        </Pressable>
+        {showDemoDataSettings ? (
+          <Pressable
+            style={({ pressed }) => [styles.iconButton, pressed && { opacity: 0.7 }]}
+            onPress={openSettings}
+            accessibilityRole="button"
+            accessibilityLabel="Open local demo data"
+          >
+            <Ionicons name="settings-outline" size={24} color={profileTokens.PRIMARY} />
+          </Pressable>
+        ) : (
+          <View style={styles.iconButton} />
+        )}
       </View>
 
       <ScrollView
@@ -169,7 +183,10 @@ export const MasterProfileScreen = () => {
           >
             <View>
               <Text style={styles.cardLabel}>{PROFILE_SCREEN.walletTitle}</Text>
-              <Text style={styles.cardValue}>{profile.walletBalanceLabel}</Text>
+              <View style={styles.walletBalanceRow}>
+                <BhaiWayCoinIcon size={22} />
+                <Text style={styles.cardValue}>{profile.walletBalanceLabel}</Text>
+              </View>
             </View>
             <Text style={styles.linkButton}>{PROFILE_SCREEN.addRedeemLabel}</Text>
           </Pressable>

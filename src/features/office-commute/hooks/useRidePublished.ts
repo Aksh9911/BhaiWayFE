@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'expo-router';
 
 import { ROUTES } from '@/config';
+import { formatBhaiWayCoins } from '@/shared/utils';
 import { WEEKDAY_OPTIONS } from '../constants/publish-commute.constants';
 import { RIDE_PUBLISHED_SCREEN } from '../constants/ride-published.constants';
 import { publishedCommuteStore, type PublishedCommuteSummary } from '../store/publishedCommuteStore';
@@ -69,7 +70,7 @@ export const useRidePublished = (): UseRidePublishedResult => {
     dropoffLabel: summary.dropoffLabel || RIDE_PUBLISHED_SCREEN.fallbackDrop,
     departureLabel: summary.departureLabel,
     seatsLabel: `${summary.seats} ${RIDE_PUBLISHED_SCREEN.seatsSuffix}`,
-    priceLabel: `₹ ${summary.pricePerSeat || '0'}`,
+    priceLabel: formatBhaiWayCoins(Number(summary.pricePerSeat || '0')),
     dayChips,
     isOneTime: summary.recurringDays.length === 0,
     openNotifications,

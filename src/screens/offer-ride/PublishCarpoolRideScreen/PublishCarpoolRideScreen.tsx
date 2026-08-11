@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ROUTES } from '@/config';
 import { AppFooter, ScreenHeader, ScreenIntro } from '@/shared/components';
 import { appModeStore } from '@/store';
+import { myRidesSurfaceStore } from '@/features/my-rides/store';
 import { IncentiveBanner, RideTypeCard } from '@/features/offer-ride/components';
 import {
   OUTSTATION_HERO_IMAGE,
@@ -22,6 +23,7 @@ export const PublishCarpoolRideScreen = () => {
   const router = useRouter();
 
   useEffect(() => {
+    myRidesSurfaceStore.setStandard();
     appModeStore.setDriving();
   }, []);
 
@@ -31,10 +33,6 @@ export const PublishCarpoolRideScreen = () => {
       return;
     }
     router.replace(ROUTES.home);
-  }, [router]);
-
-  const handleProfilePress = useCallback(() => {
-    router.push(ROUTES.profile);
   }, [router]);
 
   const handleSelect = useCallback(
@@ -49,7 +47,6 @@ export const PublishCarpoolRideScreen = () => {
       <ScreenHeader
         title={OUTSTATION_RIDE_SCREEN.title}
         onBack={handleBack}
-        onProfilePress={handleProfilePress}
       />
 
       <ScrollView

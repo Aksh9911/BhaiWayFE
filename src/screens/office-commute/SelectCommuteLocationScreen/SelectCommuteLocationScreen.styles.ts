@@ -18,7 +18,7 @@ export const styles = StyleSheet.create({
   title: {
     ...typography.title,
     fontSize: 22,
-    color: colors.textPrimary,
+    color: colors.primary,
     flex: 1,
   },
   mapContainer: {

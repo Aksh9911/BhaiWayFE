@@ -1,4 +1,5 @@
 import type { CommuteReviewBookingData } from '../types/commute-review-booking.types';
+import { formatBhaiWayCoins } from '@/shared/utils';
 
 export const COMMUTE_REVIEW_BOOKING_SCREEN = {
   title: 'Review Booking',
@@ -106,7 +107,7 @@ export const getCommuteReviewBookingMock = (overrides?: {
 };
 
 export const formatCommuteAmount = (value: number): string =>
-  `₹${value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  formatBhaiWayCoins(value, { spaced: false, minimumFractionDigits: 2 });
 
 export const getCommuteReviewBookingPath = (params: {
   rideId: string;

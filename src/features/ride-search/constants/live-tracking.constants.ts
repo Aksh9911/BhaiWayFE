@@ -12,6 +12,10 @@ export const LIVE_TRACKING_SCREEN = {
   whyOtpTitle: 'Start OTP',
   whyOtpMessage:
     'Share this one-time code with your driver when they arrive. It confirms your identity and starts the trip securely.',
+  waitingTitle: 'Waiting for driver',
+  waitingMessage:
+    'Live map tracking will appear once your driver starts the ride with your OTP.',
+  waitingBadge: 'Not started yet',
   shareTripLabel: 'Share Trip',
   shareTripHint: 'Live location',
   supportLabel: 'Support',

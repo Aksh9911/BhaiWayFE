@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 
 import { OFFICE_COMMUTE_SCREEN_INDEX } from '@/features/office-commute/navigation';
 import { colors } from '@/shared/theme';
-import { stackAnimation } from '@/shared/utils/platform';
+import { stackAnimation, stackGestureOptions } from '@/shared/utils/platform';
 
 export default function OfficeCommuteLayout() {
   return (
@@ -12,7 +12,7 @@ export default function OfficeCommuteLayout() {
         headerShown: false,
         animation: stackAnimation,
         contentStyle: styles.screen,
-        gestureEnabled: true,
+        ...stackGestureOptions,
       }}
     >
       {OFFICE_COMMUTE_SCREEN_INDEX.map((screen) => (

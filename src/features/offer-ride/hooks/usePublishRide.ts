@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
-import { getSearchParam, formatSlashDate, parseSlashDate, startOfDay } from '@/shared/utils';
+import { ROUTES } from '@/config';
+import type { MissingLocationKind } from '@/shared/components';
+import { getSearchParam, formatSlashDate, parseSlashDate, startOfDay, showAppAlert } from '@/shared/utils';
+import { getRouteTooCloseMessage } from '@/features/ride-search/utils';
 import { formatTimeLabel, getSelectLocationPath, parseTimeLabel } from '../constants';
 import { publishRideDraft } from '../store';
 import type { LocationFieldType, OutstationRideTypeId, PublishRideDraft } from '../types';
@@ -19,6 +21,9 @@ export const usePublishRide = () => {
   const [draft, setDraft] = useState<PublishRideDraft>(() => publishRideDraft.get());
   const [datePickerOpen, setDatePickerOpen] = useState(false);
   const [timePickerOpen, setTimePickerOpen] = useState(false);
+  const [missingLocationKind, setMissingLocationKind] = useState<MissingLocationKind | null>(
+    null,
+  );
 
   useEffect(() => {
     if (isRideType(rideTypeParam)) {
@@ -71,20 +76,69 @@ export const usePublishRide = () => {
   );
 
   const submit = useCallback(() => {
-    if (!draft.origin.trim() || !draft.destination.trim()) {
-      Alert.alert('Missing route', 'Please select both origin and destination.');
+    const hasOrigin = draft.origin.trim().length > 0;
+    const hasDestination = draft.destination.trim().length > 0;
+
+    if (!hasOrigin && !hasDestination) {
+      setMissingLocationKind('both');
+      return;
+    }
+    if (!hasOrigin) {
+      setMissingLocationKind('origin');
+      return;
+    }
+    if (!hasDestination) {
+      setMissingLocationKind('destination');
       return;
     }
     if (!draft.departureDate || !draft.departureTime) {
-      Alert.alert('Missing schedule', 'Please select departure date and time.');
+      showAppAlert('Missing schedule', 'Please select departure date and time.');
       return;
     }
 
-    Alert.alert(
-      'Ride published',
-      `${draft.rideType === 'assured' ? 'Assured' : 'Regular'} ride from ${draft.origin} to ${draft.destination} on ${draft.departureDate} at ${draft.departureTime}.`,
-    );
-  }, [draft]);
+    const originLocation = draft.originLocation;
+    const destinationLocation = draft.destinationLocation;
+    if (
+      originLocation &&
+      destinationLocation &&
+      Number.isFinite(originLocation.latitude) &&
+      Number.isFinite(originLocation.longitude) &&
+      Number.isFinite(destinationLocation.latitude) &&
+      Number.isFinite(destinationLocation.longitude)
+    ) {
+      const tooCloseMessage = getRouteTooCloseMessage(
+        {
+          latitude: originLocation.latitude!,
+          longitude: originLocation.longitude!,
+        },
+        {
+          latitude: destinationLocation.latitude!,
+          longitude: destinationLocation.longitude!,
+        },
+        'outstation',
+      );
+      if (tooCloseMessage) {
+        showAppAlert('Locations too close', tooCloseMessage);
+        return;
+      }
+    }
+
+    router.push(ROUTES.offerRidePreferences);
+  }, [draft, router]);
+
+  const closeMissingLocation = useCallback(() => {
+    setMissingLocationKind(null);
+  }, []);
+
+  const resolveMissingLocation = useCallback(() => {
+    const kind = missingLocationKind;
+    setMissingLocationKind(null);
+    if (kind === 'destination') {
+      openLocationPicker('destination');
+      return;
+    }
+    openLocationPicker('origin');
+  }, [missingLocationKind, openLocationPicker]);
 
   const isValid =
     draft.origin.trim().length > 0 &&
@@ -116,5 +170,8 @@ export const usePublishRide = () => {
     selectTime,
     submit,
     isValid,
+    missingLocationKind,
+    closeMissingLocation,
+    resolveMissingLocation,
   };
 };

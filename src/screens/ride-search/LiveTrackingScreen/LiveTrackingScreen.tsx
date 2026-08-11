@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -13,7 +13,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { AppFooter, Avatar, IconButton } from '@/shared/components';
+import { AppFooter, Avatar, IconButton, AppText as Text } from '@/shared/components';
+import { isGoogleMapsBypassed, MapBypassSurface } from '@/shared/maps';
 import { spacing } from '@/shared/theme';
 import { getSearchParam, triggerLightHaptic } from '@/shared/utils';
 import { LIVE_TRACKING_SCREEN } from '@/features/ride-search/constants';
@@ -78,6 +79,7 @@ export const LiveTrackingScreen = () => {
     tracking,
     routeCoordinates,
     otpDigits,
+    isRideStarted,
     goBack,
     openNotifications,
     shareTrip,
@@ -161,8 +163,11 @@ export const LiveTrackingScreen = () => {
   }, [polyline]);
 
   useEffect(() => {
+    if (!isRideStarted) {
+      return;
+    }
     fitRoute();
-  }, [fitRoute]);
+  }, [fitRoute, isRideStarted]);
 
   const handleBack = useCallback(() => {
     triggerLightHaptic();
@@ -211,98 +216,132 @@ export const LiveTrackingScreen = () => {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.mapSection}>
-          <MapView
-            ref={mapRef}
-            style={styles.map}
-            initialRegion={initialRegion}
-            onMapReady={fitRoute}
-            scrollEnabled
-            zoomEnabled
-            rotateEnabled={false}
-            pitchEnabled={false}
-            toolbarEnabled={false}
-            showsCompass={false}
-          >
-            <Polyline
-              coordinates={polyline}
-              strokeColor="rgba(3, 66, 209, 0.2)"
-              strokeWidth={6}
-            />
-            <Polyline coordinates={polyline} strokeColor="#0342D1" strokeWidth={4} />
+          {isRideStarted ? (
+            <>
+              {isGoogleMapsBypassed() ? (
+                <MapBypassSurface
+                  style={styles.map}
+                  title="Live tracking"
+                  points={[
+                    { ...driverPosition, label: 'Driver' },
+                    { ...tracking.dropoff, label: 'Drop-off' },
+                  ]}
+                />
+              ) : (
+                <MapView
+                  ref={mapRef}
+                  style={styles.map}
+                  initialRegion={initialRegion}
+                  onMapReady={fitRoute}
+                  scrollEnabled
+                  zoomEnabled
+                  rotateEnabled={false}
+                  pitchEnabled={false}
+                  toolbarEnabled={false}
+                  showsCompass={false}
+                >
+                  <Polyline
+                    coordinates={polyline}
+                    strokeColor="rgba(3, 66, 209, 0.2)"
+                    strokeWidth={6}
+                  />
+                  <Polyline coordinates={polyline} strokeColor="#0342D1" strokeWidth={4} />
 
-            <Marker coordinate={tracking.dropoff} tracksViewChanges={false} anchor={{ x: 0.5, y: 1 }}>
-              <View style={styles.destinationMarker}>
-                <View style={styles.destinationPin}>
-                  <Ionicons name="location" size={18} color="#FFFFFF" />
+                  <Marker
+                    coordinate={tracking.dropoff}
+                    tracksViewChanges={false}
+                    anchor={{ x: 0.5, y: 1 }}
+                  >
+                    <View style={styles.destinationMarker}>
+                      <View style={styles.destinationPin}>
+                        <Ionicons name="location" size={18} color="#FFFFFF" />
+                      </View>
+                      <View style={styles.destinationDot} />
+                    </View>
+                  </Marker>
+
+                  <Marker
+                    coordinate={driverPosition}
+                    tracksViewChanges={false}
+                    anchor={{ x: 0.5, y: 0.5 }}
+                  >
+                    <View style={styles.carMarkerWrap}>
+                      <Animated.View style={[styles.carPulse, carPulseStyle]} />
+                      <View style={styles.carMarker}>
+                        <Ionicons name="car" size={22} color="#0342D1" />
+                      </View>
+                    </View>
+                  </Marker>
+                </MapView>
+              )}
+
+              <Pressable
+                style={({ pressed }) => [styles.etaPill, pressed && { opacity: 0.92 }]}
+                onPress={() => {
+                  triggerLightHaptic();
+                  openOngoingTrip();
+                }}
+                accessibilityRole="button"
+                accessibilityLabel="Open ongoing trip"
+              >
+                <Animated.View style={[styles.etaDot, etaDotStyle]} />
+                <View style={styles.etaCopy}>
+                  <Text style={styles.etaLabel}>{LIVE_TRACKING_SCREEN.etaLabel}</Text>
+                  <Text style={styles.etaValue}>
+                    {LIVE_TRACKING_SCREEN.etaAwayLabel(tracking.etaMinutes)}
+                  </Text>
                 </View>
-                <View style={styles.destinationDot} />
-              </View>
-            </Marker>
+              </Pressable>
 
-            <Marker coordinate={driverPosition} tracksViewChanges={false} anchor={{ x: 0.5, y: 0.5 }}>
-              <View style={styles.carMarkerWrap}>
-                <Animated.View style={[styles.carPulse, carPulseStyle]} />
-                <View style={styles.carMarker}>
-                  <Ionicons name="car" size={22} color="#0342D1" />
-                </View>
+              <View style={styles.mapControls}>
+                <Pressable
+                  style={({ pressed }) => [styles.mapControlBtn, pressed && { opacity: 0.85 }]}
+                  onPress={() => {
+                    triggerLightHaptic();
+                    void handleZoom(1);
+                  }}
+                  accessibilityRole="button"
+                  accessibilityLabel="Zoom in"
+                >
+                  <Ionicons name="add" size={22} color="#434655" />
+                </Pressable>
+                <Pressable
+                  style={({ pressed }) => [styles.mapControlBtn, pressed && { opacity: 0.85 }]}
+                  onPress={() => {
+                    triggerLightHaptic();
+                    void handleZoom(-1);
+                  }}
+                  accessibilityRole="button"
+                  accessibilityLabel="Zoom out"
+                >
+                  <Ionicons name="remove" size={22} color="#434655" />
+                </Pressable>
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.mapControlBtn,
+                    styles.mapControlBtnPrimary,
+                    pressed && { opacity: 0.9 },
+                  ]}
+                  onPress={handleLocate}
+                  accessibilityRole="button"
+                  accessibilityLabel="Recenter map"
+                >
+                  <Ionicons name="locate" size={20} color="#FFFFFF" />
+                </Pressable>
               </View>
-            </Marker>
-          </MapView>
-
-          <Pressable
-            style={({ pressed }) => [styles.etaPill, pressed && { opacity: 0.92 }]}
-            onPress={() => {
-              triggerLightHaptic();
-              openOngoingTrip();
-            }}
-            accessibilityRole="button"
-            accessibilityLabel="Open ongoing trip"
-          >
-            <Animated.View style={[styles.etaDot, etaDotStyle]} />
-            <View style={styles.etaCopy}>
-              <Text style={styles.etaLabel}>{LIVE_TRACKING_SCREEN.etaLabel}</Text>
-              <Text style={styles.etaValue}>
-                {LIVE_TRACKING_SCREEN.etaAwayLabel(tracking.etaMinutes)}
-              </Text>
+            </>
+          ) : (
+            <View style={styles.waitingMap} accessibilityRole="text">
+              <View style={styles.waitingIconWrap}>
+                <Ionicons name="map-outline" size={36} color="#0342D1" />
+              </View>
+              <View style={styles.waitingBadge}>
+                <Text style={styles.waitingBadgeText}>{LIVE_TRACKING_SCREEN.waitingBadge}</Text>
+              </View>
+              <Text style={styles.waitingTitle}>{LIVE_TRACKING_SCREEN.waitingTitle}</Text>
+              <Text style={styles.waitingMessage}>{LIVE_TRACKING_SCREEN.waitingMessage}</Text>
             </View>
-          </Pressable>
-
-          <View style={styles.mapControls}>
-            <Pressable
-              style={({ pressed }) => [styles.mapControlBtn, pressed && { opacity: 0.85 }]}
-              onPress={() => {
-                triggerLightHaptic();
-                void handleZoom(1);
-              }}
-              accessibilityRole="button"
-              accessibilityLabel="Zoom in"
-            >
-              <Ionicons name="add" size={22} color="#434655" />
-            </Pressable>
-            <Pressable
-              style={({ pressed }) => [styles.mapControlBtn, pressed && { opacity: 0.85 }]}
-              onPress={() => {
-                triggerLightHaptic();
-                void handleZoom(-1);
-              }}
-              accessibilityRole="button"
-              accessibilityLabel="Zoom out"
-            >
-              <Ionicons name="remove" size={22} color="#434655" />
-            </Pressable>
-            <Pressable
-              style={({ pressed }) => [
-                styles.mapControlBtn,
-                styles.mapControlBtnPrimary,
-                pressed && { opacity: 0.9 },
-              ]}
-              onPress={handleLocate}
-              accessibilityRole="button"
-              accessibilityLabel="Recenter map"
-            >
-              <Ionicons name="locate" size={20} color="#FFFFFF" />
-            </Pressable>
-          </View>
+          )}
         </View>
 
         <View style={styles.content}>

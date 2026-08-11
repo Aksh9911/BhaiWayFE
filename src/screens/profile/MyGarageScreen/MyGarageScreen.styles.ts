@@ -16,8 +16,8 @@ export const garageTokens = {
   SECONDARY: '#585E72',
   APPROVED_BG: '#DCFCE7',
   APPROVED_TEXT: '#15803D',
-  PENDING_BG: '#FFEDD5',
-  PENDING_TEXT: '#C2410C',
+  PENDING_BG: '#FFFBEB',
+  PENDING_TEXT: '#D97706',
 } as const;
 
 export const styles = StyleSheet.create({
@@ -58,13 +58,19 @@ export const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   hero: {
-    height: 192,
+    minHeight: 168,
     borderRadius: layout.radiusXl,
     backgroundColor: garageTokens.PRIMARY_CONTAINER,
-    padding: spacing.xxl,
+    paddingVertical: spacing.xxl,
+    paddingHorizontal: spacing.xxl,
     justifyContent: 'center',
     overflow: 'hidden',
     ...createShadow({ color: colors.shadow, opacity: 0.05, radius: 20, offsetY: 4, elevation: 2 }),
+  },
+  heroText: {
+    zIndex: 1,
+    maxWidth: '72%',
+    gap: spacing.xs,
   },
   heroEyebrow: {
     fontSize: 12,
@@ -72,31 +78,29 @@ export const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 1.2,
     textTransform: 'uppercase',
-    color: 'rgba(255, 255, 255, 0.8)',
-    marginBottom: spacing.sm,
+    color: 'rgba(255, 255, 255, 0.85)',
   },
   heroTitle: {
-    fontSize: 28,
-    lineHeight: 36,
-    fontWeight: '600',
+    fontSize: 26,
+    lineHeight: 32,
+    fontWeight: '700',
     color: colors.white,
-    maxWidth: 240,
   },
   heroSubtitle: {
-    marginTop: spacing.sm,
+    marginTop: spacing.xs,
     fontSize: 14,
     lineHeight: 20,
-    color: 'rgba(255, 255, 255, 0.9)',
-    maxWidth: 200,
+    color: 'rgba(255, 255, 255, 0.92)',
   },
   heroIcon: {
     position: 'absolute',
-    right: -20,
-    bottom: -20,
+    right: spacing.md,
+    bottom: spacing.sm,
     opacity: 0.2,
+    zIndex: 0,
   },
   vehicleList: {
-    gap: spacing.lg,
+    gap: spacing.cardGap,
   },
   vehicleCard: {
     flexDirection: 'row',
@@ -113,7 +117,7 @@ export const styles = StyleSheet.create({
   vehicleLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.lg,
+    gap: spacing.cardGap,
     flex: 1,
   },
   vehicleIcon: {
@@ -126,11 +130,12 @@ export const styles = StyleSheet.create({
   },
   vehicleMeta: {
     flex: 1,
+    minWidth: 0,
     gap: spacing.xs,
   },
   vehicleName: {
     fontSize: 16,
-    lineHeight: 24,
+    lineHeight: 22,
     fontWeight: '700',
     color: garageTokens.ON_SURFACE,
   },
@@ -146,7 +151,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    marginTop: spacing.sm,
+    marginTop: spacing.xs,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
     borderRadius: layout.radiusSm,

@@ -4,20 +4,28 @@ export type ProfileMenuActionId =
   | 'refer'
   | 'safety'
   | 'support'
-  | 'legal';
+  | 'legal'
+  | 'demoData';
 
 export interface ProfileBadge {
   id: string;
   label: string;
-  icon: 'verified' | 'star' | 'shield-checkmark';
-  tone: 'success' | 'neutral' | 'primary';
+  icon: 'verified' | 'close-circle' | 'star' | 'shield-checkmark';
+  tone: 'success' | 'danger' | 'neutral' | 'primary';
 }
 
 export interface ProfileMenuItem {
   id: ProfileMenuActionId;
   title: string;
   subtitle: string;
-  icon: 'id-card-outline' | 'car-outline' | 'gift-outline' | 'shield-outline' | 'headset-outline' | 'document-text-outline';
+  icon:
+    | 'id-card-outline'
+    | 'car-outline'
+    | 'gift-outline'
+    | 'shield-outline'
+    | 'headset-outline'
+    | 'document-text-outline'
+    | 'folder-open-outline';
 }
 
 export interface DriverEarningBreakdown {

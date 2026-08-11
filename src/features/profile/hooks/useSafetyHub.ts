@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { ROUTES } from '@/config';
-import { triggerLightHaptic } from '@/shared/utils';
+import { triggerLightHaptic, showAppAlert } from '@/shared/utils';
 import {
   SAFETY_HUB_SCREEN,
   SAFETY_REPORT_OPTIONS,
@@ -38,7 +37,7 @@ export const useSafetyHub = (): UseSafetyHubResult => {
 
   const openInfo = useCallback(() => {
     triggerLightHaptic();
-    Alert.alert(SAFETY_HUB_SCREEN.infoTitle, SAFETY_HUB_SCREEN.infoMessage);
+    showAppAlert(SAFETY_HUB_SCREEN.infoTitle, SAFETY_HUB_SCREEN.infoMessage);
   }, []);
 
   const manageContacts = useCallback(() => {
@@ -53,7 +52,7 @@ export const useSafetyHub = (): UseSafetyHubResult => {
 
   const openReport = useCallback((_id: string) => {
     triggerLightHaptic();
-    Alert.alert(SAFETY_HUB_SCREEN.reportTitle, SAFETY_HUB_SCREEN.reportMessage);
+    showAppAlert(SAFETY_HUB_SCREEN.reportTitle, SAFETY_HUB_SCREEN.reportMessage);
   }, []);
 
   const chatWithSupport = useCallback(() => {

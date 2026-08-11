@@ -1,10 +1,10 @@
 import React, { useCallback } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppFooter, Button, KeyboardAwareScrollView, ScreenHeader } from '@/shared/components';
+import { AppFooter, Button, KeyboardAwareScrollView, ScreenHeader, AppText as Text } from '@/shared/components';
 import { getSearchParam } from '@/shared/utils';
 import { PaymentMethodList } from '@/features/ride-search/components';
 import { usePaymentOptions } from '@/features/ride-search/hooks';
@@ -43,6 +43,7 @@ export const CommutePaymentScreen = () => {
     selectedId,
     setSelectedId,
     continuePayment,
+    onAddCoins,
     onAddUpi,
     onAddCard,
     onSeeAllBanks,
@@ -93,9 +94,11 @@ export const CommutePaymentScreen = () => {
         <PaymentMethodList
           selectedId={selectedId}
           onSelect={setSelectedId}
+          onAddCoins={onAddCoins}
           onAddUpi={onAddUpi}
           onAddCard={onAddCard}
           onSeeAllBanks={onSeeAllBanks}
+          showPayAfterRide
         />
 
         <View style={styles.secureRow}>

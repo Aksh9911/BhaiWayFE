@@ -14,6 +14,16 @@ export const DEFAULT_PUBLISH_DRAFT: PublishRideDraft = {
   pricePerSeat: '0.00',
   originLocation: null,
   destinationLocation: null,
+  preferences: {
+    noSmoking: false,
+    noPets: false,
+    luggage: false,
+    music: false,
+  },
+  notes: '',
+  selectedVehicleId: null,
+  promoCode: '',
+  promoApplied: false,
 };
 
 export const PUBLISH_RIDE_SCREEN = {
@@ -55,6 +65,8 @@ export const getSelectLocationPath = (field: LocationFieldType) => ({
   pathname: ROUTES.offerRideLocation,
   params: { field },
 });
+
+export const getRidePreferencesPath = () => ROUTES.offerRidePreferences;
 
 /** Readable 12-hour time, e.g. 8:00 AM */
 export const formatTimeLabel = (date: Date): string => {

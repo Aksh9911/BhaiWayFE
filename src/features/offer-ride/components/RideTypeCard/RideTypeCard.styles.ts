@@ -2,9 +2,6 @@ import { StyleSheet } from 'react-native';
 import { colors, layout, spacing, typography } from '@/shared/theme';
 import { createShadow } from '@/shared/utils/platform';
 
-const ORANGE_ACCENT = '#F97316';
-const ORANGE_BADGE_BG = '#FFEDD5';
-
 export const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.white,
@@ -12,14 +9,14 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     padding: spacing.lg,
-    marginBottom: spacing.lg,
+    marginBottom: spacing.cardGap,
     ...createShadow({ opacity: 0.04, radius: 10, offsetY: 4, elevation: 2 }),
   },
   cardHighlighted: {
     borderWidth: 2,
-    borderColor: colors.black,
+    borderColor: colors.primary,
     borderLeftWidth: 4,
-    borderLeftColor: ORANGE_ACCENT,
+    borderLeftColor: colors.primary,
   },
   iconBox: {
     width: 44,
@@ -33,7 +30,7 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.surfaceMuted,
   },
   iconDark: {
-    backgroundColor: colors.black,
+    backgroundColor: colors.primary,
   },
   titleRow: {
     flexDirection: 'row',
@@ -52,14 +49,14 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
-    backgroundColor: ORANGE_BADGE_BG,
+    backgroundColor: colors.accentLight,
     borderRadius: layout.radiusLg,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
   },
   badgeText: {
     ...typography.caption,
-    color: ORANGE_ACCENT,
+    color: colors.primary,
     fontWeight: '700',
   },
   description: {

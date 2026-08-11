@@ -1,5 +1,7 @@
 import { useCallback, useMemo } from 'react';
-import { Alert, Linking } from 'react-native';
+import { showAppAlert } from '@/store';
+import { Linking } from 'react-native';
+
 import { useRouter } from 'expo-router';
 
 import { ROUTES } from '@/config';
@@ -67,7 +69,7 @@ export const useBookedRide = (params: UseBookedRideParams): UseBookedRideResult 
   );
 
   const addToCalendar = useCallback(() => {
-    Alert.alert(BOOKED_SCREEN.addToCalendarLabel, 'Calendar sync will be available soon.');
+    showAppAlert(BOOKED_SCREEN.addToCalendarLabel, 'Calendar sync will be available soon.');
   }, []);
 
   const trackRide = useCallback(() => {
@@ -118,7 +120,7 @@ export const useBookedRide = (params: UseBookedRideParams): UseBookedRideResult 
 
   const callDriver = useCallback(() => {
     Linking.openURL('tel:+919999999999').catch(() => {
-      Alert.alert('Call', 'Unable to start a call right now.');
+      showAppAlert('Call', 'Unable to start a call right now.');
     });
   }, []);
 

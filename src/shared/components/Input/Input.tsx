@@ -1,9 +1,10 @@
 import React from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { View } from 'react-native';
 
 import { colors } from '@/shared/theme';
 import { styles } from './Input.styles';
 import type { InputProps } from './Input.types';
+import { AppText as Text, AppTextInput as TextInput } from '../AppText';
 
 export const Input = ({ label, error, style, ...props }: InputProps) => {
   return (

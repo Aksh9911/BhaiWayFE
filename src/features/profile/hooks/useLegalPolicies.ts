@@ -1,9 +1,8 @@
 import { useCallback } from 'react';
-import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { ROUTES } from '@/config';
-import { triggerLightHaptic } from '@/shared/utils';
+import { triggerLightHaptic, showAppAlert } from '@/shared/utils';
 import { LEGAL_POLICY_ITEMS, LEGAL_SCREEN } from '../constants';
 import type { LegalPolicyId, LegalPolicyItem } from '../types';
 
@@ -33,7 +32,7 @@ export const useLegalPolicies = (): UseLegalPoliciesResult => {
         return;
       }
 
-      Alert.alert(LEGAL_SCREEN.comingSoonTitle, LEGAL_SCREEN.comingSoonMessage);
+      showAppAlert(LEGAL_SCREEN.comingSoonTitle, LEGAL_SCREEN.comingSoonMessage);
     },
     [router],
   );

@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
-import { Alert } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
+import { showAppAlert } from '@/store';
 
 import { UPLOAD_KIND_CONFIG } from '@/shared/constants/uploadTypes';
 import { showUploadFeedback } from '@/shared/utils/feedback';
@@ -163,6 +163,7 @@ export const useUpload = ({
 
         const mime = resolveMimeType(file);
         const shouldCompress = isImageMimeType(mime) && !isPdfMimeType(mime);
+        const resourceType = isPdfMimeType(mime) ? 'raw' : config.resourceType;
 
         if (shouldCompress) {
           const compressed = await compressImage(file.uri, {
@@ -190,7 +191,7 @@ export const useUpload = ({
           folder: config.folder,
           fileName: file.fileName,
           mimeType: file.mimeType,
-          resourceType: config.resourceType,
+          resourceType,
           onProgress: setProgress,
           signal: controller.signal,
         });
@@ -269,7 +270,7 @@ export const useUpload = ({
     async (publicId: string) => {
       try {
         await deleteFile(publicId);
-        Alert.alert('Deleted', 'The uploaded file was removed.');
+        showAppAlert('Deleted', 'The uploaded file was removed.');
         reset();
       } catch (err) {
         if (showAlerts) {

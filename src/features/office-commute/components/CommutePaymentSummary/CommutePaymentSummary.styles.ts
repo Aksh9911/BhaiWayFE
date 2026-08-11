@@ -1,16 +1,16 @@
 import { StyleSheet } from 'react-native';
-import { colors } from '@/shared/theme';
+import { colors, spacing } from '@/shared/theme';
 import { androidTextInputFix } from '@/shared/utils/platform';
 
 export const styles = StyleSheet.create({
   section: {
-    gap: 12,
+    gap: spacing.listGap,
   },
   title: {
     fontSize: 20,
     lineHeight: 28,
     fontWeight: '600',
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   promoWrap: {
     position: 'relative',
@@ -27,7 +27,7 @@ export const styles = StyleSheet.create({
     paddingRight: 108,
     fontSize: 16,
     lineHeight: 24,
-    color: '#0B1C30',
+    color: '#191C1D',
     ...androidTextInputFix,
   },
   applyButton: {
@@ -35,7 +35,7 @@ export const styles = StyleSheet.create({
     right: 8,
     top: 8,
     bottom: 8,
-    backgroundColor: '#0B1C30',
+    backgroundColor: '#0342D1',
     borderRadius: 8,
     paddingHorizontal: 24,
     alignItems: 'center',
@@ -54,7 +54,7 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#C6C6CD',
     padding: 16,
-    gap: 12,
+    gap: spacing.listGap,
   },
   fareRow: {
     flexDirection: 'row',
@@ -83,13 +83,13 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     lineHeight: 28,
     fontWeight: '600',
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   totalValue: {
     fontSize: 28,
     lineHeight: 36,
     fontWeight: '700',
-    color: '#0B1C30',
+    color: '#191C1D',
   },
   promoSuccess: {
     fontSize: 12,

@@ -1,22 +1,18 @@
 import React, { useCallback, useState } from 'react';
-import {
-  Image,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppFooter, IconButton } from '@/shared/components';
+import { ROUTES } from '@/config';
+import { AppFooter, IconButton, KeyboardAwareScrollView, BhaiWayCoinIcon, AppText as Text, AppTextInput as TextInput } from '@/shared/components';
 import { triggerLightHaptic } from '@/shared/utils';
 import { WITHDRAW_SCREEN } from '@/features/profile/constants';
 import { useWithdraw } from '@/features/profile/hooks';
 import { styles, withdrawTokens } from './WithdrawScreen.styles';
 
 export const WithdrawScreen = () => {
+  const router = useRouter();
   const {
     title,
     balanceLabel,
@@ -25,14 +21,12 @@ export const WithdrawScreen = () => {
     selectedBankId,
     banks,
     quickAmounts,
-    avatarUri,
     setAmount,
     addQuickAmount,
     selectBank,
     addBankAccount,
     proceed,
     goBack,
-    openProfile,
   } = useWithdraw();
 
   const [amountFocused, setAmountFocused] = useState(false);
@@ -41,6 +35,11 @@ export const WithdrawScreen = () => {
     triggerLightHaptic();
     goBack();
   }, [goBack]);
+
+  const handleNotifications = useCallback(() => {
+    triggerLightHaptic();
+    router.push(ROUTES.notifications);
+  }, [router]);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
@@ -56,37 +55,34 @@ export const WithdrawScreen = () => {
             {title}
           </Text>
         </View>
-        <Pressable
-          style={styles.avatarButton}
-          onPress={openProfile}
-          accessibilityRole="button"
-          accessibilityLabel="Open profile"
-        >
-          <Image
-            source={{ uri: avatarUri }}
-            style={styles.avatar}
-            accessibilityIgnoresInvertColors
-          />
-        </Pressable>
+        <IconButton
+          icon="notifications-outline"
+          onPress={handleNotifications}
+          color={withdrawTokens.PRIMARY}
+          accessibilityLabel="Notifications"
+        />
       </View>
 
-      <ScrollView
+      <KeyboardAwareScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
+        bottomInset={24}
       >
         <View style={styles.balanceHero}>
           <View style={styles.balanceGlow} pointerEvents="none" />
           <Text style={styles.balanceLabel}>{balanceLabel}</Text>
-          <Text style={styles.balanceValue}>{balanceValueLabel}</Text>
+          <View style={styles.balanceValueRow}>
+            <BhaiWayCoinIcon size={28} />
+            <Text style={styles.balanceValue}>{balanceValueLabel}</Text>
+          </View>
         </View>
 
         <View style={styles.amountSection}>
           <View>
             <Text style={styles.fieldLabel}>{WITHDRAW_SCREEN.amountLabel}</Text>
             <View style={styles.amountInputWrap}>
-              <Text style={styles.currencyPrefix}>₹</Text>
+              <BhaiWayCoinIcon size={28} style={styles.currencyPrefix} />
               <TextInput
                 style={[styles.amountInput, amountFocused && styles.amountInputFocused]}
                 value={amount}
@@ -189,7 +185,7 @@ export const WithdrawScreen = () => {
             </Pressable>
           </View>
         </View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
       <View style={styles.bottomBar}>
         <Pressable

@@ -1,8 +1,8 @@
 import React from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-import { Avatar } from '@/shared/components';
+import { Avatar, AppText as Text } from '@/shared/components';
 import { styles } from './BookedDriverCard.styles';
 
 export interface BookedDriverCardProps {

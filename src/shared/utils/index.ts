@@ -1,6 +1,15 @@
+export { setupGlobalKeyboardDismiss } from './setupGlobalKeyboardDismiss';
 export { logger } from './logger';
 export { sanitizePhoneNumber, formatPhoneNumber, maskPhoneNumber } from './formatter';
 export { delay, getErrorMessage, generateId, getSearchParam } from './helpers';
+export {
+  BHAIWAY_COIN_IMAGE,
+  BHAIWAY_COIN_ICON,
+  BHAIWAY_COIN_NAME,
+  BHAIWAY_COINS_NAME,
+  formatBhaiWayCoins,
+  formatSignedBhaiWayCoins,
+} from './bhaiwayCoin';
 export {
   formatDisplayDate,
   formatSlashDate,
@@ -17,6 +26,9 @@ export {
   keyboardVerticalOffset,
   scrollKeyboardDismissMode,
   stackAnimation,
+  stackGestureOptions,
+  NESTED_ROOT_SEGMENTS,
+  isNestedRootSegment,
   createShadow,
   androidTextInputFix,
 } from './platform';
@@ -45,3 +57,6 @@ export {
   showUploadFeedback,
   showSuccessFeedback,
 } from './feedback';
+export { showAppAlert } from '@/store';
+export type { AppAlertButton, AppAlertPayload, AppAlertVariant } from '@/store';
+export { UPI_ID_PATTERN, isValidUpiId } from './upi';

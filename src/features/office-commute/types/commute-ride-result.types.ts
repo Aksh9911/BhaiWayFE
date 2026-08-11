@@ -3,6 +3,7 @@ import type { RideResultItem } from '@/features/ride-search/types';
 export interface CommuteRideResultItem extends RideResultItem {
   vehicleColor: string;
   seatsNote: string;
+  organization: string;
 }
 
 export interface CommuteSearchSummary {
@@ -10,4 +11,5 @@ export interface CommuteSearchSummary {
   destination: string;
   dateLabel: string;
   timeLabel: string;
+  sameOrganizationOnly: boolean;
 }

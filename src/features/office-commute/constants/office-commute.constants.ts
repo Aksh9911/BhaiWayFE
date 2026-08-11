@@ -14,6 +14,12 @@ export const VERIFICATION_BANNER = {
   actionLabel: 'Complete Verification',
 } as const;
 
+export const VERIFIED_BANNER = {
+  title: 'Corporate Identity Verified',
+  description:
+    'Your workspace email is verified. You can publish and book office rides with verified colleagues.',
+} as const;
+
 export const OFFICE_COMMUTE_OPTIONS: readonly CommuteOption[] = [
   {
     id: 'publish',

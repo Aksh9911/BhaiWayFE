@@ -7,7 +7,7 @@ import {
 export const WITHDRAW_SCREEN = {
   title: 'Withdraw',
   balanceLabel: 'Available Balance',
-  amountLabel: 'Enter Amount',
+  amountLabel: 'Enter BhaiWay Coins',
   amountPlaceholder: '0.00',
   selectAccountLabel: 'Select Account',
   addAccountTitle: 'Add New Bank Account',
@@ -25,26 +25,14 @@ export const WITHDRAW_AVAILABLE_BALANCE = WALLET_BALANCE;
 export const WITHDRAW_AVAILABLE_BALANCE_LABEL = WALLET_BALANCE_LABEL;
 
 export const WITHDRAW_QUICK_AMOUNTS: readonly WithdrawQuickAmount[] = [
-  { id: '100', amount: 100, label: '+ ₹100' },
-  { id: '500', amount: 500, label: '+ ₹500' },
-  { id: '1000', amount: 1000, label: '+ ₹1000' },
-  { id: '5000', amount: 5000, label: '+ ₹5000' },
+  { id: '100', amount: 100, label: '+ 100' },
+  { id: '500', amount: 500, label: '+ 500' },
+  { id: '1000', amount: 1000, label: '+ 1000' },
+  { id: '5000', amount: 5000, label: '+ 5000' },
 ];
 
-export const WITHDRAW_BANK_ACCOUNTS: readonly WithdrawBankAccount[] = [
-  {
-    id: 'hdfc',
-    bankName: 'HDFC Bank',
-    accountTypeLabel: 'Savings Account',
-    maskedNumber: '•••• 1234',
-  },
-  {
-    id: 'sbi',
-    bankName: 'SBI Bank',
-    accountTypeLabel: 'Current Account',
-    maskedNumber: '•••• 5678',
-  },
-];
+/** @deprecated Mock banks removed — use BankAccounts DemoData sheet only. */
+export const WITHDRAW_BANK_ACCOUNTS: readonly WithdrawBankAccount[] = [];
 
 export const DEFAULT_WITHDRAW_AMOUNT = 1000;
-export const DEFAULT_WITHDRAW_BANK_ID = 'hdfc';
+export const DEFAULT_WITHDRAW_BANK_ID = '';

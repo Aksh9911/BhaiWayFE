@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, Share } from 'react-native';
+import { Share } from 'react-native';
+
 import { useRouter } from 'expo-router';
 
 import { ROUTES } from '@/config';
-import { triggerLightHaptic, triggerSuccessHaptic } from '@/shared/utils';
+import { triggerLightHaptic, triggerSuccessHaptic, showAppAlert } from '@/shared/utils';
 import {
   REFERRAL_CODE,
   REFERRAL_HISTORY,
@@ -48,7 +49,7 @@ export const useReferEarn = (): UseReferEarnResult => {
 
   const openHelp = useCallback(() => {
     triggerLightHaptic();
-    Alert.alert(REFER_EARN_SCREEN.helpTitle, REFER_EARN_SCREEN.helpMessage);
+    showAppAlert(REFER_EARN_SCREEN.helpTitle, REFER_EARN_SCREEN.helpMessage);
   }, []);
 
   const markCopied = useCallback(() => {
@@ -69,7 +70,7 @@ export const useReferEarn = (): UseReferEarnResult => {
         }
       })
       .catch(() => {
-        Alert.alert('Referral Code', REFERRAL_CODE);
+        showAppAlert('Referral Code', REFERRAL_CODE);
         markCopied();
       });
   }, [markCopied]);
@@ -79,13 +80,13 @@ export const useReferEarn = (): UseReferEarnResult => {
     Share.share({
       message: REFER_EARN_SCREEN.shareMessage(REFERRAL_CODE),
     }).catch(() => {
-      Alert.alert(REFER_EARN_SCREEN.shareLabel, REFER_EARN_SCREEN.shareMessage(REFERRAL_CODE));
+      showAppAlert(REFER_EARN_SCREEN.shareLabel, REFER_EARN_SCREEN.shareMessage(REFERRAL_CODE));
     });
   }, []);
 
   const viewAllHistory = useCallback(() => {
     triggerLightHaptic();
-    Alert.alert(REFER_EARN_SCREEN.viewAllTitle, REFER_EARN_SCREEN.viewAllMessage);
+    showAppAlert(REFER_EARN_SCREEN.viewAllTitle, REFER_EARN_SCREEN.viewAllMessage);
   }, []);
 
   return {

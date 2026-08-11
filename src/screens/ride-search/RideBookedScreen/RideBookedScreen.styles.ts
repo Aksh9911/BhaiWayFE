@@ -1,10 +1,10 @@
 import { StyleSheet } from 'react-native';
-import { colors } from '@/shared/theme';
+import { colors, spacing } from '@/shared/theme';
 import { createShadow } from '@/shared/utils/platform';
 
 /** Design tokens from Ride Booked HTML reference */
 const SURFACE = '#F8F9FF';
-const ON_SURFACE = '#0B1C30';
+const ON_SURFACE = '#191C1D';
 const ON_SURFACE_VARIANT = '#45464D';
 const OUTLINE_VARIANT = '#C6C6CD';
 const SURFACE_CONTAINER = '#E5EEFF';
@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    gap: spacing.cardGap,
   },
   brandName: {
     fontSize: 24,
@@ -61,7 +61,7 @@ export const styles = StyleSheet.create({
   },
   hero: {
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: spacing.sectionGap,
   },
   checkWrap: {
     width: 80,
@@ -70,7 +70,7 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
+    marginBottom: spacing.cardGap,
     ...createShadow({
       color: colors.primary,
       opacity: 0.3,
@@ -97,13 +97,13 @@ export const styles = StyleSheet.create({
   assuredRefund: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: spacing.listGap,
     backgroundColor: SURFACE_CONTAINER_LOW,
     borderWidth: 1,
     borderColor: colors.primary,
     borderRadius: RADIUS_XL,
     padding: 16,
-    marginBottom: 16,
+    marginBottom: spacing.cardGap,
   },
   assuredRefundText: {
     fontSize: 13,
@@ -112,10 +112,10 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   detailsCardWrap: {
-    marginBottom: 16,
+    marginBottom: spacing.cardGap,
   },
   driverWrap: {
-    marginBottom: 32,
+    marginBottom: spacing.sectionGap,
   },
   cancelNote: {
     flexDirection: 'row',
@@ -124,7 +124,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#FFF7ED',
     borderRadius: RADIUS_XL,
     padding: 12,
-    marginBottom: 16,
+    marginBottom: spacing.cardGap,
   },
   cancelNoteText: {
     fontSize: 13,
@@ -134,7 +134,7 @@ export const styles = StyleSheet.create({
   },
   actions: {
     paddingTop: 24,
-    gap: 16,
+    gap: spacing.cardGap,
   },
   trackButton: {
     width: '100%',
